@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Translating-PDF-Viewer</string>
+    <string name="chooser_title">Select a PDF file</string>
+</resources>
