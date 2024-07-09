@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "io.github.tomas337.translating_pdf_viewer"
-    compileSdk = 34
+    compileSdk = 33
 
     defaultConfig {
         applicationId = "io.github.tomas337.translating_pdf_viewer"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0"
 

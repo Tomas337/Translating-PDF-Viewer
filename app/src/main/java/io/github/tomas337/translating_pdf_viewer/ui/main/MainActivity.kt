@@ -8,11 +8,19 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
 import io.github.tomas337.translating_pdf_viewer.R
 import io.github.tomas337.translating_pdf_viewer.ui.main.viewmodel.MainActivityViewModel
+import io.github.tomas337.translating_pdf_viewer.ui.theme.TranslatingPDFViewerTheme
 
 class MainActivity : ComponentActivity() {
-    private val viewmodel: MainActivityViewModel by viewModels()
+    private val mainViewmodel: MainActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,18 +37,21 @@ class MainActivity : ComponentActivity() {
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == RESULT_OK) {
                     result.data?.data?.let { uri ->
-                        viewmodel.setUri(uri)
+                        mainViewmodel.setUri(uri)
                     }
                 }
             }
         getPdfUri.launch(chooser)
 
         setContent {
-//            TranslatingPDFViewerTheme {
-//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-//                    // PdfViewer()
-//                }
-//            }
+            TranslatingPDFViewerTheme {
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    PdfViewer(
+                        uri = mainViewmodel.uri.collectAsState().value,
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                }
+            }
         }
     }
 }
