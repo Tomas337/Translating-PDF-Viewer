@@ -1,20 +1,18 @@
 package io.github.tomas337.translating_pdf_viewer.ui.main
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
 import io.github.tomas337.translating_pdf_viewer.R
 import io.github.tomas337.translating_pdf_viewer.ui.main.viewmodel.MainActivityViewModel
 import io.github.tomas337.translating_pdf_viewer.ui.theme.TranslatingPDFViewerTheme
@@ -42,6 +40,8 @@ class MainActivity : ComponentActivity() {
                 }
             }
         getPdfUri.launch(chooser)
+
+        PDFBoxResourceLoader.init(applicationContext)
 
         setContent {
             TranslatingPDFViewerTheme {
