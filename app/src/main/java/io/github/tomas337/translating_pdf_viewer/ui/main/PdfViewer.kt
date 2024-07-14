@@ -1,16 +1,18 @@
 package io.github.tomas337.translating_pdf_viewer.ui.main
 
 import android.net.Uri
-import android.util.Log
-import android.view.ViewGroup
-import android.webkit.WebView
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun PdfViewer(
     uri: Uri,
     modifier: Modifier = Modifier,
 ) {
+    if (!Uri.EMPTY.equals(uri)) {
+        val context = LocalContext.current
+        val extractor = PdfExtractor(context, uri)
+        extractor.getText()
+    }
 }
