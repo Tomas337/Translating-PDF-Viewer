@@ -2,7 +2,6 @@ package io.github.tomas337.translating_pdf_viewer.ui.main;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
 import com.tom_roush.pdfbox.io.MemoryUsageSetting;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
@@ -13,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class PdfExtractor {
 
@@ -24,7 +24,7 @@ public class PdfExtractor {
         this.context = context;
     }
 
-    public List<List<TextData>> extractText() throws IOException {
+    public void extractText() throws IOException {
         try (
                 InputStream inputStream = context.getContentResolver().openInputStream(uri);
                 PDDocument pdfDocument = PDDocument.load(inputStream,
@@ -34,23 +34,26 @@ public class PdfExtractor {
             int numberOfPages = pdfDocument.getNumberOfPages();
             numberOfPages = 3;  // for testing
 
-            List<List<TextData>> pages = new ArrayList<>();
+            List<List<TextBlock>> pages = new ArrayList<>();
 
             for (int i = 0; i < numberOfPages; i++) {
                 try (PDDocument singlePageDocument = new PDDocument()) {
                     singlePageDocument.addPage(pdfDocument.getPage(i));
-                    List<TextData> text = stripper.getTextData(singlePageDocument);
+                    List<TextBlock> text = stripper.getTextData(singlePageDocument);
                     pages.add(text);
                 }
             }
-            return pages;
         }
     }
 
     private class CustomPDFTextStripper extends PDFTextStripper {
 
-        private List<TextData> textDataList;
-        private String prevFont = "";
+        private List<TextBlock> textBlocks;
+        private TextBlock curTextBlock;
+        private StringBuilder curText;
+        private String prevFont;
+        private float prevFontSize;
+        private List<TextStyle> textStyles = new ArrayList<>();
 
         public CustomPDFTextStripper() throws IOException {
             super();
@@ -69,42 +72,81 @@ public class PdfExtractor {
             StringBuilder builder = new StringBuilder();
 
             for (TextPosition position : textPositions) {
-
+                if (curTextBlock.getX() == null) {
+                    assert curTextBlock.getY() == null;
+                    curTextBlock.setX(position.getX());
+                    curTextBlock.setY(position.getY());
+                }
                 String baseFont = position.getFont().getName();
                 String font = baseFont != null ? baseFont : prevFont;
-                prevFont = font;
-
                 float fontSize = position.getFontSize();
-                float x = position.getX();
-                float y = position.getY();
-                textDataList.add(new TextData(x, y, fontSize, font, position.getUnicode()));
 
-                builder.append(position.getUnicode());
+                if (!Objects.equals(font, prevFont) || fontSize != prevFontSize) {
+                    if (curText.length() != 0) {
+                        curTextBlock.addText(curText.toString());
+
+                        // TODO: search if style exists, if not, create it and add it to curTextBlock.styles
+                        // TODO: check if curText.toString() is smaller than page width, if so, add curTextBlock to textBlocks
+                    }
+
+                    curText = new StringBuilder();
+                    prevFont = font;
+                    prevFontSize = fontSize;
+                }
+                String unicode = position.getUnicode();
+                curText.append(unicode);
+                builder.append(unicode);
             }
-
             super.writeString(builder.toString());
         }
 
-        public List<TextData> getTextData(PDDocument document) throws IOException {
-            textDataList = new ArrayList<>();
+        public List<TextBlock> getTextData(PDDocument document) throws IOException {
+            textBlocks = new ArrayList<>();
+            curTextBlock = new TextBlock();
+            curText = new StringBuilder();
             getText(document);
-            return textDataList;
+            return textBlocks;
         }
     }
 
-    public class TextData {
-        float x;
-        float y;
+    public class TextStyle {
         float fontSize;
         String font;
-        String text;
 
-        public TextData(float x, float y, float fontSize, String font, String text) {
-            this.x = x;
-            this.y = y;
+        public TextStyle(float fontSize, String font) {
             this.fontSize = fontSize;
             this.font = font;
-            this.text = text;
+        }
+    }
+
+    public class TextBlock {
+        Float x = null;
+        Float y = null;
+        List<String> texts = new ArrayList<>();
+        List<Integer> styles = new ArrayList<>();
+
+        public void addText(String text) {
+            texts.add(text);
+        }
+
+        public void addStyle(int style) {
+            styles.add(style);
+        }
+
+        public Float getX() {
+            return x;
+        }
+
+        public void setX(Float x) {
+            this.x = x;
+        }
+
+        public Float getY() {
+            return y;
+        }
+
+        public void setY(Float y) {
+            this.y = y;
         }
     }
 }

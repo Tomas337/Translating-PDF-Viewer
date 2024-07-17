@@ -13,6 +13,7 @@ fun PdfViewer(
     if (!Uri.EMPTY.equals(uri)) {
         val context = LocalContext.current
         val extractor = PdfExtractor(context, uri)
-        val pages = extractor.extractText()
+//        val pages = extractor.extractText()
+        extractor.extractText()
     }
 }
