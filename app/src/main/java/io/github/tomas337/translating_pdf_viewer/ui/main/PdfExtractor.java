@@ -2,6 +2,7 @@ package io.github.tomas337.translating_pdf_viewer.ui.main;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 
 import com.tom_roush.pdfbox.io.MemoryUsageSetting;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
@@ -11,6 +12,7 @@ import com.tom_roush.pdfbox.text.TextPosition;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -40,6 +42,7 @@ public class PdfExtractor {
                 try (PDDocument singlePageDocument = new PDDocument()) {
                     singlePageDocument.addPage(pdfDocument.getPage(i));
                     List<TextBlock> text = stripper.getTextData(singlePageDocument);
+                    Log.d(String.format("Page %s", i), text.toString());
                     pages.add(text);
                 }
             }
@@ -53,7 +56,10 @@ public class PdfExtractor {
         private StringBuilder curText;
         private String prevFont;
         private float prevFontSize;
-        private List<TextStyle> textStyles = new ArrayList<>();
+        private float maxPageWidth;
+        private int curMaxStyleIndex;
+        private HashMap<TextStyle, Integer> textStyleToInt = new HashMap<>();
+        private HashMap<Integer, TextStyle> intToTextStyle = new HashMap<>();
 
         public CustomPDFTextStripper() throws IOException {
             super();
@@ -70,6 +76,16 @@ public class PdfExtractor {
         @Override
         protected void writeString(String text, List<TextPosition> textPositions) throws IOException {
             StringBuilder builder = new StringBuilder();
+            float pageWidth = textPositions.size();
+
+            // Handle maxPageWidth update
+            if (pageWidth > maxPageWidth) {
+                maxPageWidth = pageWidth;
+                if (!curTextBlock.isEmpty()) {
+                    textBlocks.add(curTextBlock);
+                    curTextBlock = new TextBlock();
+                }
+            }
 
             for (TextPosition position : textPositions) {
                 if (curTextBlock.getX() == null) {
@@ -77,26 +93,45 @@ public class PdfExtractor {
                     curTextBlock.setX(position.getX());
                     curTextBlock.setY(position.getY());
                 }
+
                 String baseFont = position.getFont().getName();
                 String font = baseFont != null ? baseFont : prevFont;
                 float fontSize = position.getFontSize();
 
+                // Handle style change
                 if (!Objects.equals(font, prevFont) || fontSize != prevFontSize) {
                     if (curText.length() != 0) {
                         curTextBlock.addText(curText.toString());
+                        curText = new StringBuilder();
 
-                        // TODO: search if style exists, if not, create it and add it to curTextBlock.styles
-                        // TODO: check if curText.toString() is smaller than page width, if so, add curTextBlock to textBlocks
+                        TextStyle style = new TextStyle(fontSize, font);
+
+                        if (textStyleToInt.containsKey(style)) {
+                            curTextBlock.addStyle(textStyleToInt.get(style));
+                        } else {
+                            textStyleToInt.put(style, curMaxStyleIndex);
+                            intToTextStyle.put(curMaxStyleIndex, style);
+                            curTextBlock.addStyle(curMaxStyleIndex);
+                            curMaxStyleIndex++;
+                        }
                     }
-
-                    curText = new StringBuilder();
                     prevFont = font;
                     prevFontSize = fontSize;
                 }
+
                 String unicode = position.getUnicode();
                 curText.append(unicode);
                 builder.append(unicode);
             }
+
+            // Handle end of block
+            if (pageWidth < maxPageWidth) {
+                curTextBlock.addText(curText.toString());
+                curText = new StringBuilder();
+                textBlocks.add(curTextBlock);
+                curTextBlock = new TextBlock();
+            }
+
             super.writeString(builder.toString());
         }
 
@@ -110,6 +145,7 @@ public class PdfExtractor {
     }
 
     public class TextStyle {
+
         float fontSize;
         String font;
 
@@ -120,6 +156,7 @@ public class PdfExtractor {
     }
 
     public class TextBlock {
+
         Float x = null;
         Float y = null;
         List<String> texts = new ArrayList<>();
@@ -127,6 +164,10 @@ public class PdfExtractor {
 
         public void addText(String text) {
             texts.add(text);
+        }
+
+        public boolean isEmpty() {
+            return texts.isEmpty();
         }
 
         public void addStyle(int style) {
