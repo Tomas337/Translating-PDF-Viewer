@@ -1,11 +1,17 @@
 package io.github.tomas337.translating_pdf_viewer.ui.main;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
-import android.util.Log;
 
+import com.tom_roush.pdfbox.cos.COSName;
 import com.tom_roush.pdfbox.io.MemoryUsageSetting;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
+import com.tom_roush.pdfbox.pdmodel.PDPage;
+import com.tom_roush.pdfbox.pdmodel.PDResources;
+import com.tom_roush.pdfbox.pdmodel.font.PDFont;
+import com.tom_roush.pdfbox.pdmodel.graphics.PDXObject;
+import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import com.tom_roush.pdfbox.text.PDFTextStripper;
 import com.tom_roush.pdfbox.text.TextPosition;
 
@@ -26,7 +32,7 @@ public class PdfExtractor {
         this.context = context;
     }
 
-    public void extractText() throws IOException {
+    public Document extractDocument() throws IOException {
         try (
                 InputStream inputStream = context.getContentResolver().openInputStream(uri);
                 PDDocument pdfDocument = PDDocument.load(inputStream,
@@ -36,16 +42,20 @@ public class PdfExtractor {
             int numberOfPages = pdfDocument.getNumberOfPages();
             numberOfPages = 3;  // for testing
 
-            List<List<TextBlock>> pages = new ArrayList<>();
+            List<Page> pages = new ArrayList<>();
 
+            //for (PDPage page : pdfDocument.getPages()) {
             for (int i = 0; i < numberOfPages; i++) {
-                try (PDDocument singlePageDocument = new PDDocument()) {
-                    singlePageDocument.addPage(pdfDocument.getPage(i));
-                    List<TextBlock> text = stripper.getTextData(singlePageDocument);
-                    Log.d(String.format("Page %s", i), text.toString());
-                    pages.add(text);
-                }
+                PDPage page = pdfDocument.getPage(i);
+                List<TextBlock> textBlocks = stripper.getPageText(page);
+                List<Image> images = getPageImages(page);
+
+                Page pageData = new Page(textBlocks, images);
+                pages.add(pageData);
             }
+
+            //TODO implement initialization
+            return new Document();
         }
     }
 
@@ -90,8 +100,10 @@ public class PdfExtractor {
             for (TextPosition position : textPositions) {
                 if (curTextBlock.getX() == null) {
                     assert curTextBlock.getY() == null;
+                    assert curTextBlock.getEndY() == null;
                     curTextBlock.setX(position.getX());
                     curTextBlock.setY(position.getY());
+                    curTextBlock.setEndY(position.getEndY());
                 }
 
                 String baseFont = position.getFont().getName();
@@ -135,13 +147,38 @@ public class PdfExtractor {
             super.writeString(builder.toString());
         }
 
-        public List<TextBlock> getTextData(PDDocument document) throws IOException {
-            textBlocks = new ArrayList<>();
-            curTextBlock = new TextBlock();
-            curText = new StringBuilder();
-            getText(document);
+        public List<TextBlock> getPageText(PDPage page) throws IOException {
+            try (PDDocument document = new PDDocument()) {
+                document.addPage(page);
+                textBlocks = new ArrayList<>();
+                curTextBlock = new TextBlock();
+                curText = new StringBuilder();
+                getText(document);
+            }
             return textBlocks;
         }
+    }
+
+    private List<Image> getPageImages(PDPage page) throws IOException {
+        PDResources resources = page.getResources();
+        List<Image> images = new ArrayList<>();
+
+        for (COSName xObjectName : resources.getXObjectNames()) {
+            PDXObject xObject = resources.getXObject(xObjectName);
+
+            if (xObject instanceof PDImageXObject) {
+                Bitmap imageBitMap = ((PDImageXObject) xObject).getImage();
+                int height = ((PDImageXObject) xObject).getHeight();
+                Image image = new Image(imageBitMap, height);
+                images.add(image);
+            }
+        }
+        return images;
+    }
+
+    private void getFonts(PDDocument document) {
+
+
     }
 
     public class TextStyle {
@@ -157,8 +194,10 @@ public class PdfExtractor {
 
     public class TextBlock {
 
+        // TODO remove x if not necessary
         Float x = null;
         Float y = null;
+        Float endY = null;
         List<String> texts = new ArrayList<>();
         List<Integer> styles = new ArrayList<>();
 
@@ -183,11 +222,77 @@ public class PdfExtractor {
         }
 
         public Float getY() {
-            return y;
+            return this.y;
         }
 
         public void setY(Float y) {
             this.y = y;
+        }
+
+        public Float getEndY() {
+            return endY;
+        }
+
+        public void setEndY(Float y) {
+            endY = y;
+        }
+    }
+
+    public class Image {
+
+        Bitmap image;
+        int height;
+
+        public Image(Bitmap image, int height) {
+            this.image = image;
+            this.height = height;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+    }
+
+    public class Page {
+
+        List<Object> orderedData = new ArrayList<>();
+
+        public Page(List<TextBlock> textBlocks, List<Image> images) {
+            int j = 0;
+            int i = 0;
+
+            while (i < textBlocks.size() || j < images.size()) {
+
+                // TODO account for top padding
+                if (i == 0 && textBlocks.get(i).getY() > images.get(j).getHeight()) {
+                    orderedData.add(images.get(j));
+                    j++;
+                } else if (i == textBlocks.size()-1) {
+                    orderedData.add(textBlocks.get(i));
+                    i++;
+                    if (j != images.size()) {  // TODO refactor
+                        while (j < images.size()) {
+                            orderedData.add(images.get(j));
+                            j++;
+                        }
+                    }
+
+                } else if ((textBlocks.get(i).getEndY() - textBlocks.get(i+1).getY()) < images.get(j).getHeight()) {
+                    orderedData.add(textBlocks.get(i));
+                    i++;
+                }
+            }
+        }
+    }
+
+    public class Document {
+
+        List<Page> pages;
+        List<PDFont> fonts;
+        String name;
+
+        public Document() {
+            // TODO implement
         }
     }
 }

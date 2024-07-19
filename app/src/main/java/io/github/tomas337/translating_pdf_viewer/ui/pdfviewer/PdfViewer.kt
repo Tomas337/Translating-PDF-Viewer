@@ -1,9 +1,10 @@
-package io.github.tomas337.translating_pdf_viewer.ui.main
+package io.github.tomas337.translating_pdf_viewer.ui.pdfviewer
 
 import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import io.github.tomas337.translating_pdf_viewer.ui.main.PdfExtractor
 
 @Composable
 fun PdfViewer(
@@ -13,7 +14,6 @@ fun PdfViewer(
     if (!Uri.EMPTY.equals(uri)) {
         val context = LocalContext.current
         val extractor = PdfExtractor(context, uri)
-//        val pages = extractor.extractText()
-        extractor.extractText()
+        extractor.extractDocument()
     }
 }
