@@ -18,6 +18,7 @@ import com.tom_roush.pdfbox.text.TextPosition;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -261,26 +262,48 @@ public class PdfExtractor {
             int j = 0;
             int i = 0;
 
-            while (i < textBlocks.size() || j < images.size()) {
+            // handle empty textBlocks or images
+            if (textBlocks.isEmpty() && !images.isEmpty()) {
+                orderedData = Collections.singletonList(images);
+                return;
+            } else if (images.isEmpty()) {
+                orderedData = Collections.singletonList(textBlocks);
+                return;
+            }
+
+            // handle start of the page
+            while (i == 0) {
+                int sumOfHeights = orderedData.stream().mapToInt(o -> ((Image) o).getHeight()).sum();
 
                 // TODO account for top padding
-                if (i == 0 && textBlocks.get(i).getY() > images.get(j).getHeight()) {
+                if (textBlocks.get(i).getY() < (images.get(j).getHeight() + sumOfHeights)) {
+                    orderedData.add(textBlocks.get(i));
+                    i++;
+                } else {
                     orderedData.add(images.get(j));
                     j++;
-                } else if (i == textBlocks.size()-1) {
-                    orderedData.add(textBlocks.get(i));
-                    i++;
-                    if (j != images.size()) {  // TODO refactor
-                        while (j < images.size()) {
-                            orderedData.add(images.get(j));
-                            j++;
-                        }
-                    }
-
-                } else if ((textBlocks.get(i).getEndY() - textBlocks.get(i+1).getY()) < images.get(j).getHeight()) {
-                    orderedData.add(textBlocks.get(i));
-                    i++;
                 }
+            }
+
+            // handle middle of the page
+            while (i < textBlocks.size() && j < images.size()) {
+                if ((textBlocks.get(i-1).getEndY() - textBlocks.get(i).getY()) < images.get(j).getHeight()) {
+                    orderedData.add(textBlocks.get(i));
+                    i++;
+                } else {
+                    orderedData.add(images.get(j));
+                    j++;
+                }
+            }
+
+            // handle end of the page
+            while (i != textBlocks.size()) {
+                orderedData.add(textBlocks.get(i));
+                i++;
+            }
+            while (j != images.size()) {
+                orderedData.add(images.get(j));
+                j++;
             }
         }
     }
