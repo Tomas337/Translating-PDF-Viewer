@@ -1,4 +1,4 @@
-package io.github.tomas337.translating_pdf_viewer.ui.main;
+package io.github.tomas337.translating_pdf_viewer.data.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -9,7 +9,6 @@ import com.tom_roush.pdfbox.io.MemoryUsageSetting;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
 import com.tom_roush.pdfbox.pdmodel.PDPage;
 import com.tom_roush.pdfbox.pdmodel.PDResources;
-import com.tom_roush.pdfbox.pdmodel.font.PDFont;
 import com.tom_roush.pdfbox.pdmodel.graphics.PDXObject;
 import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import com.tom_roush.pdfbox.text.PDFTextStripper;
@@ -18,7 +17,6 @@ import com.tom_roush.pdfbox.text.TextPosition;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -180,142 +178,5 @@ public class PdfExtractor {
     private void getFonts(PDDocument document) {
 
 
-    }
-
-    public class TextStyle {
-
-        float fontSize;
-        String font;
-
-        public TextStyle(float fontSize, String font) {
-            this.fontSize = fontSize;
-            this.font = font;
-        }
-    }
-
-    public class TextBlock {
-
-        // TODO remove x if not necessary
-        Float x = null;
-        Float y = null;
-        Float endY = null;
-        List<String> texts = new ArrayList<>();
-        List<Integer> styles = new ArrayList<>();
-
-        public void addText(String text) {
-            texts.add(text);
-        }
-
-        public boolean isEmpty() {
-            return texts.isEmpty();
-        }
-
-        public void addStyle(int style) {
-            styles.add(style);
-        }
-
-        public Float getX() {
-            return x;
-        }
-
-        public void setX(Float x) {
-            this.x = x;
-        }
-
-        public Float getY() {
-            return this.y;
-        }
-
-        public void setY(Float y) {
-            this.y = y;
-        }
-
-        public Float getEndY() {
-            return endY;
-        }
-
-        public void setEndY(Float y) {
-            endY = y;
-        }
-    }
-
-    public class Image {
-
-        Bitmap image;
-        int height;
-
-        public Image(Bitmap image, int height) {
-            this.image = image;
-            this.height = height;
-        }
-
-        public int getHeight() {
-            return height;
-        }
-    }
-
-    public class Page {
-
-        List<Object> orderedData = new ArrayList<>();
-
-        public Page(List<TextBlock> textBlocks, List<Image> images) {
-            int j = 0;
-            int i = 0;
-
-            // handle empty textBlocks or images
-            if (textBlocks.isEmpty() && !images.isEmpty()) {
-                orderedData = Collections.singletonList(images);
-                return;
-            } else if (images.isEmpty()) {
-                orderedData = Collections.singletonList(textBlocks);
-                return;
-            }
-
-            // handle start of the page
-            while (i == 0) {
-                int sumOfHeights = orderedData.stream().mapToInt(o -> ((Image) o).getHeight()).sum();
-
-                // TODO account for top padding
-                if (textBlocks.get(i).getY() < (images.get(j).getHeight() + sumOfHeights)) {
-                    orderedData.add(textBlocks.get(i));
-                    i++;
-                } else {
-                    orderedData.add(images.get(j));
-                    j++;
-                }
-            }
-
-            // handle middle of the page
-            while (i < textBlocks.size() && j < images.size()) {
-                if ((textBlocks.get(i-1).getEndY() - textBlocks.get(i).getY()) < images.get(j).getHeight()) {
-                    orderedData.add(textBlocks.get(i));
-                    i++;
-                } else {
-                    orderedData.add(images.get(j));
-                    j++;
-                }
-            }
-
-            // handle end of the page
-            while (i != textBlocks.size()) {
-                orderedData.add(textBlocks.get(i));
-                i++;
-            }
-            while (j != images.size()) {
-                orderedData.add(images.get(j));
-                j++;
-            }
-        }
-    }
-
-    public class Document {
-
-        List<Page> pages;
-        List<PDFont> fonts;
-        String name;
-
-        public Document() {
-            // TODO implement
-        }
     }
 }

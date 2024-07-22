@@ -1,4 +1,4 @@
-package io.github.tomas337.translating_pdf_viewer.ui.main
+package io.github.tomas337.translating_pdf_viewer.ui.screens.main
 
 import android.content.Intent
 import android.os.Bundle
@@ -14,8 +14,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
 import io.github.tomas337.translating_pdf_viewer.R
-import io.github.tomas337.translating_pdf_viewer.ui.main.viewmodel.MainActivityViewModel
-import io.github.tomas337.translating_pdf_viewer.ui.pdfviewer.PdfViewer
+import io.github.tomas337.translating_pdf_viewer.ui.screens.main.viewmodel.MainActivityViewModel
+import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.PdfViewer
 import io.github.tomas337.translating_pdf_viewer.ui.theme.TranslatingPDFViewerTheme
 
 class MainActivity : ComponentActivity() {

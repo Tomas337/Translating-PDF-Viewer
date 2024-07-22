@@ -1,4 +1,4 @@
-package io.github.tomas337.translating_pdf_viewer.ui.main.viewmodel
+package io.github.tomas337.translating_pdf_viewer.ui.screens.main.viewmodel
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
