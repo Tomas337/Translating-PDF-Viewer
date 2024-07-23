@@ -7,8 +7,10 @@ import android.net.Uri;
 import com.tom_roush.pdfbox.cos.COSName;
 import com.tom_roush.pdfbox.io.MemoryUsageSetting;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
+import com.tom_roush.pdfbox.pdmodel.PDDocumentInformation;
 import com.tom_roush.pdfbox.pdmodel.PDPage;
 import com.tom_roush.pdfbox.pdmodel.PDResources;
+import com.tom_roush.pdfbox.pdmodel.font.PDFont;
 import com.tom_roush.pdfbox.pdmodel.graphics.PDXObject;
 import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import com.tom_roush.pdfbox.text.PDFTextStripper;
@@ -39,9 +41,10 @@ public class PdfExtractor {
                 ) {
             CustomPDFTextStripper stripper = new CustomPDFTextStripper();
             int numberOfPages = pdfDocument.getNumberOfPages();
-            numberOfPages = 3;  // for testing
-
             List<Page> pages = new ArrayList<>();
+
+            // for debugging
+            numberOfPages = 3;
 
             //for (PDPage page : pdfDocument.getPages()) {
             for (int i = 0; i < numberOfPages; i++) {
@@ -53,8 +56,11 @@ public class PdfExtractor {
                 pages.add(pageData);
             }
 
-            //TODO implement initialization
-            return new Document();
+            HashMap<Integer, TextStyle> intToTextStyleMap = stripper.getIntToTextStyleMap();
+            PDDocumentInformation information = pdfDocument.getDocumentInformation();
+            String title = information.getTitle();
+
+            return new Document(pages, intToTextStyleMap, title);
         }
     }
 
@@ -63,12 +69,12 @@ public class PdfExtractor {
         private List<TextBlock> textBlocks;
         private TextBlock curTextBlock;
         private StringBuilder curText;
-        private String prevFont;
+        private PDFont prevFont;
         private float prevFontSize;
-        private float maxPageWidth;
+        private float maxLineWidth;
         private int curMaxStyleIndex;
-        private HashMap<TextStyle, Integer> textStyleToInt = new HashMap<>();
-        private HashMap<Integer, TextStyle> intToTextStyle = new HashMap<>();
+        private HashMap<TextStyle, Integer> textStyleToIntMap = new HashMap<>();
+        private HashMap<Integer, TextStyle> intToTextStyleMap = new HashMap<>();
 
         public CustomPDFTextStripper() throws IOException {
             super();
@@ -85,28 +91,28 @@ public class PdfExtractor {
         @Override
         protected void writeString(String text, List<TextPosition> textPositions) throws IOException {
             StringBuilder builder = new StringBuilder();
-            float pageWidth = textPositions.size();
+            int lineWidth = textPositions.size();
 
-            // Handle maxPageWidth update
-            if (pageWidth > maxPageWidth) {
-                maxPageWidth = pageWidth;
+            // Handle maxLineWidth update
+            if (lineWidth > maxLineWidth) {
+                maxLineWidth = lineWidth;
                 if (!curTextBlock.isEmpty()) {
                     textBlocks.add(curTextBlock);
                     curTextBlock = new TextBlock();
                 }
             }
 
-            for (TextPosition position : textPositions) {
-                if (curTextBlock.getX() == null) {
-                    assert curTextBlock.getY() == null;
-                    assert curTextBlock.getEndY() == null;
-                    curTextBlock.setX(position.getX());
-                    curTextBlock.setY(position.getY());
-                    curTextBlock.setEndY(position.getEndY());
-                }
+            if (curTextBlock.getX() == null) {
+                assert curTextBlock.getY() == null;
+                assert curTextBlock.getEndY() == null;
+                curTextBlock.setX(textPositions.get(0).getX());
+                curTextBlock.setY(textPositions.get(0).getY());
+            }
+            curTextBlock.updateEndY(textPositions.get(0).getHeight());
 
-                String baseFont = position.getFont().getName();
-                String font = baseFont != null ? baseFont : prevFont;
+            for (TextPosition position : textPositions) {
+                PDFont baseFont = position.getFont();
+                PDFont font = baseFont != null ? baseFont : prevFont;
                 float fontSize = position.getFontSize();
 
                 // Handle style change
@@ -114,17 +120,17 @@ public class PdfExtractor {
                     if (curText.length() != 0) {
                         curTextBlock.addText(curText.toString());
                         curText = new StringBuilder();
+                    }
 
-                        TextStyle style = new TextStyle(fontSize, font);
+                    TextStyle style = new TextStyle(fontSize, font);
 
-                        if (textStyleToInt.containsKey(style)) {
-                            curTextBlock.addStyle(textStyleToInt.get(style));
-                        } else {
-                            textStyleToInt.put(style, curMaxStyleIndex);
-                            intToTextStyle.put(curMaxStyleIndex, style);
-                            curTextBlock.addStyle(curMaxStyleIndex);
-                            curMaxStyleIndex++;
-                        }
+                    if (textStyleToIntMap.containsKey(style)) {
+                        curTextBlock.addStyle(textStyleToIntMap.get(style));
+                    } else {
+                        textStyleToIntMap.put(style, curMaxStyleIndex);
+                        intToTextStyleMap.put(curMaxStyleIndex, style);
+                        curTextBlock.addStyle(curMaxStyleIndex);
+                        curMaxStyleIndex++;
                     }
                     prevFont = font;
                     prevFontSize = fontSize;
@@ -136,10 +142,10 @@ public class PdfExtractor {
             }
 
             // Handle end of block
-            if (pageWidth < maxPageWidth) {
+            if (lineWidth < maxLineWidth) {
                 curTextBlock.addText(curText.toString());
-                curText = new StringBuilder();
                 textBlocks.add(curTextBlock);
+                curText = new StringBuilder();
                 curTextBlock = new TextBlock();
             }
 
@@ -155,6 +161,14 @@ public class PdfExtractor {
                 getText(document);
             }
             return textBlocks;
+        }
+
+        public HashMap<TextStyle, Integer> getTextStyleToIntMap() {
+            return textStyleToIntMap;
+        }
+
+        public HashMap<Integer, TextStyle> getIntToTextStyleMap() {
+            return intToTextStyleMap;
         }
     }
 
@@ -173,10 +187,5 @@ public class PdfExtractor {
             }
         }
         return images;
-    }
-
-    private void getFonts(PDDocument document) {
-
-
     }
 }

@@ -38,13 +38,14 @@ public class TextBlock {
 
     public void setY(Float y) {
         this.y = y;
+        this.endY = y;
     }
 
     public Float getEndY() {
         return endY;
     }
 
-    public void setEndY(Float y) {
-        endY = y;
+    public void updateEndY(Float y) {
+        endY += y;
         }
 }
