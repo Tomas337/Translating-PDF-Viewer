@@ -14,10 +14,10 @@ public class Page {
 
         // handle empty textBlocks or images
         if (textBlocks.isEmpty() && !images.isEmpty()) {
-            orderedData = Collections.singletonList(images);
+            orderedData = new ArrayList<>(images);
             return;
         } else if (images.isEmpty()) {
-            orderedData = Collections.singletonList(textBlocks);
+            orderedData = new ArrayList<>(textBlocks);
             return;
         }
 
