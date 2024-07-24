@@ -57,10 +57,10 @@ public class PdfExtractor {
             }
 
             HashMap<Integer, TextStyle> intToTextStyleMap = stripper.getIntToTextStyleMap();
-            PDDocumentInformation information = pdfDocument.getDocumentInformation();
-            String title = information.getTitle();
+            String title = pdfDocument.getDocumentInformation().getTitle();
+            String language = pdfDocument.getDocumentCatalog().getLanguage();
 
-            return new Document(pages, intToTextStyleMap, title);
+            return new Document(pages, intToTextStyleMap, title, language);
         }
     }
 

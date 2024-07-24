@@ -1,4 +1,4 @@
-package io.github.tomas337.translating_pdf_viewer.ui.main
+package io.github.tomas337.translating_pdf_viewer.ui.screens.home
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
@@ -18,25 +18,20 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import io.github.tomas337.translating_pdf_viewer.R
-import io.github.tomas337.translating_pdf_viewer.ui.main.navigation.Screen
-import io.github.tomas337.translating_pdf_viewer.ui.main.viewmodel.MainViewModel
-import kotlinx.coroutines.launch
+import io.github.tomas337.translating_pdf_viewer.ui.screens.home.viewmodel.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(
+fun HomeScreen(
     navController: NavHostController,
-    //mainViewModel: MainViewModel = hiltViewModel();
+    homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val scope = rememberCoroutineScope()
@@ -71,7 +66,7 @@ fun MainScreen(
                 title = {
                     Text(text = "Processed files")
                 },
-                colors = TopAppBarDefaults.smallTopAppBarColors(
+                colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = MaterialTheme.colorScheme.onPrimary
                 ),
