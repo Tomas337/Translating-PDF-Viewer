@@ -1,4 +1,4 @@
-package io.github.tomas337.translating_pdf_viewer.data.utils;
+package io.github.tomas337.translating_pdf_viewer.domain.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,7 +7,6 @@ import android.net.Uri;
 import com.tom_roush.pdfbox.cos.COSName;
 import com.tom_roush.pdfbox.io.MemoryUsageSetting;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
-import com.tom_roush.pdfbox.pdmodel.PDDocumentInformation;
 import com.tom_roush.pdfbox.pdmodel.PDPage;
 import com.tom_roush.pdfbox.pdmodel.PDResources;
 import com.tom_roush.pdfbox.pdmodel.font.PDFont;

@@ -1,6 +1,4 @@
-package io.github.tomas337.translating_pdf_viewer.data.utils;
-
-import com.tom_roush.pdfbox.pdmodel.font.PDFont;
+package io.github.tomas337.translating_pdf_viewer.domain.utils;
 
 import java.util.HashMap;
 import java.util.List;

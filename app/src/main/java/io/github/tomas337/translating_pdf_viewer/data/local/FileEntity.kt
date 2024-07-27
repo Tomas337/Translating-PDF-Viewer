@@ -3,8 +3,8 @@ package io.github.tomas337.translating_pdf_viewer.data.local
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import io.github.tomas337.translating_pdf_viewer.data.utils.Page
-import io.github.tomas337.translating_pdf_viewer.data.utils.TextStyle
+import io.github.tomas337.translating_pdf_viewer.domain.utils.Page
+import io.github.tomas337.translating_pdf_viewer.domain.utils.TextStyle
 
 // TODO split into two entities for efficiency?
 @Entity(tableName = "files")

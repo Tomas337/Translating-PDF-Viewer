@@ -1,7 +1,6 @@
-package io.github.tomas337.translating_pdf_viewer.data.utils;
+package io.github.tomas337.translating_pdf_viewer.domain.utils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Page {
