@@ -8,6 +8,7 @@ import java.io.File
 
 @Dao
 interface FileDao {
+
     @Query("SELECT name, language FROM files WHERE id == :id")
     suspend fun getFileInfo(id: Int): FileInfo
 
