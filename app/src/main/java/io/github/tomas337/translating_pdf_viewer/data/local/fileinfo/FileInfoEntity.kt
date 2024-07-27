@@ -1,14 +1,12 @@
-package io.github.tomas337.translating_pdf_viewer.data.local
+package io.github.tomas337.translating_pdf_viewer.data.local.fileinfo
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import io.github.tomas337.translating_pdf_viewer.domain.utils.Page
 import io.github.tomas337.translating_pdf_viewer.domain.utils.TextStyle
 
-// TODO split into two entities for efficiency?
-@Entity(tableName = "files")
-data class FileEntity(
+@Entity(tableName = "file_info")
+data class FileInfoEntity(
 
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
@@ -18,9 +16,6 @@ data class FileEntity(
 
     @ColumnInfo(name = "language")
     val language: String,
-
-    @ColumnInfo(name = "pages")
-    val pages: List<Page>,
 
     @ColumnInfo(name = "int_to_textstyle_map")
     val intToTextStyleMap: HashMap<Int, TextStyle>
