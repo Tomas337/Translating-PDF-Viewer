@@ -10,6 +10,9 @@ interface FileInfoDao {
     @Query("SELECT * FROM file_info WHERE id == :id")
     suspend fun getFileInfo(id: Int): FileInfoEntity
 
+    @Query("SELECT * FROM file_info")
+    suspend fun getAllFileInfo(): List<FileInfoEntity>
+
     @Query("SELECT last_insert_rowid()")
     suspend fun getLastInsertedFileId(): Int
 

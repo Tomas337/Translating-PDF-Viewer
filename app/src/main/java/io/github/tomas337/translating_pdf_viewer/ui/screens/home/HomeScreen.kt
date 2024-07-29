@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -34,7 +35,7 @@ fun HomeScreen(
     homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val scope = rememberCoroutineScope()
+//    val scope = rememberCoroutineScope()
 
 //    var sets: List<Set> by remember { mutableStateOf(listOf()) }
 //    LaunchedEffect(true) {
@@ -48,14 +49,15 @@ fun HomeScreen(
     val title: String = stringResource(R.string.chooser_title)
     val chooser: Intent = Intent.createChooser(intent, title)
 
+    val context = LocalContext.current
+
     val getPdfUri = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             result.data?.data?.let { uri ->
-                //mainViewmodel.setUri(uri)
+                homeViewModel.addFile(context, uri)
             }
         }
     }
-
 
     Scaffold(
         modifier = Modifier
