@@ -8,6 +8,7 @@ fun FileInfoEntity.toFileInfoDto(): FileInfoDto {
         id = id,
         name = name,
         language = language,
+        curPage = curPage,
         intToTextStyleMap = intToTextStyleMap
     )
 }

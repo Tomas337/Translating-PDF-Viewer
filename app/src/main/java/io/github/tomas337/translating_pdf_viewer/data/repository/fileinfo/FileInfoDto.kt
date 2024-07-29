@@ -6,5 +6,6 @@ data class FileInfoDto(
     val id: Int = 0,
     val name: String,
     val language: String,
+    val curPage: Int = 0,
     val intToTextStyleMap: HashMap<Int, TextStyle>
 )

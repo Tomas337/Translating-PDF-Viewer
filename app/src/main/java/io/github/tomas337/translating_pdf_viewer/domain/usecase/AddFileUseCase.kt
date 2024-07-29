@@ -6,8 +6,6 @@ import io.github.tomas337.translating_pdf_viewer.data.repository.fileinfo.FileIn
 import io.github.tomas337.translating_pdf_viewer.data.repository.fileinfo.FileInfoRepository
 import io.github.tomas337.translating_pdf_viewer.data.repository.page.PageDto
 import io.github.tomas337.translating_pdf_viewer.data.repository.page.PageRepository
-import io.github.tomas337.translating_pdf_viewer.domain.mapper.toFileInfoDto
-import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
 import io.github.tomas337.translating_pdf_viewer.domain.utils.PdfExtractor
 
 class AddFileUseCase(

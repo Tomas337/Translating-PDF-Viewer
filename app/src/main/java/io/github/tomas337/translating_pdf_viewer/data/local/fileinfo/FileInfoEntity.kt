@@ -17,6 +17,9 @@ data class FileInfoEntity(
     @ColumnInfo(name = "language")
     val language: String,
 
+    @ColumnInfo(name = "language")
+    val curPage: Int = 0,
+
     @ColumnInfo(name = "int_to_textstyle_map")
     val intToTextStyleMap: HashMap<Int, TextStyle>
 )
