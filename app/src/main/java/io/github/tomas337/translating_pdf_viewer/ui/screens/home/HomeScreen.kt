@@ -18,7 +18,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -26,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import io.github.tomas337.translating_pdf_viewer.R
+import io.github.tomas337.translating_pdf_viewer.domain.model.FileInfoModel
 import io.github.tomas337.translating_pdf_viewer.ui.screens.home.viewmodel.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,12 +37,8 @@ fun HomeScreen(
     homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-//    val scope = rememberCoroutineScope()
 
-//    var sets: List<Set> by remember { mutableStateOf(listOf()) }
-//    LaunchedEffect(true) {
-//        sets = setViewModel.getAllSets()
-//    }
+    val allFileInfo: List<FileInfoModel>? by homeViewModel.getAllFileInfo().observeAsState()
 
     val intent = Intent()
         .setType("application/pdf")
@@ -92,9 +90,11 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // TODO display processed files
-//            items() {
-//            }
+            allFileInfo?.size?.let { size ->
+                items(size) {
+                    FileItem(allFileInfo!![it], navController)
+                }
+            }
         }
     }
 }

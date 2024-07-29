@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 
+import androidx.compose.ui.graphics.ImageBitmap;
+
 import com.tom_roush.pdfbox.cos.COSName;
 import com.tom_roush.pdfbox.io.MemoryUsageSetting;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
@@ -12,6 +14,7 @@ import com.tom_roush.pdfbox.pdmodel.PDResources;
 import com.tom_roush.pdfbox.pdmodel.font.PDFont;
 import com.tom_roush.pdfbox.pdmodel.graphics.PDXObject;
 import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import com.tom_roush.pdfbox.rendering.PDFRenderer;
 import com.tom_roush.pdfbox.text.PDFTextStripper;
 import com.tom_roush.pdfbox.text.TextPosition;
 
@@ -64,8 +67,10 @@ public class PdfExtractor {
             HashMap<Integer, TextStyle> intToTextStyleMap = stripper.getIntToTextStyleMap();
             String title = pdfDocument.getDocumentInformation().getTitle();
             String language = pdfDocument.getDocumentCatalog().getLanguage();
+            PDFRenderer pdfRenderer = new PDFRenderer(pdfDocument);
+            Bitmap thumbnail = pdfRenderer.renderImageWithDPI(0, 300);
 
-            return new Document(pages, intToTextStyleMap, title, language);
+            return new Document(pages, intToTextStyleMap, title, language, thumbnail);
         }
     }
 

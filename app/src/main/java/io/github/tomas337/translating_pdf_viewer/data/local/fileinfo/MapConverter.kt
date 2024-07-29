@@ -1,13 +1,18 @@
 package io.github.tomas337.translating_pdf_viewer.data.local.fileinfo
 
+import android.util.Log
 import androidx.room.TypeConverter
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import io.github.tomas337.translating_pdf_viewer.utils.TextStyle
 
+
 class MapConverter {
 
-    private val gson = Gson()
+    private val gson: Gson = GsonBuilder()
+        .serializeSpecialFloatingPointValues()
+        .create()
 
     @TypeConverter
     fun toString(map: HashMap<Int, TextStyle>): String = gson.toJson(map)

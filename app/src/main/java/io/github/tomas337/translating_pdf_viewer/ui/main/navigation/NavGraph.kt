@@ -23,9 +23,9 @@ fun NavGraph(
             HomeScreen(navController)
         }
         composable(NavRoute.PdfViewer.route) { navBackStackEntry ->
-            val bookId = navBackStackEntry.arguments?.getString("bookId")?.toInt()
-            bookId?.let { bookId ->
-                PdfViewerScreen(navController, bookId)
+            val fileId = navBackStackEntry.arguments?.getString("fileId")?.toInt()
+            fileId?.let { fileId ->
+                PdfViewerScreen(navController, fileId)
             }
         }
     }

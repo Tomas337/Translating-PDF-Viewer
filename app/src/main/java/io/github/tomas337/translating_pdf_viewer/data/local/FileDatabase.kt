@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import io.github.tomas337.translating_pdf_viewer.data.local.fileinfo.BitmapConverter
 import io.github.tomas337.translating_pdf_viewer.data.local.fileinfo.FileInfoDao
 import io.github.tomas337.translating_pdf_viewer.data.local.fileinfo.FileInfoEntity
 import io.github.tomas337.translating_pdf_viewer.data.local.fileinfo.MapConverter
@@ -13,7 +14,7 @@ import io.github.tomas337.translating_pdf_viewer.data.local.page.PageDao
 import io.github.tomas337.translating_pdf_viewer.data.local.page.PageEntity
 
 @Database(entities = [FileInfoEntity::class, PageEntity::class], version = 1)
-@TypeConverters(PageConverter::class, MapConverter::class)
+@TypeConverters(PageConverter::class, MapConverter::class, BitmapConverter::class)
 abstract class FileDatabase : RoomDatabase() {
 
     abstract fun fileInfoDao() : FileInfoDao

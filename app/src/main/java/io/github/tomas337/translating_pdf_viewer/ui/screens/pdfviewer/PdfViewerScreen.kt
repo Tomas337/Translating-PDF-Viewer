@@ -7,7 +7,6 @@ import androidx.navigation.NavController
 @Composable
 fun PdfViewerScreen(
     navController: NavController,
-    bookId: Int,
-    modifier: Modifier = Modifier,
+    fileId: Int,
 ) {
 }

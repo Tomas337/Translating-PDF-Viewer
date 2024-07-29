@@ -19,7 +19,8 @@ class AddFileUseCase(
         fileInfoRepository.upsertFileInfo(FileInfoDto(
             name = document.name,
             language = document.language,
-            intToTextStyleMap = document.intToTextStyleMap
+            intToTextStyleMap = document.intToTextStyleMap,
+            thumbnail = document.thumbnail
         ))
 
         val fileId = fileInfoRepository.getLastInsertedFileId()

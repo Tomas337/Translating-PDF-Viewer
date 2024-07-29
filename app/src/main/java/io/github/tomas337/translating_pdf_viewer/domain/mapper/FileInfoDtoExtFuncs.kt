@@ -16,5 +16,6 @@ fun FileInfoDto.toFileInfoModel(): FileInfoModel {
         language = language,
         curPage = curPage,
         intToTextStyleMap = intToTextStyleMap,
+        thumbnail = thumbnail
     )
 }
