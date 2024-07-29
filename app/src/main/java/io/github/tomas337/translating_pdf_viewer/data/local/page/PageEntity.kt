@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import io.github.tomas337.translating_pdf_viewer.data.local.fileinfo.FileInfoEntity
-import io.github.tomas337.translating_pdf_viewer.data.utils.Page
+import io.github.tomas337.translating_pdf_viewer.utils.Page
 
 @Entity(
     tableName = "pages",

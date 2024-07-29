@@ -13,6 +13,10 @@ class FileInfoRepositoryImpl(
         return fileInfoDao.getFileInfo(id).toFileInfoDto()
     }
 
+    override suspend fun getLastInsertedFileId(): Int {
+        return fileInfoDao.getLastInsertedFileId()
+    }
+
     override suspend fun upsertFileInfo(fileInfoDto: FileInfoDto) {
         fileInfoDao.upsertFile(fileInfoDto.toFileInfoEntity())
     }

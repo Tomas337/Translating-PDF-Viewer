@@ -3,8 +3,7 @@ package io.github.tomas337.translating_pdf_viewer.data.local.page
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import io.github.tomas337.translating_pdf_viewer.data.local.fileinfo.FileInfoEntity
-import io.github.tomas337.translating_pdf_viewer.data.utils.Page
+import io.github.tomas337.translating_pdf_viewer.utils.Page
 
 @Dao
 interface PageDao {

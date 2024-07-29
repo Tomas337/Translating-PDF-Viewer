@@ -2,7 +2,8 @@ package io.github.tomas337.translating_pdf_viewer.data.repository.page
 
 import io.github.tomas337.translating_pdf_viewer.data.local.page.PageDao
 import io.github.tomas337.translating_pdf_viewer.data.local.page.PageEntity
-import io.github.tomas337.translating_pdf_viewer.data.utils.Page
+import io.github.tomas337.translating_pdf_viewer.data.mapper.toPageEntity
+import io.github.tomas337.translating_pdf_viewer.utils.Page
 
 class PageRepositoryImpl(
     private val pageDao: PageDao
@@ -12,7 +13,7 @@ class PageRepositoryImpl(
         return pageDao.getPage(pageNumber, id)
     }
 
-    override suspend fun upsertPage(pageEntity: PageEntity) {
-        pageDao.upsertPage(pageEntity)
+    override suspend fun upsertPage(pageDto: PageDto) {
+        pageDao.upsertPage(pageDto.toPageEntity())
     }
 }

@@ -2,16 +2,12 @@ package io.github.tomas337.translating_pdf_viewer.domain.mapper
 
 import io.github.tomas337.translating_pdf_viewer.data.repository.fileinfo.FileInfoDto
 import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
-import io.github.tomas337.translating_pdf_viewer.utils.Page
 
-fun FileInfoDto.toFileModel(
-    curPage: Page
-): FileModel {
-    return FileModel(
+fun FileModel.toFileInfoDto(): FileInfoDto {
+    return FileInfoDto(
         id = id,
         name = name,
         language = language,
-        intToTextStyleMap = intToTextStyleMap,
-        curPage = curPage
+        intToTextStyleMap = intToTextStyleMap
     )
 }

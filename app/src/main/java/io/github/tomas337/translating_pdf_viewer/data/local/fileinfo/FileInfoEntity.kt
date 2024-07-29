@@ -3,7 +3,7 @@ package io.github.tomas337.translating_pdf_viewer.data.local.fileinfo
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import io.github.tomas337.translating_pdf_viewer.data.utils.TextStyle
+import io.github.tomas337.translating_pdf_viewer.utils.TextStyle
 
 @Entity(tableName = "file_info")
 data class FileInfoEntity(
