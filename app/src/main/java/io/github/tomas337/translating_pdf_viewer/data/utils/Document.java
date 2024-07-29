@@ -1,4 +1,4 @@
-package io.github.tomas337.translating_pdf_viewer.domain.utils;
+package io.github.tomas337.translating_pdf_viewer.data.utils;
 
 import java.util.HashMap;
 import java.util.List;

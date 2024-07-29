@@ -1,9 +1,8 @@
-package io.github.tomas337.translating_pdf_viewer.data.local.pages
+package io.github.tomas337.translating_pdf_viewer.data.local.page
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import io.github.tomas337.translating_pdf_viewer.domain.utils.Page
+import io.github.tomas337.translating_pdf_viewer.data.utils.Page
 
 class PageConverter {
 

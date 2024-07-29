@@ -8,9 +8,9 @@ import androidx.room.TypeConverters
 import io.github.tomas337.translating_pdf_viewer.data.local.fileinfo.FileInfoDao
 import io.github.tomas337.translating_pdf_viewer.data.local.fileinfo.FileInfoEntity
 import io.github.tomas337.translating_pdf_viewer.data.local.fileinfo.MapConverter
-import io.github.tomas337.translating_pdf_viewer.data.local.pages.PageConverter
-import io.github.tomas337.translating_pdf_viewer.data.local.pages.PageDao
-import io.github.tomas337.translating_pdf_viewer.data.local.pages.PageEntity
+import io.github.tomas337.translating_pdf_viewer.data.local.page.PageConverter
+import io.github.tomas337.translating_pdf_viewer.data.local.page.PageDao
+import io.github.tomas337.translating_pdf_viewer.data.local.page.PageEntity
 
 @Database(entities = [FileInfoEntity::class, PageEntity::class], version = 1)
 @TypeConverters(PageConverter::class, MapConverter::class)

@@ -22,6 +22,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+import io.github.tomas337.translating_pdf_viewer.data.utils.Document;
+import io.github.tomas337.translating_pdf_viewer.data.utils.Image;
+import io.github.tomas337.translating_pdf_viewer.data.utils.Page;
+import io.github.tomas337.translating_pdf_viewer.data.utils.TextBlock;
+import io.github.tomas337.translating_pdf_viewer.data.utils.TextStyle;
+
 public class PdfExtractor {
 
     private final Uri uri;
