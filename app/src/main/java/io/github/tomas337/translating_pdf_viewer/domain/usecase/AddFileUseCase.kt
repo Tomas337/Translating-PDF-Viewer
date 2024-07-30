@@ -20,8 +20,6 @@ class AddFileUseCase(
         try {
             val document = pdfExtractor.extractAndSaveDocument()
 
-            Log.d("document", document.pagePaths.toString())
-            Log.d("file insertion", "before file insertion")
             fileInfoRepository.upsertFileInfo(
                 FileInfoDto(
                     name = document.name,
@@ -33,7 +31,6 @@ class AddFileUseCase(
             )
 
             for ((i, pagePath) in document.pagePaths.withIndex()) {
-                Log.d("i", i.toString())
                 pageRepository.upsertPage(
                     PageDto(
                         fileId = fileId,
@@ -41,11 +38,9 @@ class AddFileUseCase(
                     pageNumber = i+1,
                 ))
             }
-            Log.d("file insertion", "after file insertion")
         } catch (e: IOException) {
             pdfExtractor.deleteDirs();
-            Log.e("file extraction", "failed")
-            Log.e("file extraction", e.stackTraceToString())
+            Log.e("file extraction failed", e.stackTraceToString())
         }
     }
 }
