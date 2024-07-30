@@ -30,8 +30,8 @@ data class PageEntity(
     @ColumnInfo(name = "file_id")
     val fileId: Int,
 
-    @ColumnInfo(name = "page")
-    val page: Page,
+    @ColumnInfo(name = "page_path")
+    val pagePath: String,
 
     @ColumnInfo(name = "page_number")
     val pageNumber: Int

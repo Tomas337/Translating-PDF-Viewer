@@ -8,8 +8,9 @@ fun FileInfoModel.toFileInfoDto(): FileInfoDto {
         id = id,
         name = name,
         language = language,
+        maxPage = maxPage,
         curPage = curPage,
         intToTextStyleMap = intToTextStyleMap,
-        thumbnail = thumbnail
+        thumbnailPath = thumbnailPath
     )
 }

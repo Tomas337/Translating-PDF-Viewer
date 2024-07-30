@@ -7,7 +7,8 @@ data class FileInfoModel(
     val id: Int = 0,
     val name: String,
     val language: String,
+    val maxPage: Int,
     val curPage: Int = 0,
     val intToTextStyleMap: HashMap<Int, TextStyle>,
-    val thumbnail: Bitmap
+    val thumbnailPath: String
 )

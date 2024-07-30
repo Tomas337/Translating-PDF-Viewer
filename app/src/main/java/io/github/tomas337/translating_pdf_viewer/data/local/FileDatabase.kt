@@ -5,16 +5,14 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import io.github.tomas337.translating_pdf_viewer.data.local.fileinfo.BitmapConverter
 import io.github.tomas337.translating_pdf_viewer.data.local.fileinfo.FileInfoDao
 import io.github.tomas337.translating_pdf_viewer.data.local.fileinfo.FileInfoEntity
 import io.github.tomas337.translating_pdf_viewer.data.local.fileinfo.MapConverter
-import io.github.tomas337.translating_pdf_viewer.data.local.page.PageConverter
 import io.github.tomas337.translating_pdf_viewer.data.local.page.PageDao
 import io.github.tomas337.translating_pdf_viewer.data.local.page.PageEntity
 
-@Database(entities = [FileInfoEntity::class, PageEntity::class], version = 1)
-@TypeConverters(PageConverter::class, MapConverter::class, BitmapConverter::class)
+@Database(entities = [FileInfoEntity::class, PageEntity::class], version = 2)
+@TypeConverters(MapConverter::class)
 abstract class FileDatabase : RoomDatabase() {
 
     abstract fun fileInfoDao() : FileInfoDao
@@ -31,6 +29,7 @@ abstract class FileDatabase : RoomDatabase() {
                     klass = FileDatabase::class.java,
                     name = "file_db",
                 )
+                    .fallbackToDestructiveMigration()
                     .build()
                     .also { Instance = it }
             }

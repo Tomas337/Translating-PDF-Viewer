@@ -45,10 +45,10 @@ fun FileItem(
                 .fillMaxWidth()
                 .padding(padding)
         ) {
-            Image(
-                fileInfo.thumbnail.asImageBitmap(),
-                "Thumbnail"
-            )
+//            Image(
+//                fileInfo.thumbnail.asImageBitmap(),
+//                "Thumbnail"
+//            )
             Text(
                 text = fileInfo.name,
                 fontSize = textSize,

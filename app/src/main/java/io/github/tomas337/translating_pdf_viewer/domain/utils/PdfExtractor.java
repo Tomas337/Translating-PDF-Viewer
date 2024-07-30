@@ -3,9 +3,12 @@ package io.github.tomas337.translating_pdf_viewer.domain.utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.compose.ui.graphics.ImageBitmap;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.tom_roush.pdfbox.cos.COSName;
 import com.tom_roush.pdfbox.io.MemoryUsageSetting;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
@@ -18,12 +21,26 @@ import com.tom_roush.pdfbox.rendering.PDFRenderer;
 import com.tom_roush.pdfbox.text.PDFTextStripper;
 import com.tom_roush.pdfbox.text.TextPosition;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import io.github.tomas337.translating_pdf_viewer.utils.Document;
 import io.github.tomas337.translating_pdf_viewer.utils.Image;
@@ -35,46 +52,93 @@ public class PdfExtractor {
 
     private final Uri uri;
     private final Context context;
+    private final Path path;
 
-    public PdfExtractor(Context context, Uri uri) {
+    public PdfExtractor(Context context, Uri uri, Integer fileId) {
         this.uri = uri;
         this.context = context;
+        String folderName = String.format(Locale.getDefault(), "fileId-%d", fileId);
+        this.path = Paths.get(context.getFilesDir().getAbsolutePath(), folderName);
     }
 
-    public Document extractDocument() throws IOException {
+    public Document extractAndSaveDocument() throws IOException {
         try (
                 InputStream inputStream = context.getContentResolver().openInputStream(uri);
                 PDDocument pdfDocument = PDDocument.load(inputStream,
                         MemoryUsageSetting.setupTempFileOnly())
                 ) {
+            Log.d("extractAndSave", "started");
+            Files.createDirectories(this.path);
+
             CustomPDFTextStripper stripper = new CustomPDFTextStripper();
             int numberOfPages = pdfDocument.getNumberOfPages();
-            List<Page> pages = new ArrayList<>();
+            List<String> pages = new ArrayList<>();
 
             // for debugging
             numberOfPages = 3;
 
-            //for (PDPage page : pdfDocument.getPages()) {
             for (int i = 0; i < numberOfPages; i++) {
                 PDPage page = pdfDocument.getPage(i);
                 List<TextBlock> textBlocks = stripper.getPageText(page);
                 List<Image> images = getPageImages(page);
 
                 Page pageData = new Page(textBlocks, images);
-                pages.add(pageData);
+                Log.d("extractAndSave", "before savePage");
+                String filepath = savePage(pageData, i+1);
+                Log.d("extractAndSave", "after savePage");
+                pages.add(filepath);
             }
 
             HashMap<Integer, TextStyle> intToTextStyleMap = stripper.getIntToTextStyleMap();
             String title = pdfDocument.getDocumentInformation().getTitle();
             String language = pdfDocument.getDocumentCatalog().getLanguage();
+
             PDFRenderer pdfRenderer = new PDFRenderer(pdfDocument);
             Bitmap thumbnail = pdfRenderer.renderImageWithDPI(0, 300);
+            Log.d("extractAndSave", "before saveThumbnail");
+            String thumbnailPath = saveThumbnail(thumbnail);
+            Log.d("extractAndSave", "after saveThumbnail");
 
-            return new Document(pages, intToTextStyleMap, title, language, thumbnail);
+            return new Document(
+                    title,
+                    language,
+                    numberOfPages,
+                    intToTextStyleMap,
+                    pages,
+                    thumbnailPath
+            );
         }
     }
 
-    private class CustomPDFTextStripper extends PDFTextStripper {
+    private String savePage(Page page, int pageIndex) throws IOException {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        String filename = String.format(Locale.getDefault(), "page-%d.json", pageIndex);
+        String filepath = this.path.resolve(filename).toString();
+        String pageJson = gson.toJson(page);
+        try (FileWriter writer = new FileWriter(filepath)) {
+            writer.write(pageJson);
+        }
+        return filepath;
+    }
+
+    private String saveThumbnail(Bitmap thumbnail) throws IOException {
+        String filepath = this.path.resolve("thumbnail.jpeg").toString();
+        try (FileOutputStream fos = new FileOutputStream(filepath)) {
+            thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+        }
+        return filepath;
+    }
+
+    public void deleteDirs() throws IOException {
+        try (Stream<Path> walk = Files.walk(path)) {
+            walk.sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .forEach(File::delete);
+        }
+    }
+
+    private static class CustomPDFTextStripper extends PDFTextStripper {
 
         private List<TextBlock> textBlocks;
         private TextBlock curTextBlock;

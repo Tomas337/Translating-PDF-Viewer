@@ -18,12 +18,15 @@ data class FileInfoEntity(
     @ColumnInfo(name = "language")
     val language: String,
 
+    @ColumnInfo(name = "max_page")
+    val maxPage: Int,
+
     @ColumnInfo(name = "cur_page")
     val curPage: Int = 0,
 
     @ColumnInfo(name = "int_to_textstyle_map")
     val intToTextStyleMap: HashMap<Int, TextStyle>,
 
-    @ColumnInfo(name = "bitmap")
-    val thumbnail: Bitmap
+    @ColumnInfo(name = "thumbnail_path")
+    val thumbnailPath: String
 )

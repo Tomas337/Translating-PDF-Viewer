@@ -7,7 +7,7 @@ fun PageEntity.toPageDto(): PageDto {
     return PageDto(
         id = id,
         fileId = fileId,
-        page = page,
+        pagePath = pagePath,
         pageNumber = pageNumber
     )
 }

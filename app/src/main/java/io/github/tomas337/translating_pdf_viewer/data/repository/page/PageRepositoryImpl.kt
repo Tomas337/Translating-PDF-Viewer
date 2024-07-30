@@ -9,7 +9,7 @@ class PageRepositoryImpl(
     private val pageDao: PageDao
 ) : PageRepository {
 
-    override suspend fun getPage(pageNumber: Int, id: Int): Page {
+    override suspend fun getPage(pageNumber: Int, id: Int): String {
         return pageDao.getPage(pageNumber, id)
     }
 

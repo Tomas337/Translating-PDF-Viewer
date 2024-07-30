@@ -1,29 +1,30 @@
 package io.github.tomas337.translating_pdf_viewer.utils;
 
-import android.graphics.Bitmap;
-
 import java.util.HashMap;
 import java.util.List;
 
 public class Document {
 
-    public List<Page> pages;
-    public HashMap<Integer, TextStyle> intToTextStyleMap;
     public String name;
     public String language;
-    public Bitmap thumbnail;
+    public int maxPage;
+    public HashMap<Integer, TextStyle> intToTextStyleMap;
+    public List<String> pagePaths;
+    public String thumbnailPath;
 
     public Document(
-            List<Page> pages,
-            HashMap<Integer, TextStyle> intToTextStyleMap,
             String name,
             String language,
-            Bitmap thumbnail
+            int maxPage,
+            HashMap<Integer, TextStyle> intToTextStyleMap,
+            List<String> pagePaths,
+            String thumbnailPath
     ) {
-        this.pages = pages;
-        this.intToTextStyleMap = intToTextStyleMap;
         this.name = name;
         this.language = language;
-        this.thumbnail = thumbnail;
+        this.maxPage = maxPage;
+        this.intToTextStyleMap = intToTextStyleMap;
+        this.pagePaths = pagePaths;
+        this.thumbnailPath = thumbnailPath;
     }
 }
