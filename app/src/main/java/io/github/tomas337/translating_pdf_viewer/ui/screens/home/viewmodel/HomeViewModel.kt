@@ -15,18 +15,25 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import io.github.tomas337.translating_pdf_viewer.di.MyApp
 import io.github.tomas337.translating_pdf_viewer.domain.model.FileInfoModel
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.AddFileUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.DeleteFileUseCase
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.GetAllFileInfoUseCase
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.GetFileInfoUseCase
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val addFileUseCase: AddFileUseCase,
-    private val getAllFileInfoUseCase: GetAllFileInfoUseCase
+    private val deleteFileUseCase: DeleteFileUseCase,
+    private val getAllFileInfoUseCase: GetAllFileInfoUseCase,
 ) : ViewModel() {
 
     fun addFile(context: Context, uri: Uri) =
         viewModelScope.launch {
             addFileUseCase(context, uri)
+        }
+
+    fun deleteFile(context: Context, fileId: Int) =
+        viewModelScope.launch {
+            deleteFileUseCase(context, fileId)
         }
 
     fun getAllFileInfo(): LiveData<List<FileInfoModel>> {
@@ -45,7 +52,8 @@ class HomeViewModel(
                 val pageRepository = MyApp.appModule.pageRepository
                 HomeViewModel(
                     AddFileUseCase(fileInfoRepository, pageRepository),
-                    GetAllFileInfoUseCase(fileInfoRepository)
+                    DeleteFileUseCase(fileInfoRepository),
+                    GetAllFileInfoUseCase(fileInfoRepository),
                 )
             }
         }

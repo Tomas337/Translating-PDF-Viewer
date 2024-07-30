@@ -1,4 +1,4 @@
-package io.github.tomas337.translating_pdf_viewer.domain.utils;
+package io.github.tomas337.translating_pdf_viewer.data.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -117,6 +117,16 @@ public class PdfExtractor {
         return filepath;
     }
 
+    public static void deleteDirs(Context context, Integer fileId) throws IOException {
+        String folderName = String.format(Locale.getDefault(), "fileId-%d", fileId);
+        Path path = Paths.get(context.getFilesDir().getAbsolutePath(), folderName);
+        try (Stream<Path> walk = Files.walk(path)) {
+            walk.sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .forEach(File::delete);
+        }
+    }
+
     public void deleteDirs() throws IOException {
         try (Stream<Path> walk = Files.walk(path)) {
             walk.sorted(Comparator.reverseOrder())
@@ -134,8 +144,8 @@ public class PdfExtractor {
         private float prevFontSize;
         private float maxLineWidth;
         private int curMaxStyleIndex;
-        private HashMap<TextStyle, Integer> textStyleToIntMap = new HashMap<>();
-        private HashMap<Integer, TextStyle> intToTextStyleMap = new HashMap<>();
+        private final HashMap<TextStyle, Integer> textStyleToIntMap = new HashMap<>();
+        private final HashMap<Integer, TextStyle> intToTextStyleMap = new HashMap<>();
 
         public CustomPDFTextStripper() throws IOException {
             super();

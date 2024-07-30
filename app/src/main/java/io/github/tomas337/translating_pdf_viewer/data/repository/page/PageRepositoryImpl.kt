@@ -13,6 +13,10 @@ class PageRepositoryImpl(
         return pageDao.getPage(pageNumber, id)
     }
 
+    override suspend fun getAllPages(id: Int): List<String> {
+        return pageDao.getAllPages(id)
+    }
+
     override suspend fun upsertPage(pageDto: PageDto) {
         pageDao.upsertPage(pageDto.toPageEntity())
     }

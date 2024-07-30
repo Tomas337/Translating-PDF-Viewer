@@ -7,7 +7,7 @@ import io.github.tomas337.translating_pdf_viewer.data.repository.fileinfo.FileIn
 import io.github.tomas337.translating_pdf_viewer.data.repository.fileinfo.FileInfoRepository
 import io.github.tomas337.translating_pdf_viewer.data.repository.page.PageDto
 import io.github.tomas337.translating_pdf_viewer.data.repository.page.PageRepository
-import io.github.tomas337.translating_pdf_viewer.domain.utils.PdfExtractor
+import io.github.tomas337.translating_pdf_viewer.data.utils.PdfExtractor
 import java.io.IOException
 
 class AddFileUseCase(
@@ -16,7 +16,12 @@ class AddFileUseCase(
 ) {
     suspend operator fun invoke(context: Context, uri: Uri) {
         val fileId = fileInfoRepository.getLastInsertedFileId() + 1
-        val pdfExtractor = PdfExtractor(context, uri, fileId)
+        val pdfExtractor =
+            PdfExtractor(
+                context,
+                uri,
+                fileId
+            )
         try {
             val document = pdfExtractor.extractAndSaveDocument()
 
