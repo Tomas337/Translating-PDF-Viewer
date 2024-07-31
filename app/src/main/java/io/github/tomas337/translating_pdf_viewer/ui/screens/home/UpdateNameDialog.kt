@@ -38,14 +38,13 @@ import io.github.tomas337.translating_pdf_viewer.ui.screens.home.viewmodel.HomeV
 @Composable
 fun UpdateNameDialog(
     id: Int,
-    setShowDialog: (Boolean) -> Unit,
     oldText: String,
-    value: String = "",
+    setShowDialog: (Boolean) -> Unit,
     homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
 ) {
     val spacerHeight = 10.dp
 
-    var txtField by remember { mutableStateOf(value) }
+    var txtField by remember { mutableStateOf(oldText) }
 
     Dialog(onDismissRequest = { setShowDialog(false) }) {
         Surface(
@@ -63,7 +62,6 @@ fun UpdateNameDialog(
                         shape = RectangleShape,
                         value = txtField,
                         onValueChange = { txtField = it },
-                        placeholder = { Text(text = oldText) },
                     )
                     Spacer(modifier = Modifier.height(spacerHeight))
                     Row(
@@ -77,7 +75,7 @@ fun UpdateNameDialog(
                         }
                         TextButton(
                             onClick = {
-                                if (txtField.isNotEmpty()) {
+                                if (txtField.isNotEmpty() && txtField != oldText) {
                                     homeViewModel.updateName(txtField, id)
                                 }
                                 setShowDialog(false)

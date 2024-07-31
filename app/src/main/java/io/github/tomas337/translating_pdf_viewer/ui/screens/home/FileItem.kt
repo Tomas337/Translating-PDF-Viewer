@@ -58,8 +58,8 @@ fun FileItem(
     if (showDialog) {
         UpdateNameDialog(
             id = fileInfo.id,
-            setShowDialog = { showDialog = it },
-            oldText = fileInfo.name
+            oldText = fileInfo.name,
+            setShowDialog = { showDialog = it }
         )
     }
 
