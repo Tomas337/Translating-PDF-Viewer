@@ -21,28 +21,36 @@ import kotlinx.coroutines.launch
 class HomeViewModel(
     private val addFileUseCase: AddFileUseCase,
     private val deleteFileUseCase: DeleteFileUseCase,
+    private val updateNameUseCase: UpdateNameUseCase,
     private val getAllFileInfoUseCase: GetAllFileInfoUseCase,
     private val getThumbnailPathUseCase: GetThumbnailPathUseCase,
-    private val updateNameUseCase: UpdateNameUseCase,
 ) : ViewModel() {
+
+    private val _allFileInfo = MutableLiveData<List<FileModel>>()
+    init {
+        viewModelScope.launch {
+            _allFileInfo.postValue(getAllFileInfoUseCase())
+        }
+    }
+    val allFileInfo: LiveData<List<FileModel>> = _allFileInfo
 
     fun addFile(context: Context, uri: Uri) =
         viewModelScope.launch {
             addFileUseCase(context, uri)
+            _allFileInfo.postValue(getAllFileInfoUseCase())
         }
 
     fun deleteFile(context: Context, fileId: Int) =
         viewModelScope.launch {
             deleteFileUseCase(context, fileId)
+            _allFileInfo.postValue(getAllFileInfoUseCase())
         }
 
-    fun getAllFileInfo(): LiveData<List<FileModel>> {
-        val result = MutableLiveData<List<FileModel>>()
+    fun updateName(name: String, id: Int) {
         viewModelScope.launch {
-            val allFileInfo = getAllFileInfoUseCase()
-            result.postValue(allFileInfo)
+            updateNameUseCase(name, id)
+            _allFileInfo.postValue(getAllFileInfoUseCase())
         }
-        return result
     }
 
     fun getThumbnailPath(id: Int): LiveData<String> {
@@ -54,12 +62,6 @@ class HomeViewModel(
         return result
     }
 
-    fun updateName(name: String, id: Int) {
-        viewModelScope.launch {
-            updateNameUseCase(name, id)
-        }
-    }
-
     companion object {
         val Factory : ViewModelProvider.Factory = viewModelFactory {
             initializer {
@@ -68,9 +70,9 @@ class HomeViewModel(
                 HomeViewModel(
                     AddFileUseCase(fileInfoRepository, pageRepository),
                     DeleteFileUseCase(fileInfoRepository),
+                    UpdateNameUseCase(fileInfoRepository),
                     GetAllFileInfoUseCase(fileInfoRepository),
                     GetThumbnailPathUseCase(fileInfoRepository),
-                    UpdateNameUseCase(fileInfoRepository)
                 )
             }
         }

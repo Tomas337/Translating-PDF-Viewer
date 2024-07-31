@@ -38,7 +38,7 @@ fun HomeScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    val allFileInfo: List<FileModel>? by homeViewModel.getAllFileInfo().observeAsState()
+    val allFileInfo: List<FileModel> by homeViewModel.allFileInfo.observeAsState(emptyList())
 
     val intent = Intent()
         .setType("application/pdf")
@@ -90,10 +90,8 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            allFileInfo?.size?.let { size ->
-                items(size) {
-                    FileItem(allFileInfo!![it], navController)
-                }
+            items(allFileInfo.size) {
+                FileItem(allFileInfo[it], navController)
             }
         }
     }
