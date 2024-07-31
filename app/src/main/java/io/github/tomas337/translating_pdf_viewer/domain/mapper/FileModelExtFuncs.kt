@@ -1,9 +1,9 @@
 package io.github.tomas337.translating_pdf_viewer.domain.mapper
 
 import io.github.tomas337.translating_pdf_viewer.data.repository.fileinfo.FileInfoDto
-import io.github.tomas337.translating_pdf_viewer.domain.model.FileInfoModel
+import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
 
-fun FileInfoModel.toFileInfoDto(): FileInfoDto {
+fun FileModel.toFileInfoDto(): FileInfoDto {
     return FileInfoDto(
         id = id,
         name = name,

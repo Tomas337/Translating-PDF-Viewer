@@ -1,9 +1,8 @@
 package io.github.tomas337.translating_pdf_viewer.domain.model
 
-import android.graphics.Bitmap
 import io.github.tomas337.translating_pdf_viewer.utils.TextStyle
 
-data class FileInfoModel(
+data class FileModel(
     val id: Int = 0,
     val name: String,
     val language: String,

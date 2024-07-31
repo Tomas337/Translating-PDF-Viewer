@@ -27,7 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import io.github.tomas337.translating_pdf_viewer.R
-import io.github.tomas337.translating_pdf_viewer.domain.model.FileInfoModel
+import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
 import io.github.tomas337.translating_pdf_viewer.ui.screens.home.viewmodel.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,7 +38,7 @@ fun HomeScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    val allFileInfo: List<FileInfoModel>? by homeViewModel.getAllFileInfo().observeAsState()
+    val allFileInfo: List<FileModel>? by homeViewModel.getAllFileInfo().observeAsState()
 
     val intent = Intent()
         .setType("application/pdf")

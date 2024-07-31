@@ -22,8 +22,16 @@ class FileInfoRepositoryImpl(
         return fileInfoDao.getLastInsertedFileId()
     }
 
+    override suspend fun getThumbnailPath(id: Int): String {
+        return fileInfoDao.getThumbnailPath(id)
+    }
+
     override suspend fun upsertFileInfo(fileInfoDto: FileInfoDto) {
         fileInfoDao.upsertFile(fileInfoDto.toFileInfoEntity())
+    }
+
+    override suspend fun updateName(name: String, id: Int) {
+        fileInfoDao.updateName(name, id)
     }
 
     override suspend fun deleteFile(id: Int) {
