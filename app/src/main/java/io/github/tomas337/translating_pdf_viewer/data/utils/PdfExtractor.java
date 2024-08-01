@@ -2,10 +2,12 @@ package io.github.tomas337.translating_pdf_viewer.data.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.tom_roush.pdfbox.cos.COSBase;
 import com.tom_roush.pdfbox.cos.COSName;
 import com.tom_roush.pdfbox.io.MemoryUsageSetting;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
@@ -239,7 +241,7 @@ public class PdfExtractor {
         }
     }
 
-    private List<Image> getPageImages(PDPage page) throws IOException {
+    private static List<Image> getPageImages(PDPage page) throws IOException {
         PDResources resources = page.getResources();
         List<Image> images = new ArrayList<>();
 
@@ -247,12 +249,55 @@ public class PdfExtractor {
             PDXObject xObject = resources.getXObject(xObjectName);
 
             if (xObject instanceof PDImageXObject) {
-                Bitmap imageBitMap = ((PDImageXObject) xObject).getImage();
+                Bitmap imageBitmap = getImage((PDImageXObject) xObject);
                 int height = ((PDImageXObject) xObject).getHeight();
-                Image image = new Image(imageBitMap, height);
+                Image image = new Image(imageBitmap, height);
                 images.add(image);
             }
         }
         return images;
+    }
+
+    private static Bitmap getImage(PDImageXObject image) throws IOException {
+        COSBase colorSpace = image.getCOSObject().getItem(COSName.COLORSPACE, COSName.CS);
+
+        if (colorSpace instanceof COSName) {
+            COSName name = (COSName) colorSpace;
+
+            if (name == COSName.DEVICECMYK) {
+                return bitmapFromCmyk(image);
+            }
+            return image.getImage();
+        }
+        return null;
+    }
+
+    private static Bitmap bitmapFromCmyk(PDImageXObject image) throws IOException {
+        try (InputStream is = image.createInputStream()) {
+            int width = image.getWidth();
+            int height = image.getHeight();
+
+            byte[] buffer = new byte[width * height * 4]; // CMYK has 4 components
+            is.read(buffer);
+
+            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+            int index = 0;
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    float c = (buffer[index++] & 0xFF) / 255f;
+                    float m = (buffer[index++] & 0xFF) / 255f;
+                    float yVal = (buffer[index++] & 0xFF) / 255f;
+                    float k = (buffer[index++] & 0xFF) / 255f;
+
+                    int r = (int) (255 * (1 - c) * (1 - k));
+                    int g = (int) (255 * (1 - m) * (1 - k));
+                    int b = (int) (255 * (1 - yVal) * (1 - k));
+
+                    bitmap.setPixel(x, y, Color.rgb(r, g, b));
+                }
+            }
+            return bitmap;
+        }
     }
 }
