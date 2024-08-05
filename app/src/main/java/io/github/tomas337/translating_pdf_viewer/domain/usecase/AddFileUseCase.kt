@@ -39,7 +39,7 @@ class AddFileUseCase(
                     PageDto(
                         fileId = fileId,
                         pagePath = pagePath,
-                    pageNumber = i+1,
+                    pageIndex = i,
                 ))
             }
         } catch (e: IOException) {

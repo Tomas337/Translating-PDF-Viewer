@@ -8,6 +8,6 @@ fun PageDto.toPageEntity(): PageEntity {
         id = id,
         fileId = fileId,
         pagePath = pagePath,
-        pageNumber = pageNumber
+        pageIndex = pageIndex
     )
 }

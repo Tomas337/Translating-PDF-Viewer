@@ -75,7 +75,7 @@ public class PdfExtractor {
                 List<Image> images = getPageImages(page);
 
                 Page pageData = new Page(textBlocks, images);
-                String filepath = savePage(pageData, i+1);
+                String filepath = savePage(pageData, i);
                 pagePaths.add(filepath);
             }
 
@@ -96,8 +96,8 @@ public class PdfExtractor {
         }
     }
 
-    private String savePage(Page page, int pageNumber) throws IOException {
-        String filename = String.format(Locale.getDefault(), "page-%d.json", pageNumber);
+    private String savePage(Page page, int pageIndex) throws IOException {
+        String filename = String.format(Locale.getDefault(), "page-%d.json", pageIndex);
         String filepath = path.resolve(filename).toString();
         String pageJson = gson.toJson(page);
         try (FileWriter writer = new FileWriter(filepath)) {

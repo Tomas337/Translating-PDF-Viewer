@@ -7,7 +7,7 @@ import androidx.room.Query
 @Dao
 interface PageDao {
 
-    @Query("SELECT page_path FROM pages WHERE page_number == :pageNumber AND file_id == :fileId")
+    @Query("SELECT page_path FROM pages WHERE page_index == :pageNumber AND file_id == :fileId")
     suspend fun getPage(pageNumber: Int, fileId: Int): String
 
     @Query("SELECT page_path FROM pages WHERE file_id == :fileId")

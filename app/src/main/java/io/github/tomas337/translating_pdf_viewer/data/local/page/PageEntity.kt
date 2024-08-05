@@ -33,6 +33,6 @@ data class PageEntity(
     @ColumnInfo(name = "page_path")
     val pagePath: String,
 
-    @ColumnInfo(name = "page_number")
-    val pageNumber: Int
+    @ColumnInfo(name = "page_index")
+    val pageIndex: Int
 )

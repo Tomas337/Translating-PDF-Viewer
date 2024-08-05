@@ -1,8 +1,10 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.List
@@ -30,7 +32,7 @@ import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
 import io.github.tomas337.translating_pdf_viewer.ui.main.navigation.NavRoute
 import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.PdfViewerViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun PdfViewerScreen(
     navController: NavController,
@@ -43,6 +45,11 @@ fun PdfViewerScreen(
         pdfViewerViewModel.initFileInfo(fileId)
     }
     val fileInfo: FileModel by pdfViewerViewModel.fileInfo.observeAsState(FileModel())
+
+    val pagerState = rememberPagerState(
+        initialPage = fileInfo.curPage,
+        pageCount = { fileInfo.maxPage }
+    )
 
     Scaffold(
         modifier = Modifier
@@ -99,11 +106,12 @@ fun PdfViewerScreen(
             )
         },
     ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
+        VerticalPager(
+            modifier = Modifier.padding(innerPadding),
+            state = pagerState
+        ) { pageNumber ->
+
+
         }
     }
 }
