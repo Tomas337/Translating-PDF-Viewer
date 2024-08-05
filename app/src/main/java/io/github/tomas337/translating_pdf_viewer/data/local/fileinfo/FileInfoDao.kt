@@ -13,14 +13,14 @@ interface FileInfoDao {
     @Query("SELECT * FROM file_info")
     suspend fun getAllFileInfo(): List<FileInfoEntity>
 
-    @Query("SELECT last_insert_rowid()")
+    @Query("SELECT MAX(id) FROM file_info")
     suspend fun getLastInsertedFileId(): Int
 
     @Query("SELECT thumbnail_path FROM file_info WHERE id == :id")
     suspend fun getThumbnailPath(id: Int): String
 
     @Insert
-    suspend fun upsertFile(fileEntity: FileInfoEntity)
+    suspend fun insertFile(fileEntity: FileInfoEntity)
 
     @Query("UPDATE file_info SET name = :name WHERE id == :id")
     suspend fun updateName(name: String, id: Int)

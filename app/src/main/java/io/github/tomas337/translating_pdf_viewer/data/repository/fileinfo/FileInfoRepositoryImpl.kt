@@ -26,8 +26,8 @@ class FileInfoRepositoryImpl(
         return fileInfoDao.getThumbnailPath(id)
     }
 
-    override suspend fun upsertFileInfo(fileInfoDto: FileInfoDto) {
-        fileInfoDao.upsertFile(fileInfoDto.toFileInfoEntity())
+    override suspend fun insertFileInfo(fileInfoDto: FileInfoDto) {
+        fileInfoDao.insertFile(fileInfoDto.toFileInfoEntity())
     }
 
     override suspend fun updateName(name: String, id: Int) {

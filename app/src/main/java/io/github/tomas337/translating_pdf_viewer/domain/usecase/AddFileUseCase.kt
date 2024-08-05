@@ -25,7 +25,7 @@ class AddFileUseCase(
         try {
             val document = pdfExtractor.extractAndSaveDocument()
 
-            fileInfoRepository.upsertFileInfo(
+            fileInfoRepository.insertFileInfo(
                 FileInfoDto(
                     name = document.name,
                     maxPage = document.maxPage,
@@ -35,7 +35,8 @@ class AddFileUseCase(
             )
 
             for ((i, pagePath) in document.pagePaths.withIndex()) {
-                pageRepository.upsertPage(
+                Log.d("file id", fileId.toString())
+                pageRepository.insertPage(
                     PageDto(
                         fileId = fileId,
                         pagePath = pagePath,

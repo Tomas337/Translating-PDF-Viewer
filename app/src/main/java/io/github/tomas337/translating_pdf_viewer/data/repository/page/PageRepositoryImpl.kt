@@ -17,7 +17,7 @@ class PageRepositoryImpl(
         return pageDao.getAllPages(id)
     }
 
-    override suspend fun upsertPage(pageDto: PageDto) {
-        pageDao.upsertPage(pageDto.toPageEntity())
+    override suspend fun insertPage(pageDto: PageDto) {
+        pageDao.insertPage(pageDto.toPageEntity())
     }
 }
