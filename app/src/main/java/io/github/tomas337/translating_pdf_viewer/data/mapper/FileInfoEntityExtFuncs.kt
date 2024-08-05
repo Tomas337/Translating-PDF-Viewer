@@ -13,7 +13,6 @@ fun FileInfoEntity.toFileInfoDto(): FileInfoDto {
     return FileInfoDto(
         id = id,
         name = name,
-        language = language,
         maxPage = maxPage,
         curPage = curPage,
         intToTextStyleMap = intToTextStyleMap,

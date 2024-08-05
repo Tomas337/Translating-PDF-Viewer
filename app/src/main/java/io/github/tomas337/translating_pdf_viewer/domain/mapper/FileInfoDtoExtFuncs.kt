@@ -13,7 +13,6 @@ fun FileInfoDto.toFileModel(): FileModel {
     return FileModel(
         id = id,
         name = name,
-        language = language,
         maxPage = maxPage,
         curPage = curPage,
         intToTextStyleMap = intToTextStyleMap,

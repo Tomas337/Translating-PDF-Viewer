@@ -87,7 +87,6 @@ public class PdfExtractor {
 
             HashMap<Integer, TextStyle> intToTextStyleMap = stripper.getIntToTextStyleMap();
             String title = pdfDocument.getDocumentInformation().getTitle();
-            String language = pdfDocument.getDocumentCatalog().getLanguage();
 
             PDFRenderer pdfRenderer = new PDFRenderer(pdfDocument);
             Bitmap thumbnail = pdfRenderer.renderImageWithDPI(0, 300);
@@ -95,7 +94,6 @@ public class PdfExtractor {
 
             return new Document(
                     title,
-                    language,
                     numberOfPages,
                     intToTextStyleMap,
                     pagePaths,

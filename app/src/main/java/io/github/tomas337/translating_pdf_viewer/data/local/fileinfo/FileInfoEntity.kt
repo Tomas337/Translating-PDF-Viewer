@@ -15,9 +15,6 @@ data class FileInfoEntity(
     @ColumnInfo(name = "name")
     val name: String,
 
-    @ColumnInfo(name = "language")
-    val language: String,
-
     @ColumnInfo(name = "max_page")
     val maxPage: Int,
 

@@ -28,7 +28,6 @@ class AddFileUseCase(
             fileInfoRepository.upsertFileInfo(
                 FileInfoDto(
                     name = document.name,
-                    language = document.language,
                     maxPage = document.maxPage,
                     intToTextStyleMap = document.intToTextStyleMap,
                     thumbnailPath = document.thumbnailPath

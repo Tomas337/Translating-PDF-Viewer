@@ -11,7 +11,7 @@ import io.github.tomas337.translating_pdf_viewer.data.local.fileinfo.MapConverte
 import io.github.tomas337.translating_pdf_viewer.data.local.page.PageDao
 import io.github.tomas337.translating_pdf_viewer.data.local.page.PageEntity
 
-@Database(entities = [FileInfoEntity::class, PageEntity::class], version = 2)
+@Database(entities = [FileInfoEntity::class, PageEntity::class], version = 3)
 @TypeConverters(MapConverter::class)
 abstract class FileDatabase : RoomDatabase() {
 

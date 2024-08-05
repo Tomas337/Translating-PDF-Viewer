@@ -90,12 +90,6 @@ fun FileItem(
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 2
             )
-            Text(
-                text = fileInfo.language,
-                modifier = Modifier.width(boxWithConstraintsScope.maxWidth * 0.1f),
-                fontSize = textSize,
-                textAlign = TextAlign.Center,
-            )
             IconButton(
                 onClick = {
                     isContextMenuVisible = true
