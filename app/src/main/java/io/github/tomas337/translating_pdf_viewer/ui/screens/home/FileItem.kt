@@ -1,6 +1,5 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.home
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -55,9 +54,6 @@ fun FileItem(
     val thumbnailPath: String? by homeViewModel.getThumbnailPath(fileInfo.id).observeAsState()
 
     var isContextMenuVisible by rememberSaveable { mutableStateOf(false) }
-    val pressOffset by remember { mutableStateOf(DpOffset.Zero) }
-    val context = LocalContext.current
-
     var showDialog by remember { mutableStateOf(false) }
 
     if (showDialog) {
@@ -75,6 +71,7 @@ fun FileItem(
             }
     ) {
         val boxWithConstraintsScope = this
+
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
@@ -104,62 +101,14 @@ fun FileItem(
                     imageVector = Icons.Default.MoreVert,
                     contentDescription = "Edit file info"
                 )
-                DropdownMenu(
-                    expanded = isContextMenuVisible,
-                    onDismissRequest = {
-                        isContextMenuVisible = false
-                    },
-                    offset = pressOffset.copy(
-                        y = pressOffset.y - boxWithConstraintsScope.maxWidth * 0.1f
-                    )
-                ) {
-                    TextButton(
-                        onClick = {
-                            showDialog = true
-                            isContextMenuVisible = false
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RectangleShape
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Absolute.Left,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.Edit,
-                                contentDescription = "Edit icon",
-                            )
-                            Spacer(modifier = Modifier.width(padding))
-                            Text(text = "Edit name")
-                        }
-                    }
-                    TextButton(
-                        onClick = {
-                            homeViewModel.deleteFile(context, fileInfo.id)
-                            isContextMenuVisible = false
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RectangleShape
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Absolute.Left,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.Delete,
-                                contentDescription = "Thrash icon",
-                                tint = MaterialTheme.colorScheme.error
-                            )
-                            Spacer(modifier = Modifier.width(padding))
-                            Text(
-                                text = "Delete",
-                                color = MaterialTheme.colorScheme.error
-                            )
-                        }
-                    }
-                }
+                ContextMenu(
+                    fileInfo.id,
+                    padding,
+                    isContextMenuVisible,
+                    { isContextMenuVisible = it },
+                    { showDialog = it },
+                    boxWithConstraintsScope
+                )
             }
         }
     }
