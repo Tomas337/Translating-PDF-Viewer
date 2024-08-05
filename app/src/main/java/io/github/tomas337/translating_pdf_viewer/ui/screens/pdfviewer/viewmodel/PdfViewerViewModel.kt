@@ -1,8 +1,40 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import io.github.tomas337.translating_pdf_viewer.di.MyApp
+import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.GetFileInfoUseCase
+import kotlinx.coroutines.launch
 
-// TODO init it with the file id
-@Composable
-fun PdfViewerViewModel() {
+class PdfViewerViewModel(
+    private val getFileInfoUseCase: GetFileInfoUseCase,
+) : ViewModel() {
+
+    private val _fileInfo = MutableLiveData<FileModel>()
+    val fileInfo: LiveData<FileModel> = _fileInfo
+
+    fun initFileInfo(id: Int) {
+        viewModelScope.launch {
+            _fileInfo.postValue(getFileInfoUseCase(id))
+        }
+    }
+
+    companion object {
+        val Factory : ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val fileInfoRepository = MyApp.appModule.fileInfoRepository
+                val pageRepository = MyApp.appModule.pageRepository
+                PdfViewerViewModel(
+                    GetFileInfoUseCase(fileInfoRepository),
+                )
+            }
+        }
+    }
 }

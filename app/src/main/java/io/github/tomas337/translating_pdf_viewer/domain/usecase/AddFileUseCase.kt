@@ -35,7 +35,6 @@ class AddFileUseCase(
             )
 
             for ((i, pagePath) in document.pagePaths.withIndex()) {
-                Log.d("file id", fileId.toString())
                 pageRepository.insertPage(
                     PageDto(
                         fileId = fileId,
