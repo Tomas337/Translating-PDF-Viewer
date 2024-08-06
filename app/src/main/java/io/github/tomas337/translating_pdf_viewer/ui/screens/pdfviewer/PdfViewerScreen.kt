@@ -1,41 +1,35 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.input.pointer.PointerEvent
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import io.github.tomas337.translating_pdf_viewer.R
 import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
-import io.github.tomas337.translating_pdf_viewer.ui.main.navigation.NavRoute
 import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.PdfViewerViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -65,16 +59,66 @@ fun PdfViewerScreen(
             PdfViewerTopBar(navController = navController)
         },
     ) { innerPadding ->
+        var scrollable by remember { mutableStateOf(false) }
+
         VerticalPager(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize(),
             state = pagerState,
             beyondBoundsPageCount = 1,
+            userScrollEnabled = scrollable
         ) { pageIndex ->
-            val pageContent = pdfViewerViewModel.getPageContent(pageIndex, fileId)
+            val pageContent: List<Any> by pdfViewerViewModel
+                .getPageContent(pageIndex, fileId)
+                .observeAsState(emptyList())
 
-            LazyColumn() {
+            val lazyColumnState = rememberLazyListState()
+
+            LazyColumn(
+                state = lazyColumnState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(Unit) {
+                        awaitPointerEventScope {
+                            var previousEvent = PointerEvent(emptyList())
+                            while (true) {
+                                val curEvent = awaitPointerEvent(PointerEventPass.Initial)
+
+                                if (previousEvent.type == PointerEventType.Move &&
+                                    curEvent.type == PointerEventType.Release
+                                ) {
+                                    val pointerEvent = previousEvent.changes.first()
+                                    val delta = pointerEvent.position - pointerEvent.previousPosition
+
+                                    val isDraggingUpwards = delta.y < 0f
+                                    val isDraggingDownwards = delta.y > 0f
+                                    val isAtBottom = !lazyColumnState.canScrollForward
+                                    val isAtTop = !lazyColumnState.canScrollBackward
+
+                                    scrollable = (isAtBottom && isDraggingUpwards) ||
+                                            (isAtTop && isDraggingDownwards)
+
+                                } else if (curEvent.type == PointerEventType.Move) {
+                                    val pointerEvent = curEvent.changes.first()
+                                    val delta = pointerEvent.position - pointerEvent.previousPosition
+
+                                    val isDraggingUpwards = delta.y < 0f
+                                    val isDraggingDownwards = delta.y > 0f
+                                    val isAtBottom = !lazyColumnState.canScrollForward
+                                    val isAtTop = !lazyColumnState.canScrollBackward
+
+                                    if ((isAtBottom && isDraggingDownwards) ||
+                                        (isAtTop && isDraggingUpwards)
+                                    ) {
+                                        scrollable = false
+                                    }
+                                }
+                                previousEvent = curEvent
+                            }
+                        }
+                    },
+            ) {
                 item {
                     Text(text = "text-$pageIndex")
                     Spacer(modifier = Modifier.height(1000.dp))

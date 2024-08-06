@@ -49,7 +49,9 @@ fun HomeScreen(
 
     val context = LocalContext.current
 
-    val getPdfUri = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    val getPdfUri = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
         if (result.resultCode == RESULT_OK) {
             result.data?.data?.let { uri ->
                 homeViewModel.addFile(context, uri)
