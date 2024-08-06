@@ -1,6 +1,5 @@
 package io.github.tomas337.translating_pdf_viewer.data.local.fileinfo
 
-import android.util.Log
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder

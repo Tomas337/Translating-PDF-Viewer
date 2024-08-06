@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Page {
 
-    List<Object> orderedData = new ArrayList<>();
+    public List<Object> orderedData = new ArrayList<>();
 
     public Page(List<TextBlock> textBlocks, List<Image> images) {
         int j = 0;

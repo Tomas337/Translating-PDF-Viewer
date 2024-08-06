@@ -1,6 +1,5 @@
 package io.github.tomas337.translating_pdf_viewer.data.local.fileinfo
 
-import android.graphics.Bitmap
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
