@@ -28,7 +28,7 @@ class AddFileUseCase(
             fileInfoRepository.insertFileInfo(
                 FileInfoDto(
                     name = document.name,
-                    maxPage = document.maxPage,
+                    pageCount = document.pageCount,
                     intToTextStyleMap = document.intToTextStyleMap,
                     thumbnailPath = document.thumbnailPath
                 )

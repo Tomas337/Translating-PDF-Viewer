@@ -14,8 +14,8 @@ data class FileInfoEntity(
     @ColumnInfo(name = "name")
     val name: String,
 
-    @ColumnInfo(name = "max_page")
-    val maxPage: Int,
+    @ColumnInfo(name = "page_count")
+    val pageCount: Int,
 
     @ColumnInfo(name = "cur_page")
     val curPage: Int = 0,

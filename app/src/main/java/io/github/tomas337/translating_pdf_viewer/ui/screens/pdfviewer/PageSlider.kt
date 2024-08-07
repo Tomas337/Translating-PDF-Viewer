@@ -24,7 +24,7 @@ import kotlin.math.roundToInt
 
 @Composable
 fun PageSlider(
-    maxPage: Int,
+    pageCount: Int,
     curPage: Int,
     setPage: suspend (Int) -> Unit,
     maxWidth: Int,
@@ -37,9 +37,9 @@ fun PageSlider(
     var stepSize by remember { mutableIntStateOf(0) }
     var y by remember { mutableIntStateOf(0) }
 
-    LaunchedEffect(maxPage, maxHeight) {
+    LaunchedEffect(pageCount, maxHeight) {
         with (density) {
-            stepSize = if (maxPage > 1) (maxHeight - size.roundToPx()) / (maxPage - 1) else 0
+            stepSize = if (pageCount > 1) (maxHeight - size.roundToPx()) / (pageCount - 1) else 0
         }
     }
     LaunchedEffect(curPage, stepSize) {

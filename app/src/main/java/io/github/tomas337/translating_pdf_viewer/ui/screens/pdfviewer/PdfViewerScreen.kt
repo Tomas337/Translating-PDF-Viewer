@@ -18,9 +18,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.PointerEvent
-import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -46,9 +43,10 @@ fun PdfViewerScreen(
         isVisible = isToolbarVisible,
         navController = navController
     ) { boxWithConstraintsScope ->
+
         val pagerState = rememberPagerState(
             initialPage = fileInfo.curPage,
-            pageCount = { fileInfo.maxPage }
+            pageCount = { fileInfo.pageCount }
         )
         var isScrollable by remember { mutableStateOf(false) }
 
@@ -91,7 +89,7 @@ fun PdfViewerScreen(
             }
         }
         PageSlider(
-            maxPage = fileInfo.maxPage,
+            pageCount = fileInfo.pageCount,
             curPage = pagerState.currentPage,
             setPage = { page -> pagerState.animateScrollToPage(page) },
             maxWidth = boxWithConstraintsScope.constraints.maxWidth,

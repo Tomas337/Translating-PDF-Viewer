@@ -7,7 +7,7 @@ fun FileModel.toFileInfoDto(): FileInfoDto {
     return FileInfoDto(
         id = id,
         name = name,
-        maxPage = maxPage,
+        pageCount = pageCount,
         curPage = curPage,
         intToTextStyleMap = intToTextStyleMap,
         thumbnailPath = thumbnailPath
