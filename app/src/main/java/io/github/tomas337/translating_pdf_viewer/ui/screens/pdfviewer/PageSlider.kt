@@ -1,67 +1,96 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
 import android.util.Log
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Slider
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.consumeAllChanges
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layout
-import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 @Composable
 fun PageSlider(
     maxPage: Int,
     curPage: Int,
     setPage: suspend (Int) -> Unit,
-    maxWidth: Dp,
+    maxWidth: Int,
+    maxHeight: Int,
+    visible: Boolean = true,
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val density = LocalDensity.current
+    val size = 40.dp
+    var stepSize by remember { mutableIntStateOf(0) }
+    var y by remember { mutableIntStateOf(0) }
 
-    Slider(
-        modifier = Modifier
-            .graphicsLayer {
-                rotationZ = 90f
-                transformOrigin = TransformOrigin(0f, 0f)
-            }
-            .layout { measurable, constraints ->
-                val placeable = measurable.measure(
-                    Constraints(
-                        minWidth = constraints.minHeight,
-                        maxWidth = constraints.maxHeight,
-                        minHeight = constraints.minWidth,
-                        maxHeight = constraints.maxWidth,
-                    )
-                )
-                // x & y and width & height are interchanged due to rotation
-                layout(placeable.height, placeable.width) {
-                    placeable.place(0, -maxWidth.roundToPx(), zIndex = 1f)
+    LaunchedEffect(maxPage, maxHeight) {
+        with (density) {
+            stepSize = if (maxPage > 1) (maxHeight - size.roundToPx()) / (maxPage - 1) else 0
+        }
+    }
+    LaunchedEffect(curPage, stepSize) {
+        y = curPage * stepSize
+    }
+
+    if (visible) {
+        Box(
+            modifier = Modifier
+                .layout { measurable, constraints ->
+                    val placeable = measurable.measure(constraints)
+                    layout(placeable.width, placeable.height) {
+                        val x = maxWidth - placeable.width
+                        placeable.place(x, y, zIndex = 1f)
+                    }
                 }
-            }
-            .fillMaxWidth()
-            .height(20.dp)
-        ,
-        valueRange = 0f..(maxPage - 1).toFloat(),
-        value = curPage.toFloat(),
-        onValueChange = {
-            coroutineScope.launch {
-                setPage(it.toInt())
-            }
-        },
-        steps = max(maxPage - 2, 0),
-    )
+                .pointerInput(Unit) {
+                    var newY = y
+                    detectVerticalDragGestures(
+                        onDragStart = { newY = y },
+                        onDragEnd = { newY = y },
+                        onDragCancel = { newY = y },
+                        onVerticalDrag = { _, dragAmount ->
+                            newY += dragAmount.roundToInt()
+                            val isAtTop = (y == 0)
+                            val isAtBottom = (y == (maxHeight - size.roundToPx()))
+
+                            if (newY > (y + stepSize / 2) && !isAtBottom) {
+                                y += stepSize
+                                coroutineScope.launch { setPage(y / stepSize) }
+                            } else if (newY < (y - stepSize / 2) && !isAtTop) {
+                                y -= stepSize
+                                coroutineScope.launch { setPage(y / stepSize) }
+                            }
+                        }
+                    )
+                }
+                .size(size)
+                .background(color = Color.Black),
+            contentAlignment = Alignment.Center
+        ) {
+            Text("$curPage", color = Color.White)
+        }
+    }
 }
