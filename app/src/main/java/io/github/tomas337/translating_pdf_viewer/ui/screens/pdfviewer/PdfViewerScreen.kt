@@ -1,9 +1,7 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -29,8 +27,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
 import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.PdfViewerViewModel
-import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -54,14 +50,14 @@ fun PdfViewerScreen(
             initialPage = fileInfo.curPage,
             pageCount = { fileInfo.maxPage }
         )
-        var scrollable by remember { mutableStateOf(false) }
+        var isScrollable by remember { mutableStateOf(false) }
 
         VerticalPager(
             modifier = Modifier
                 .fillMaxSize(),
             state = pagerState,
             beyondBoundsPageCount = 1,
-            userScrollEnabled = scrollable
+            userScrollEnabled = isScrollable
         ) { pageIndex ->
             val pageContent: List<Any> by pdfViewerViewModel
                 .getPageContent(pageIndex, fileId)
@@ -74,45 +70,10 @@ fun PdfViewerScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .pointerInput(Unit) {
-                        awaitPointerEventScope {
-                            var previousEvent = PointerEvent(emptyList())
-                            while (true) {
-                                val curEvent = awaitPointerEvent(PointerEventPass.Initial)
-
-                                if (previousEvent.type == PointerEventType.Move &&
-                                    curEvent.type == PointerEventType.Release
-                                ) {
-                                    val pointerEvent = previousEvent.changes.first()
-                                    val delta =
-                                        pointerEvent.position - pointerEvent.previousPosition
-
-                                    val isDraggingUpwards = delta.y < 0f
-                                    val isDraggingDownwards = delta.y > 0f
-                                    val isAtBottom = !lazyColumnState.canScrollForward
-                                    val isAtTop = !lazyColumnState.canScrollBackward
-
-                                    scrollable = (isAtBottom && isDraggingUpwards) ||
-                                            (isAtTop && isDraggingDownwards)
-
-                                } else if (curEvent.type == PointerEventType.Move) {
-                                    val pointerEvent = curEvent.changes.first()
-                                    val delta =
-                                        pointerEvent.position - pointerEvent.previousPosition
-
-                                    val isDraggingUpwards = delta.y < 0f
-                                    val isDraggingDownwards = delta.y > 0f
-                                    val isAtBottom = !lazyColumnState.canScrollForward
-                                    val isAtTop = !lazyColumnState.canScrollBackward
-
-                                    if ((isAtBottom && isDraggingDownwards) ||
-                                        (isAtTop && isDraggingUpwards)
-                                    ) {
-                                        scrollable = false
-                                    }
-                                }
-                                previousEvent = curEvent
-                            }
-                        }
+                        detectAndHandleScroll(
+                            lazyColumnState = lazyColumnState,
+                            setScrollable = { isScrollable = it }
+                        )
                     }
                     .pointerInput(Unit) {
                         detectTapGestures(
