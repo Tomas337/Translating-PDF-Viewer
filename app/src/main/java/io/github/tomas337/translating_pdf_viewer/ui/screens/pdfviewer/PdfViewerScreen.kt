@@ -1,6 +1,9 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -26,6 +29,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
 import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.PdfViewerViewModel
+import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -39,7 +44,12 @@ fun PdfViewerScreen(
     }
     val fileInfo: FileModel by pdfViewerViewModel.fileInfo.observeAsState(FileModel())
 
-    PdfViewerContainer(navController = navController) { boxWithConstraintsScope ->
+    var isToolbarVisible by remember { mutableStateOf(true) }
+
+    PdfViewerContainer(
+        isVisible = isToolbarVisible,
+        navController = navController
+    ) { boxWithConstraintsScope ->
         val pagerState = rememberPagerState(
             initialPage = fileInfo.curPage,
             pageCount = { fileInfo.maxPage }
@@ -67,7 +77,6 @@ fun PdfViewerScreen(
                         awaitPointerEventScope {
                             var previousEvent = PointerEvent(emptyList())
                             while (true) {
-                                // also works on main
                                 val curEvent = awaitPointerEvent(PointerEventPass.Initial)
 
                                 if (previousEvent.type == PointerEventType.Move &&
@@ -104,6 +113,13 @@ fun PdfViewerScreen(
                                 previousEvent = curEvent
                             }
                         }
+                    }
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onLongPress = {
+                                isToolbarVisible = !isToolbarVisible
+                            }
+                        )
                     },
             ) {
                 item {
@@ -119,6 +135,7 @@ fun PdfViewerScreen(
             setPage = { page -> pagerState.animateScrollToPage(page) },
             maxWidth = boxWithConstraintsScope.constraints.maxWidth,
             maxHeight = boxWithConstraintsScope.constraints.maxHeight,
+            isVisible = isToolbarVisible
         )
     }
 }
