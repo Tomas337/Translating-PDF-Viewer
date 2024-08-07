@@ -1,6 +1,9 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -32,38 +35,27 @@ import androidx.navigation.NavController
 import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
 import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.PdfViewerViewModel
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PdfViewerScreen(
     navController: NavController,
     fileId: Int,
     pdfViewerViewModel: PdfViewerViewModel = viewModel(factory = PdfViewerViewModel.Factory)
 ) {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-
     LaunchedEffect(Unit) {
         pdfViewerViewModel.initFileInfo(fileId)
     }
     val fileInfo: FileModel by pdfViewerViewModel.fileInfo.observeAsState(FileModel())
 
-    val pagerState = rememberPagerState(
-        initialPage = fileInfo.curPage,
-        pageCount = { fileInfo.maxPage }
-    )
-
-    Scaffold(
-        modifier = Modifier
-            .fillMaxSize()
-            .nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            PdfViewerTopBar(navController = navController)
-        },
-    ) { innerPadding ->
+    PdfViewerContainer(navController = navController) { boxWithConstraintsScope ->
+        val pagerState = rememberPagerState(
+            initialPage = fileInfo.curPage,
+            pageCount = { fileInfo.maxPage }
+        )
         var scrollable by remember { mutableStateOf(false) }
 
         VerticalPager(
             modifier = Modifier
-                .padding(innerPadding)
                 .fillMaxSize(),
             state = pagerState,
             beyondBoundsPageCount = 1,
@@ -89,7 +81,8 @@ fun PdfViewerScreen(
                                     curEvent.type == PointerEventType.Release
                                 ) {
                                     val pointerEvent = previousEvent.changes.first()
-                                    val delta = pointerEvent.position - pointerEvent.previousPosition
+                                    val delta =
+                                        pointerEvent.position - pointerEvent.previousPosition
 
                                     val isDraggingUpwards = delta.y < 0f
                                     val isDraggingDownwards = delta.y > 0f
@@ -101,7 +94,8 @@ fun PdfViewerScreen(
 
                                 } else if (curEvent.type == PointerEventType.Move) {
                                     val pointerEvent = curEvent.changes.first()
-                                    val delta = pointerEvent.position - pointerEvent.previousPosition
+                                    val delta =
+                                        pointerEvent.position - pointerEvent.previousPosition
 
                                     val isDraggingUpwards = delta.y < 0f
                                     val isDraggingDownwards = delta.y > 0f
@@ -126,5 +120,11 @@ fun PdfViewerScreen(
                 }
             }
         }
+        PageSlider(
+            maxPage = fileInfo.maxPage,
+            curPage = pagerState.currentPage,
+            setPage = { page -> pagerState.animateScrollToPage(page) },
+            maxWidth = boxWithConstraintsScope.maxWidth
+        )
     }
 }
