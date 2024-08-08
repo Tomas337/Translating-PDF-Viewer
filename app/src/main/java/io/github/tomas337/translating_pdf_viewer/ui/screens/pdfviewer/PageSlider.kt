@@ -1,6 +1,7 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,6 +24,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layout
@@ -108,13 +111,18 @@ fun PageSlider(
                     )
                 }
                 .height(height)
+                .clip(
+                    RoundedCornerShape(
+                        topStart = (height.value / 2).dp,
+                        bottomStart = (height.value / 2).dp
+                    )
+                )
                 .background(color = Color.Black),
-            contentAlignment = Alignment.Center,
+        contentAlignment = Alignment.Center,
         ) {
             if (isActive) {
                 Row(
-                    modifier = Modifier.padding(10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(horizontal = 10.dp),
                     horizontalArrangement = Arrangement.Center,
                 ) {
                     val paddedCurPage = (curPage + 1)
