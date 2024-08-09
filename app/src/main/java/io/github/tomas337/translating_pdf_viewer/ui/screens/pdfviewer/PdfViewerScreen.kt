@@ -1,5 +1,8 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Spacer
@@ -18,7 +21,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -38,6 +45,7 @@ fun PdfViewerScreen(
     val fileInfo: FileModel by pdfViewerViewModel.fileInfo.observeAsState(FileModel())
 
     var isToolbarVisible by remember { mutableStateOf(true) }
+    val context = LocalContext.current
 
     PdfViewerContainer(
         isVisible = isToolbarVisible,
@@ -50,6 +58,10 @@ fun PdfViewerScreen(
         )
         var isScrollable by remember { mutableStateOf(false) }
 
+
+        BackHandler(enabled = !isToolbarVisible) {
+            isToolbarVisible = true
+        }
         VerticalPager(
             modifier = Modifier
                 .fillMaxSize(),
@@ -77,6 +89,10 @@ fun PdfViewerScreen(
                         detectTapGestures(
                             onLongPress = {
                                 isToolbarVisible = !isToolbarVisible
+                                if (!isToolbarVisible) {
+                                    val toastMessage = "Long press the screen or press back to exit fullscreen."
+                                    Toast.makeText(context, toastMessage, Toast.LENGTH_LONG).show()
+                                }
                             }
                         )
                     },

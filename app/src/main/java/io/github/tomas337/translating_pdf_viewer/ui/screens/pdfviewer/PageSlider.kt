@@ -98,10 +98,8 @@ fun PageSlider(
                         }
                     )
                 }
-                    // TODO show dialog to input desired page
                 .pointerInput(Unit) {
                     detectTapGestures(
-//                        onTap = { coroutineScope.launch { setPage( /* TODO */ ) } }
                         onPress = {
                             isActive = true
                             if (tryAwaitRelease()) {
