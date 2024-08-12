@@ -12,11 +12,11 @@ public class Document {
     String pathOfThumbnail;
 
     public Document(
-            String name,
-            int pageCount,
-            HashMap<Integer, TextStyle> intToTextStyleMap,
-            List<String> pagePaths,
-            String thumbnailPath
+        String name,
+        int pageCount,
+        HashMap<Integer, TextStyle> intToTextStyleMap,
+        List<String> pagePaths,
+        String thumbnailPath
     ) {
         this.name = name;
         this.pageCount = pageCount;

@@ -34,6 +34,13 @@ fun DrawContent(
         Log.d("texts size", content.texts.size.toString())
         Log.d("styles size", content.styles.size.toString())
 
+        for (text in content.texts) {
+            Log.d("text", text)
+        }
+        for (style in content.styles) {
+            Log.d("style", style.toString())
+        }
+
         Text(
             buildAnnotatedString {
                 content.texts.forEachIndexed { i, text ->

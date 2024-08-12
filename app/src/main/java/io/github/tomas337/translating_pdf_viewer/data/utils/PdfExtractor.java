@@ -3,6 +3,7 @@ package io.github.tomas337.translating_pdf_viewer.data.utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -66,9 +67,6 @@ public class PdfExtractor {
             int numberOfPages = pdfDocument.getNumberOfPages();
             List<String> pagePaths = new ArrayList<>();
 
-            // for debugging
-            numberOfPages = 3;
-
             for (int i = 0; i < numberOfPages; i++) {
                 PDPage page = pdfDocument.getPage(i);
                 List<TextBlock> textBlocks = stripper.getPageText(page);
@@ -81,6 +79,9 @@ public class PdfExtractor {
 
             HashMap<Integer, TextStyle> intToTextStyleMap = stripper.getIntToTextStyleMap();
             String title = pdfDocument.getDocumentInformation().getTitle();
+            if (title == null) {
+                title = "No title";
+            }
 
             PDFRenderer pdfRenderer = new PDFRenderer(pdfDocument);
             Bitmap thumbnail = pdfRenderer.renderImageWithDPI(0, 300);
@@ -139,7 +140,7 @@ public class PdfExtractor {
         private StringBuilder curText;
         private PDFont prevFont;
         private float prevFontSize;
-        private float maxLineWidth;
+        private int maxLineWidth;
         private int curMaxStyleIndex;
         private final HashMap<TextStyle, Integer> textStyleToIntMap = new HashMap<>();
         private final HashMap<Integer, TextStyle> intToTextStyleMap = new HashMap<>();
@@ -184,7 +185,10 @@ public class PdfExtractor {
                 float fontSize = position.getFontSize();
 
                 // Handle style change
-                if (!Objects.equals(font, prevFont) || fontSize != prevFontSize) {
+                if (!Objects.deepEquals(font, prevFont) ||
+                    fontSize != prevFontSize ||
+                    (curTextBlock.isEmpty() && curText.length() == 0)
+                ) {
                     if (curText.length() != 0) {
                         curTextBlock.addText(curText.toString());
                         curText = new StringBuilder();
@@ -212,16 +216,6 @@ public class PdfExtractor {
             // Handle end of block
             if (lineWidth < maxLineWidth) {
                 curTextBlock.addText(curText.toString());
-
-                /*
-                If text size is one and font change doesn't happen then style isn't added by logic
-                in for loop. This handles that.
-                 */
-//                if (curTextBlock.getTexts().size() == 1) {
-//                    TextStyle style = new TextStyle(prevFontSize, prevFont);
-//                    curTextBlock.addStyle(textStyleToIntMap.get(style));
-//                }
-
                 textBlocks.add(curTextBlock);
                 curText = new StringBuilder();
                 curTextBlock = new TextBlock();
