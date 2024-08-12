@@ -212,12 +212,32 @@ public class PdfExtractor {
             // Handle end of block
             if (lineWidth < maxLineWidth) {
                 curTextBlock.addText(curText.toString());
+
+                /*
+                If text size is one and font change doesn't happen then style isn't added by logic
+                in for loop. This handles that.
+                 */
+//                if (curTextBlock.getTexts().size() == 1) {
+//                    TextStyle style = new TextStyle(prevFontSize, prevFont);
+//                    curTextBlock.addStyle(textStyleToIntMap.get(style));
+//                }
+
                 textBlocks.add(curTextBlock);
                 curText = new StringBuilder();
                 curTextBlock = new TextBlock();
             }
 
             super.writeString(builder.toString());
+        }
+
+        /**
+         * Handles the case when page ends with a line of maximum length.
+          */
+        private void onPageEnd() {
+            if (curText.length() != 0) {
+                curTextBlock.addText(curText.toString());
+                textBlocks.add(curTextBlock);
+            }
         }
 
         public List<TextBlock> getPageText(PDPage page) throws IOException {
@@ -227,6 +247,7 @@ public class PdfExtractor {
                 curTextBlock = new TextBlock();
                 curText = new StringBuilder();
                 getText(document);
+                onPageEnd();
             }
             return textBlocks;
         }

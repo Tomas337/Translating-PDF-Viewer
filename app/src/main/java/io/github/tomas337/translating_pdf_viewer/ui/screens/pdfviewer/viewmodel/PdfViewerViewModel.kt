@@ -11,6 +11,7 @@ import io.github.tomas337.translating_pdf_viewer.di.MyApp
 import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.GetFileInfoUseCase
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.GetPageContentUseCase
+import io.github.tomas337.translating_pdf_viewer.utils.PageContent
 import kotlinx.coroutines.launch
 
 class PdfViewerViewModel(
@@ -27,8 +28,8 @@ class PdfViewerViewModel(
         }
     }
 
-    fun getPageContent(pageIndex: Int, id: Int): LiveData<List<Any>> {
-        val result = MutableLiveData<List<Any>>()
+    fun getPageContent(pageIndex: Int, id: Int): LiveData<List<PageContent>> {
+        val result = MutableLiveData<List<PageContent>>()
         viewModelScope.launch {
             result.postValue(getPageContentUseCase(pageIndex, id))
         }

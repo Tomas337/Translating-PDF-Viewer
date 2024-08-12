@@ -30,7 +30,7 @@ class AddFileUseCase(
                     name = document.name,
                     pageCount = document.pageCount,
                     intToTextStyleMap = document.intToTextStyleMap,
-                    thumbnailPath = document.thumbnailPath
+                    thumbnailPath = document.pathOfThumbnail
                 )
             )
 

@@ -5,11 +5,11 @@ import java.util.List;
 
 public class Document {
 
-    public String name;
-    public int pageCount;
-    public HashMap<Integer, TextStyle> intToTextStyleMap;
-    public List<String> pagePaths;
-    public String thumbnailPath;
+    String name;
+    int pageCount;
+    HashMap<Integer, TextStyle> intToTextStyleMap;
+    List<String> pagePaths;
+    String pathOfThumbnail;
 
     public Document(
             String name,
@@ -22,6 +22,26 @@ public class Document {
         this.pageCount = pageCount;
         this.intToTextStyleMap = intToTextStyleMap;
         this.pagePaths = pagePaths;
-        this.thumbnailPath = thumbnailPath;
+        this.pathOfThumbnail = thumbnailPath;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getPageCount() {
+        return pageCount;
+    }
+
+    public HashMap<Integer, TextStyle> getIntToTextStyleMap() {
+        return intToTextStyleMap;
+    }
+
+    public List<String> getPagePaths() {
+        return pagePaths;
+    }
+
+    public String getPathOfThumbnail() {
+        return pathOfThumbnail;
     }
 }

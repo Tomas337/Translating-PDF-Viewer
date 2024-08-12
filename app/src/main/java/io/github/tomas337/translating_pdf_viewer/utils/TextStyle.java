@@ -6,13 +6,25 @@ import com.tom_roush.pdfbox.pdmodel.font.PDFontDescriptor;
 public class TextStyle {
 
     float fontSize;
-    float fontWeight;
+    int fontWeight;
     boolean isItalic;
 
     public TextStyle(float fontSize, PDFont font) {
         this.fontSize = fontSize;
         PDFontDescriptor descriptor = font.getFontDescriptor();
-        fontWeight = descriptor.getFontWeight();
+        fontWeight = (int) descriptor.getFontWeight();
         isItalic = descriptor.isItalic();
+    }
+
+    public float getFontSize() {
+        return fontSize;
+    }
+
+    public int getFontWeight() {
+        return fontWeight;
+    }
+
+    public boolean isItalic() {
+        return isItalic;
     }
 }

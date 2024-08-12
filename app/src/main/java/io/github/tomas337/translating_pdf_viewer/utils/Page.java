@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Page {
 
-    public List<Object> orderedData = new ArrayList<>();
+    List<PageContent> orderedData = new ArrayList<>();
 
     public Page(List<TextBlock> textBlocks, List<Image> images) {
         int j = 0;
@@ -54,5 +54,9 @@ public class Page {
             orderedData.add(images.get(j));
             j++;
         }
+    }
+
+    public List<PageContent> getOrderedData() {
+        return orderedData;
     }
 }
