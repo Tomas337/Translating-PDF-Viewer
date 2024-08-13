@@ -18,6 +18,7 @@ import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import com.tom_roush.pdfbox.rendering.PDFRenderer;
 import com.tom_roush.pdfbox.text.PDFTextStripper;
 import com.tom_roush.pdfbox.text.TextPosition;
+import com.tom_roush.pdfbox.util.Matrix;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -165,6 +166,7 @@ public class PdfExtractor {
             // Handle maxLineWidth update
             if (lineWidth > maxLineWidth) {
                 maxLineWidth = lineWidth;
+                Log.d("y at end", String.valueOf((textPositions.get(textPositions.size() - 1).getX() + textPositions.get(textPositions.size() - 1).getWidth())));
                 if (!curTextBlock.isEmpty()) {
                     textBlocks.add(curTextBlock);
                     curTextBlock = new TextBlock();
@@ -174,8 +176,10 @@ public class PdfExtractor {
             if (curTextBlock.getX() == null) {
                 assert curTextBlock.getY() == null;
                 assert curTextBlock.getEndY() == null;
+                assert curTextBlock.getRotation() == null;
                 curTextBlock.setX(textPositions.get(0).getX());
                 curTextBlock.setY(textPositions.get(0).getY());
+                curTextBlock.setRotation(getAngle(textPositions.get(0)));
             }
             curTextBlock.updateEndY(textPositions.get(0).getHeight());
 
@@ -222,6 +226,13 @@ public class PdfExtractor {
             }
 
             super.writeString(builder.toString());
+        }
+
+        private static float getAngle(TextPosition text)
+        {
+            Matrix m = text.getTextMatrix().clone();
+            m.concatenate(text.getFont().getFontMatrix());
+            return (float) -Math.round(Math.toDegrees(Math.atan2(m.getShearY(), m.getScaleY())));
         }
 
         /**

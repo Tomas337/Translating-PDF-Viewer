@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -41,11 +43,15 @@ fun DrawContent(
             Log.d("style", style.toString())
         }
 
+        Log.d("rotation", content.rotation.toString())
+
         Text(
             buildAnnotatedString {
                 content.texts.forEachIndexed { i, text ->
                     val styleIndex = content.styles[i]
                     val style = intToTextStyleMap[styleIndex]
+
+                    Log.d("font weight", style!!.fontWeight.toString())
 
                     withStyle(
                         style = SpanStyle(
@@ -57,7 +63,8 @@ fun DrawContent(
                         append(text)
                     }
                 }
-            }
+            },
+            modifier = Modifier.rotate(content.rotation),
         )
     }
 }

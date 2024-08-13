@@ -5,10 +5,10 @@ import java.util.List;
 
 public class TextBlock extends PageContent {
 
-    // TODO remove x if not necessary
     Float x = null;
     Float y = null;
     Float endY = null;
+    Float rotation = null;
     List<String> texts = new ArrayList<>();
     List<Integer> styles = new ArrayList<>();
 
@@ -59,5 +59,13 @@ public class TextBlock extends PageContent {
 
     public void updateEndY(Float y) {
         endY += y;
-        }
+    }
+
+    public Float getRotation() {
+        return rotation;
+    }
+
+    public void setRotation(Float rotation) {
+        this.rotation = rotation;
+    }
 }
