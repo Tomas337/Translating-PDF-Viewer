@@ -16,6 +16,7 @@ class AddFileUseCase(
 ) {
     suspend operator fun invoke(context: Context, uri: Uri) {
         val fileId = fileInfoRepository.getLastInsertedFileId() + 1
+        Log.d("fileid", fileId.toString())
         val pdfExtractor =
             PdfExtractor(
                 context,
@@ -27,6 +28,7 @@ class AddFileUseCase(
 
             fileInfoRepository.insertFileInfo(
                 FileInfoDto(
+                    id = fileId,
                     name = document.name,
                     pageCount = document.pageCount,
                     intToTextStyleMap = document.intToTextStyleMap,
@@ -43,7 +45,7 @@ class AddFileUseCase(
                 ))
             }
         } catch (e: IOException) {
-            pdfExtractor.deleteDirs();
+            pdfExtractor.deleteDirs()
             Log.e("file extraction failed", e.stackTraceToString())
         }
     }

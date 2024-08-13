@@ -8,7 +8,8 @@ import io.github.tomas337.translating_pdf_viewer.utils.TextStyle
 @Entity(tableName = "file_info")
 data class FileInfoEntity(
 
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
+    @ColumnInfo(name = "id")
     val id: Int = 0,
 
     @ColumnInfo(name = "name")
