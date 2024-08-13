@@ -21,7 +21,7 @@ public class Page {
         }
 
         // handle start of the page
-        while (i == 0) {
+        while (i == 0 && j < images.size()) {
             int sumOfHeights = orderedData.stream().mapToInt(o -> ((Image) o).getHeight()).sum();
 
             // TODO account for top padding

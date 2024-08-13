@@ -17,7 +17,6 @@ import io.github.tomas337.translating_pdf_viewer.utils.Image
 import io.github.tomas337.translating_pdf_viewer.utils.PageContent
 import io.github.tomas337.translating_pdf_viewer.utils.TextBlock
 import io.github.tomas337.translating_pdf_viewer.utils.TextStyle
-import kotlin.math.max
 
 @Composable
 fun DrawContent(
@@ -51,13 +50,11 @@ fun DrawContent(
                     val styleIndex = content.styles[i]
                     val style = intToTextStyleMap[styleIndex]
 
-                    Log.d("font weight", style!!.fontWeight.toString())
-
                     withStyle(
                         style = SpanStyle(
                             fontSize = style!!.fontSize.sp,
-                            fontWeight = FontWeight(max(style.fontWeight, 1)),
-                            fontStyle = if (style.isItalic) FontStyle.Italic else FontStyle.Normal
+                            fontWeight = FontWeight(style.fontWeight),
+                            fontStyle = if (style.isItalic) FontStyle.Italic else FontStyle.Normal,
                         )
                     ) {
                         append(text)

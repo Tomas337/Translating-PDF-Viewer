@@ -1,5 +1,7 @@
 package io.github.tomas337.translating_pdf_viewer.utils;
 
+import android.util.Log;
+
 import com.tom_roush.pdfbox.pdmodel.font.PDFont;
 import com.tom_roush.pdfbox.pdmodel.font.PDFontDescriptor;
 
@@ -12,7 +14,12 @@ public class TextStyle {
     public TextStyle(float fontSize, PDFont font) {
         this.fontSize = fontSize;
         PDFontDescriptor descriptor = font.getFontDescriptor();
+        Log.d("font", font.getName());
+        Log.d("weight", String.valueOf(font.getFontDescriptor().getFontWeight()));
         fontWeight = (int) descriptor.getFontWeight();
+        if (fontWeight == 0) {
+            fontWeight = 400;
+        }
         isItalic = descriptor.isItalic();
     }
 
