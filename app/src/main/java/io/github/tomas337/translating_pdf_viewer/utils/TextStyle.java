@@ -5,6 +5,9 @@ import android.util.Log;
 import com.tom_roush.pdfbox.pdmodel.font.PDFont;
 import com.tom_roush.pdfbox.pdmodel.font.PDFontDescriptor;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class TextStyle {
 
     float fontSize;
@@ -14,13 +17,32 @@ public class TextStyle {
     public TextStyle(float fontSize, PDFont font) {
         this.fontSize = fontSize;
         PDFontDescriptor descriptor = font.getFontDescriptor();
-        Log.d("font", font.getName());
-        Log.d("weight", String.valueOf(font.getFontDescriptor().getFontWeight()));
+        String fontName = font.getName();
+
+        Log.d("font", fontName);
+        Log.d("font size", String.valueOf(fontSize));
+
         fontWeight = (int) descriptor.getFontWeight();
         if (fontWeight == 0) {
-            fontWeight = 400;
+            if (Pattern.matches("(i?).*(Light|Lt|Thin).*", fontName)) {
+                fontWeight = 300;
+            } else if (Pattern.matches("(i?).*(Medium|Medi).*", fontName)) {
+                fontWeight = 500;
+            } else if (Pattern.matches("(i?).*(Semibold).*", fontName)) {
+                fontWeight = 600;
+            } else if (Pattern.matches("(i?).*(Bold|Bd).*", fontName)) {
+                fontWeight = 700;
+            } else if (Pattern.matches("(i?).*(Black|Heavy|((-|\\s).*H)).*", fontName)) {
+                fontWeight = 900;
+            } else {
+                fontWeight = 400;
+            }
         }
-        isItalic = descriptor.isItalic();
+        if (Pattern.matches("(i?).*(Italic|Ital|((-|\\s).*It)|Oblique|Obl).*", fontName)) {
+            isItalic = true;
+        } else {
+            isItalic = descriptor.isItalic();
+        }
     }
 
     public float getFontSize() {

@@ -7,12 +7,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import io.github.tomas337.translating_pdf_viewer.utils.Image
 import io.github.tomas337.translating_pdf_viewer.utils.PageContent
 import io.github.tomas337.translating_pdf_viewer.utils.TextBlock
@@ -26,23 +29,24 @@ fun DrawContent(
 ) {
     Log.d("content", content.toString())
 
+    // TODO: fix "Error, cannot access an invalid/free'd bitmap here!"
+    // TODO: fix " java.lang.RuntimeException: Canvas: trying to draw too large(1257637270bytes) bitmap."
     if (content is Image) {
-        Image(
-            bitmap = content.image.asImageBitmap(),
-            contentDescription = "Image on page ${pageIndex + 1}"
+//        Image(
+//            bitmap = content.image.asImageBitmap(),
+//            contentDescription = "Image on page ${pageIndex + 1}"
+//        )
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(content.image)
+                .build(),
+            contentDescription = "Image on page ${pageIndex + 1}",
         )
     } else if (content is TextBlock) {
-        Log.d("texts size", content.texts.size.toString())
-        Log.d("styles size", content.styles.size.toString())
 
         for (text in content.texts) {
             Log.d("text", text)
         }
-        for (style in content.styles) {
-            Log.d("style", style.toString())
-        }
-
-        Log.d("rotation", content.rotation.toString())
 
         Text(
             buildAnnotatedString {

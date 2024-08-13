@@ -2,6 +2,7 @@ package io.github.tomas337.translating_pdf_viewer.data.local.page
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 @Dao
