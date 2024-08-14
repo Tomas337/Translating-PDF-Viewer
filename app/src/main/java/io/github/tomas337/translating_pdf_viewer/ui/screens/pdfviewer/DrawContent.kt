@@ -44,9 +44,9 @@ fun DrawContent(
         )
     } else if (content is TextBlock) {
 
-        for (text in content.texts) {
-            Log.d("text", text)
-        }
+//        for (text in content.texts) {
+//            Log.d("text", text)
+//        }
 
         Text(
             buildAnnotatedString {

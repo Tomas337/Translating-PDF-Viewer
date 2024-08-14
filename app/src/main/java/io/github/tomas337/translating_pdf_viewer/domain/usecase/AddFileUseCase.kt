@@ -16,7 +16,6 @@ class AddFileUseCase(
 ) {
     suspend operator fun invoke(context: Context, uri: Uri) {
         val fileId = fileInfoRepository.getLastInsertedFileId() + 1
-        Log.d("fileid", fileId.toString())
         val pdfExtractor =
             PdfExtractor(
                 context,

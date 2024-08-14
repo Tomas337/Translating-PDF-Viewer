@@ -18,6 +18,8 @@ import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import com.tom_roush.pdfbox.rendering.PDFRenderer;
 import com.tom_roush.pdfbox.text.PDFTextStripper;
 import com.tom_roush.pdfbox.text.TextPosition;
+import com.tom_roush.pdfbox.text.TextPositionComparator;
+import com.tom_roush.pdfbox.util.IterativeMergeSort;
 import com.tom_roush.pdfbox.util.Matrix;
 
 import java.io.File;
@@ -29,8 +31,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -156,6 +160,8 @@ public class PdfExtractor {
          *
          * @param text String representation of one line in the document.
          * @param textPositions Contains the line splitted into characters in TextPosition type.
+         *                      The list may contain null in the case that the document doesn't
+         *                      represent separators as ASCII.
          * @throws IOException If there is an error when writing the text or extracting information.
          */
         @Override
@@ -163,10 +169,16 @@ public class PdfExtractor {
             StringBuilder builder = new StringBuilder();
             int lineWidth = textPositions.size();
 
+            Log.d("text", text);
+            Log.d("textPositions", textPositions.toString());
+
             // Handle maxLineWidth update
             if (lineWidth > maxLineWidth) {
                 maxLineWidth = lineWidth;
-                Log.d("y at end", String.valueOf((textPositions.get(textPositions.size() - 1).getX() + textPositions.get(textPositions.size() - 1).getWidth())));
+                Log.d("xAtEnd", String.valueOf((textPositions.get(textPositions.size() - 1).getX() + textPositions.get(textPositions.size() - 1).getWidth() + textPositions.get(0).getX())));
+                Log.d("pageWidth", String.valueOf(textPositions.get(0).getPageWidth()));
+
+                Log.d("pageWidthMinusPadding", String.valueOf(textPositions.get(0).getPageWidth() - textPositions.get(0).getX()));
                 if (!curTextBlock.isEmpty()) {
                     textBlocks.add(curTextBlock);
                     curTextBlock = new TextBlock();
@@ -187,6 +199,7 @@ public class PdfExtractor {
                 PDFont baseFont = position.getFont();
                 PDFont font = baseFont != null ? baseFont : prevFont;
                 float fontSize = position.getFontSize();
+
 
                 // Handle style change
                 if (!Objects.deepEquals(font, prevFont) ||
@@ -251,7 +264,8 @@ public class PdfExtractor {
                 textBlocks = new ArrayList<>();
                 curTextBlock = new TextBlock();
                 curText = new StringBuilder();
-                getText(document);
+                String text = getText(document);
+                Log.d("extractedText", text);
                 onPageEnd();
             }
             return textBlocks;
