@@ -16,8 +16,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        jcenter()  // jp2-android
     }
 }
 
 rootProject.name = "Translating-PDF-Viewer"
-include(":app")
+include(":app", ":pdfbox-android:library")

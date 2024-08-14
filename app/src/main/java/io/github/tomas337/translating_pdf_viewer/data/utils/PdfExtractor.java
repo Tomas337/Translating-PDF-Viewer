@@ -160,8 +160,8 @@ public class PdfExtractor {
          *
          * @param text String representation of one line in the document.
          * @param textPositions Contains the line splitted into characters in TextPosition type.
-         *                      The list may contain null in the case that the document doesn't
-         *                      represent separators as ASCII.
+         *                      The list is going to contain null elements in the case that the document
+         *                      doesn't represent separators as ASCII.
          * @throws IOException If there is an error when writing the text or extracting information.
          */
         @Override
@@ -196,10 +196,14 @@ public class PdfExtractor {
             curTextBlock.updateEndY(textPositions.get(0).getHeight());
 
             for (TextPosition position : textPositions) {
+                if (position == null) {
+                    curText.append(getWordSeparator());
+                    continue;
+                }
+
                 PDFont baseFont = position.getFont();
                 PDFont font = baseFont != null ? baseFont : prevFont;
                 float fontSize = position.getFontSize();
-
 
                 // Handle style change
                 if (!Objects.deepEquals(font, prevFont) ||
