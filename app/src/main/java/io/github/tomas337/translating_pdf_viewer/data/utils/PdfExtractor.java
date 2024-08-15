@@ -146,7 +146,6 @@ public class PdfExtractor {
         private PDFont prevFont;
         private float prevFontSize;
         private int curMaxStyleIndex;
-        private Integer prevStartPadding = null;
         private Integer prevEndPadding = null;
         private final HashMap<TextStyle, Integer> textStyleToIntMap = new HashMap<>();
         private final HashMap<Integer, TextStyle> intToTextStyleMap = new HashMap<>();
@@ -169,11 +168,15 @@ public class PdfExtractor {
         protected void writeString(String text, List<TextPosition> textPositions) throws IOException {
             StringBuilder builder = new StringBuilder();
 
-            Log.d("text", text);
-            Log.d("textPositions", textPositions.toString());
+            // Join parts of a word or separate sentences
+            int lastIndex = curText.length() - 1;
+            char lastChar = curText.charAt(lastIndex);
 
-            Log.d("padding start", String.valueOf(textPositions.get(0).getX()));
-            Log.d("padding end", String.valueOf(textPositions.get(0).getPageWidth() - textPositions.get(textPositions.size() - 1).getEndX()));
+            if (lastChar == '-') {
+                curText.deleteCharAt(lastIndex);
+            } else if (lastChar != ' ') {
+                curText.append(" ");
+            }
 
             if (curTextBlock.getX() == null) {
                 assert curTextBlock.getY() == null;
@@ -190,7 +193,9 @@ public class PdfExtractor {
 
                 // Handle non ASCII separator
                 if (position == null) {
-                    curText.append(getWordSeparator());
+                    String separator = getWordSeparator();
+                    curText.append(separator);
+                    builder.append(separator);
                     continue;
                 }
 
@@ -230,21 +235,15 @@ public class PdfExtractor {
             // Handle end of block
             float curPageWidth = textPositions.get(0).getPageWidth();
             float curLineEndX = textPositions.get(textPositions.size() - 1).getEndX();
-            int curStartPadding = (int) textPositions.get(0).getX();
             int curEndPadding = (int) (curPageWidth - curLineEndX);
 
-            if (prevStartPadding != null &&
-                prevEndPadding != null &&
-                curEndPadding != prevEndPadding
-            ) {
+            if (prevEndPadding != null && curEndPadding != prevEndPadding) {
                 curTextBlock.addText(curText.toString());
                 textBlocks.add(curTextBlock);
                 curText = new StringBuilder();
                 curTextBlock = new TextBlock();
-                prevStartPadding = null;
                 prevEndPadding = null;
             } else {
-                prevStartPadding = curStartPadding;
                 prevEndPadding = curEndPadding;
             }
 
