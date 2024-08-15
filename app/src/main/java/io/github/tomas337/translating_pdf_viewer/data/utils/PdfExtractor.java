@@ -145,8 +145,9 @@ public class PdfExtractor {
         private StringBuilder curText;
         private PDFont prevFont;
         private float prevFontSize;
-        private int maxLineWidth;
         private int curMaxStyleIndex;
+        private Integer prevStartPadding = null;
+        private Integer prevEndPadding = null;
         private final HashMap<TextStyle, Integer> textStyleToIntMap = new HashMap<>();
         private final HashMap<Integer, TextStyle> intToTextStyleMap = new HashMap<>();
 
@@ -160,30 +161,19 @@ public class PdfExtractor {
          *
          * @param text String representation of one line in the document.
          * @param textPositions Contains the line splitted into characters in TextPosition type.
-         *                      The list is going to contain null elements in the case that the document
-         *                      doesn't represent separators as ASCII.
+         *                      The list is going to contain null elements in the case that the
+         *                      document doesn't represent separators as ASCII.
          * @throws IOException If there is an error when writing the text or extracting information.
          */
         @Override
         protected void writeString(String text, List<TextPosition> textPositions) throws IOException {
             StringBuilder builder = new StringBuilder();
-            int lineWidth = textPositions.size();
 
             Log.d("text", text);
             Log.d("textPositions", textPositions.toString());
 
-            // Handle maxLineWidth update
-            if (lineWidth > maxLineWidth) {
-                maxLineWidth = lineWidth;
-                Log.d("xAtEnd", String.valueOf((textPositions.get(textPositions.size() - 1).getX() + textPositions.get(textPositions.size() - 1).getWidth() + textPositions.get(0).getX())));
-                Log.d("pageWidth", String.valueOf(textPositions.get(0).getPageWidth()));
-
-                Log.d("pageWidthMinusPadding", String.valueOf(textPositions.get(0).getPageWidth() - textPositions.get(0).getX()));
-                if (!curTextBlock.isEmpty()) {
-                    textBlocks.add(curTextBlock);
-                    curTextBlock = new TextBlock();
-                }
-            }
+            Log.d("padding start", String.valueOf(textPositions.get(0).getX()));
+            Log.d("padding end", String.valueOf(textPositions.get(0).getPageWidth() - textPositions.get(textPositions.size() - 1).getEndX()));
 
             if (curTextBlock.getX() == null) {
                 assert curTextBlock.getY() == null;
@@ -193,9 +183,12 @@ public class PdfExtractor {
                 curTextBlock.setY(textPositions.get(0).getY());
                 curTextBlock.setRotation(getAngle(textPositions.get(0)));
             }
-            curTextBlock.updateEndY(textPositions.get(0).getHeight());
+            float endY = textPositions.get(0).getPageHeight() - textPositions.get(0).getEndY();
+            curTextBlock.setEndY(endY);
 
             for (TextPosition position : textPositions) {
+
+                // Handle non ASCII separator
                 if (position == null) {
                     curText.append(getWordSeparator());
                     continue;
@@ -235,11 +228,24 @@ public class PdfExtractor {
             }
 
             // Handle end of block
-            if (lineWidth < maxLineWidth) {
+            float curPageWidth = textPositions.get(0).getPageWidth();
+            float curLineEndX = textPositions.get(textPositions.size() - 1).getEndX();
+            int curStartPadding = (int) textPositions.get(0).getX();
+            int curEndPadding = (int) (curPageWidth - curLineEndX);
+
+            if (prevStartPadding != null &&
+                prevEndPadding != null &&
+                curEndPadding != prevEndPadding
+            ) {
                 curTextBlock.addText(curText.toString());
                 textBlocks.add(curTextBlock);
                 curText = new StringBuilder();
                 curTextBlock = new TextBlock();
+                prevStartPadding = null;
+                prevEndPadding = null;
+            } else {
+                prevStartPadding = curStartPadding;
+                prevEndPadding = curEndPadding;
             }
 
             super.writeString(builder.toString());
@@ -268,8 +274,7 @@ public class PdfExtractor {
                 textBlocks = new ArrayList<>();
                 curTextBlock = new TextBlock();
                 curText = new StringBuilder();
-                String text = getText(document);
-                Log.d("extractedText", text);
+                getText(document);
                 onPageEnd();
             }
             return textBlocks;

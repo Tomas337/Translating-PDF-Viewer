@@ -57,8 +57,8 @@ public class TextBlock extends PageContent {
         return endY;
     }
 
-    public void updateEndY(Float y) {
-        endY += y;
+    public void setEndY(Float y) {
+        endY = y;
     }
 
     public Float getRotation() {
