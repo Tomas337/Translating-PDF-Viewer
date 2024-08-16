@@ -169,13 +169,15 @@ public class PdfExtractor {
             StringBuilder builder = new StringBuilder();
 
             // Join parts of a word or separate sentences
-            int lastIndex = curText.length() - 1;
-            char lastChar = curText.charAt(lastIndex);
+            if (curText.length() != 0) {
+                int lastIndex = curText.length() - 1;
+                char lastChar = curText.charAt(lastIndex);
 
-            if (lastChar == '-') {
-                curText.deleteCharAt(lastIndex);
-            } else if (lastChar != ' ') {
-                curText.append(" ");
+                if (lastChar == '-') {
+                    curText.deleteCharAt(lastIndex);
+                } else if (lastChar != ' ') {
+                    curText.append(" ");
+                }
             }
 
             if (curTextBlock.getX() == null) {
