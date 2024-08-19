@@ -266,10 +266,13 @@ public class Extractor extends PDFTextStripper {
                 Image image = new Image(filepath, scaledX, scaledY, scaledWidth, scaledHeight);
                 images.add(image);
 
+                Log.i("position in px", scaledX + ", " + scaledY);
+
+
+
                 // position in user space units. 1 unit = 1/72 inch at 72 dpi
 //                Log.i("position in PDF", ctmNew.getTranslateX() + ", " + ctmNew.getTranslateY() + " in user space units");
                 // position in px
-                Log.i("position in px", scaledX + ", " + scaledY);
 
                 // raw size in pixels
 //                Log.i("raw image size", width + ", " + height + " in pixels");

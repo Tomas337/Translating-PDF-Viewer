@@ -67,7 +67,6 @@ fun PdfViewerScreen(
         )
         var isScrollable by remember { mutableStateOf(false) }
 
-
         BackHandler(enabled = !isToolbarVisible) {
             isToolbarVisible = true
         }
