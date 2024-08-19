@@ -38,7 +38,11 @@ import com.tom_roush.pdfbox.text.PDFTextStripper;
 import com.tom_roush.pdfbox.text.TextPosition;
 import com.tom_roush.pdfbox.util.Matrix;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -67,6 +71,7 @@ public class Extractor extends PDFTextStripper {
 
     // variables for image extraction
     private final int dpi;
+    private final Path path;
     private List<Image> images;
 
     /**
@@ -76,9 +81,10 @@ public class Extractor extends PDFTextStripper {
      *
      * @throws IOException If there is an error loading text stripper properties.
      */
-    public Extractor(int dpi) throws IOException {
+    public Extractor(int dpi, Path path) throws IOException {
         super();
         this.dpi = dpi;
+        this.path = path;
 
         // Initialize operators for image extraction
         addOperator(new Concatenate());
@@ -220,7 +226,6 @@ public class Extractor extends PDFTextStripper {
         try (PDDocument document = new PDDocument()) {
             document.addPage(page);
             extractDocument(document);
-            Log.d("images", images.toString());
             return new Page(textBlocks, images);
         }
     }
@@ -245,38 +250,47 @@ public class Extractor extends PDFTextStripper {
 
             if (xObject instanceof PDImageXObject) {
                 PDImageXObject imageObject = (PDImageXObject) xObject;
-                int width = imageObject.getWidth();
-                int height = imageObject.getHeight();
+
+                Bitmap imageBitmap = imageObject.getImage();
+                String filepath = saveImage(imageBitmap, objectName.getName());
 
                 Matrix ctmNew = getGraphicsState().getCurrentTransformationMatrix();
                 float imageXScale = ctmNew.getScalingFactorX();
                 float imageYScale = ctmNew.getScalingFactorY();
 
-                Bitmap imageBitmap = imageObject.getImage();
                 int scaledX = Math.round(ctmNew.getTranslateX() * (dpi / 72f));
                 int scaledY = Math.round(ctmNew.getTranslateY() * (dpi / 72f));
                 int scaledWidth = Math.round(imageXScale * (dpi / 72f));
                 int scaledHeight = Math.round(imageYScale * (dpi / 72f));
 
-                Image image = new Image(imageBitmap, scaledX, scaledY, scaledWidth, scaledHeight);
+                Image image = new Image(filepath, scaledX, scaledY, scaledWidth, scaledHeight);
                 images.add(image);
 
                 // position in user space units. 1 unit = 1/72 inch at 72 dpi
-                Log.i("position in PDF", ctmNew.getTranslateX() + ", " + ctmNew.getTranslateY() + " in user space units");
+//                Log.i("position in PDF", ctmNew.getTranslateX() + ", " + ctmNew.getTranslateY() + " in user space units");
                 // position in px
                 Log.i("position in px", scaledX + ", " + scaledY);
 
                 // raw size in pixels
-                Log.i("raw image size", width + ", " + height + " in pixels");
+//                Log.i("raw image size", width + ", " + height + " in pixels");
                 // displayed size in pixels
-                 Log.i("displayed size", scaledWidth + ", " + scaledHeight);
+//                Log.i("displayed size", scaledWidth + ", " + scaledHeight);
 
-            } else if (xObject instanceof PDFormXObject) {
-                PDFormXObject form = (PDFormXObject) xObject;
-                showForm(form);
             }
         } else {
             super.processOperator(operator, operands);
         }
+    }
+
+    private String saveImage(Bitmap image, String name) throws IOException {
+        Path filepath = path.resolve(name + ".png");
+        String filepathString = filepath.toString();
+
+        if (!Files.exists(filepath)) {
+            try (FileOutputStream fos = new FileOutputStream(filepathString)) {
+                image.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            }
+        }
+        return filepathString;
     }
 }

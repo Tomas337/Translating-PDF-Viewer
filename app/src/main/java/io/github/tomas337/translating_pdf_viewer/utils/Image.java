@@ -6,17 +6,17 @@ import java.io.ByteArrayOutputStream;
 
 public class Image extends PageContent {
 
-    Bitmap image;
-//    byte[] image;
+//    Bitmap image;
+    String path;
     int x;
     int y;
     int width;
     int height;
 
-    public Image(Bitmap image, int x, int y, int width, int height) {
+    public Image(String path, int x, int y, int width, int height) {
         super("image");
-        this.image = image;
-//        this.image = bitmapToBuffer(image);
+//        this.image = image;
+        this.path = path;
         this.x = x;
         this.y = y;
         this.width = width;
@@ -31,18 +31,7 @@ public class Image extends PageContent {
         return height;
     }
 
-//    public byte[] getImage() {
-//        return image;
-//    }
-    public Bitmap getImage() {
-        return image;
+    public String getPath() {
+        return path;
     }
-
-//    private static byte[] bitmapToBuffer(Bitmap bitmap) {
-//        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-//        byte[] byteArray = stream.toByteArray();
-//        bitmap.recycle();
-//        return byteArray;
-//    }
 }

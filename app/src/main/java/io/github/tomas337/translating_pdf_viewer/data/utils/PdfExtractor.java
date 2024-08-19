@@ -7,9 +7,12 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.tom_roush.pdfbox.cos.COSName;
 import com.tom_roush.pdfbox.io.MemoryUsageSetting;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
 import com.tom_roush.pdfbox.pdmodel.PDPage;
+import com.tom_roush.pdfbox.pdmodel.graphics.PDXObject;
+import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import com.tom_roush.pdfbox.rendering.PDFRenderer;
 
 import java.io.File;
@@ -53,7 +56,7 @@ public class PdfExtractor {
             Files.createDirectories(path);
 
             int dpi = context.getResources().getDisplayMetrics().densityDpi;
-            Extractor extractor = new Extractor(dpi);
+            Extractor extractor = new Extractor(dpi, path);
             int numberOfPages = pdfDocument.getNumberOfPages();
             List<String> pagePaths = new ArrayList<>();
 

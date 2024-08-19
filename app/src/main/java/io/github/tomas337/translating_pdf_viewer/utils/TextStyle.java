@@ -19,8 +19,8 @@ public class TextStyle {
         PDFontDescriptor descriptor = font.getFontDescriptor();
         String fontName = font.getName();
 
-        Log.d("font", fontName);
-        Log.d("font size", String.valueOf(fontSize));
+//        Log.d("font", fontName);
+//        Log.d("font size", String.valueOf(fontSize));
 
         fontWeight = (int) descriptor.getFontWeight();
         if (fontWeight == 0) {

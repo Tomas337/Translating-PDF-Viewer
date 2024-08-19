@@ -27,14 +27,10 @@ fun DrawContent(
     pageIndex: Int,
     intToTextStyleMap: Map<Int, TextStyle>
 ) {
-
-    // TODO: fix "Error, cannot access an invalid/free'd bitmap here!"
-    // TODO: fix " java.lang.RuntimeException: Canvas: trying to draw too large(1257637270bytes) bitmap."
     if (content is Image) {
-        Log.d("image drawing", content.image.toString())
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(content.image)
+                .data(content.path)
                 .size(content.width, content.height)
                 .build(),
             contentDescription = "Image on page ${pageIndex + 1}",
