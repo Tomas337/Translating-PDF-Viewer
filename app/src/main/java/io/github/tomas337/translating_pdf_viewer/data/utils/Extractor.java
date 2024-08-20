@@ -112,9 +112,9 @@ public class Extractor extends PDFTextStripper {
 
         Log.d("line", text);
 
-        float curPageWidth = textPositions.get(0).getPageWidth();
-        float curLineEndX = textPositions.get(textPositions.size() - 1).getEndX();
-        int curEndPadding = (int) (curPageWidth - curLineEndX);
+        int curPageWidth = (int) textPositions.get(0).getPageWidth();
+        int curLineEndX = Math.round(textPositions.get(textPositions.size() - 1).getEndX());
+        int curEndPadding = curPageWidth - curLineEndX;
 
         // Block ends when the current line is longer than the previous one
         // and isn't at the start of a block.
@@ -124,8 +124,6 @@ public class Extractor extends PDFTextStripper {
             curText = new StringBuilder();
             curTextBlock = new TextBlock();
             prevEndPadding = null;
-        } else {
-            prevEndPadding = curEndPadding;
         }
 
         // Join parts of a word or separate sentences
