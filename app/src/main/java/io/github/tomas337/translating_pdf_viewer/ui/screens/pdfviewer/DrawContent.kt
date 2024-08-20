@@ -38,7 +38,6 @@ fun DrawContent(
     } else if (content is TextBlock) {
         val fontSizeScale = 1.5
         val lineSpacing = 4
-
         val lineHeight =
             (intToTextStyleMap[content.styles[0]]!!.fontSize * fontSizeScale + lineSpacing).sp
 
