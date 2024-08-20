@@ -131,7 +131,8 @@ public class Extractor extends PDFTextStripper {
             int lastIndex = curText.length() - 1;
             char lastChar = curText.charAt(lastIndex);
 
-            if (lastChar == '-') {
+            // hyphen-minus and hyphen character
+            if (lastChar == '-' || lastChar == '‐') {
                 curText.deleteCharAt(lastIndex);
             } else if (lastChar != ' ') {
                 curText.append(" ");

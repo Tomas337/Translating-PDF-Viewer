@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,6 +19,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.Hyphens
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -69,6 +72,12 @@ fun DrawContent(
             },
             lineHeight = lineHeight,
             modifier = Modifier.rotate(content.rotation),
+            style = androidx.compose.ui.text.TextStyle.Default.copy(
+                hyphens = Hyphens.Auto,
+                lineBreak = LineBreak.Paragraph.copy(
+                    strategy = LineBreak.Strategy.HighQuality,
+                )
+            )
         )
     }
 }
