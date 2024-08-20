@@ -2,17 +2,24 @@ package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -25,8 +32,11 @@ import io.github.tomas337.translating_pdf_viewer.utils.TextStyle
 fun DrawContent(
     content: PageContent,
     pageIndex: Int,
-    intToTextStyleMap: Map<Int, TextStyle>
+    intToTextStyleMap: Map<Int, TextStyle>,
 ) {
+    val lineSpacing = 1.5
+    val fontSizeScale = 1.5
+
     if (content is Image) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -36,6 +46,10 @@ fun DrawContent(
             contentDescription = "Image on page ${pageIndex + 1}",
         )
     } else if (content is TextBlock) {
+        val lineHeight = intToTextStyleMap[content.styles[0]]!!.fontSize.sp
+            .times(lineSpacing)
+            .times(fontSizeScale)
+
         Text(
             buildAnnotatedString {
                 content.texts.forEachIndexed { i, text ->
@@ -44,7 +58,7 @@ fun DrawContent(
 
                     withStyle(
                         style = SpanStyle(
-                            fontSize = style!!.fontSize.sp,
+                            fontSize = style!!.fontSize.sp * fontSizeScale,
                             fontWeight = FontWeight(style.fontWeight),
                             fontStyle = if (style.isItalic) FontStyle.Italic else FontStyle.Normal,
                         )
@@ -53,6 +67,7 @@ fun DrawContent(
                     }
                 }
             },
+            lineHeight = lineHeight,
             modifier = Modifier.rotate(content.rotation),
         )
     }
