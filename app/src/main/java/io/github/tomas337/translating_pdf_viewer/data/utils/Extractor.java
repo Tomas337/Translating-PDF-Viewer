@@ -97,7 +97,8 @@ public class Extractor extends PDFTextStripper {
 
     /**
      * Write a Java string to the output stream.
-     * This implementation also extracts information about the text.
+     * This implementation also extracts information about the text divided into text blocks
+     * containing texts, styles and information about the positioning.
      *
      * @param text String representation of one line in the document.
      * @param textPositions Contains the line splitted into characters in TextPosition type.
@@ -108,6 +109,24 @@ public class Extractor extends PDFTextStripper {
     @Override
     protected void writeString(String text, List<TextPosition> textPositions) throws IOException {
         StringBuilder builder = new StringBuilder();
+
+        Log.d("line", text);
+
+        float curPageWidth = textPositions.get(0).getPageWidth();
+        float curLineEndX = textPositions.get(textPositions.size() - 1).getEndX();
+        int curEndPadding = (int) (curPageWidth - curLineEndX);
+
+        // Block ends when the current line is longer than the previous one
+        // and isn't at the start of a block.
+        if (prevEndPadding != null && curEndPadding < prevEndPadding) {
+            curTextBlock.addText(curText.toString());
+            textBlocks.add(curTextBlock);
+            curText = new StringBuilder();
+            curTextBlock = new TextBlock();
+            prevEndPadding = null;
+        } else {
+            prevEndPadding = curEndPadding;
+        }
 
         // Join parts of a word or separate sentences
         if (curText.length() != 0) {
@@ -120,17 +139,6 @@ public class Extractor extends PDFTextStripper {
                 curText.append(" ");
             }
         }
-
-        if (curTextBlock.getX() == null) {
-            assert curTextBlock.getY() == null;
-            assert curTextBlock.getEndY() == null;
-            assert curTextBlock.getRotation() == null;
-            curTextBlock.setX(textPositions.get(0).getX());
-            curTextBlock.setY(textPositions.get(0).getY());
-            curTextBlock.setRotation(getAngle(textPositions.get(0)));
-        }
-        float endY = textPositions.get(0).getPageHeight() - textPositions.get(0).getEndY();
-        curTextBlock.setEndY(endY);
 
         for (TextPosition position : textPositions) {
 
@@ -156,6 +164,16 @@ public class Extractor extends PDFTextStripper {
                     curText = new StringBuilder();
                 }
 
+                // Block ends when the font size changes between lines
+                if (fontSize != prevFontSize &&
+                    !Objects.equals(curTextBlock.getEndY(), position.getY()) &&
+                    !curTextBlock.isEmpty()
+                ) {
+                    textBlocks.add(curTextBlock);
+                    curTextBlock = new TextBlock();
+                    prevEndPadding = null;
+                }
+
                 TextStyle style = new TextStyle(fontSize, font);
 
                 if (textStyleToIntMap.containsKey(style)) {
@@ -173,14 +191,21 @@ public class Extractor extends PDFTextStripper {
             String unicode = position.getUnicode();
             curText.append(unicode);
             builder.append(unicode);
+
+            curTextBlock.setEndY(position.getY());
         }
 
-        // Handle end of block
-        float curPageWidth = textPositions.get(0).getPageWidth();
-        float curLineEndX = textPositions.get(textPositions.size() - 1).getEndX();
-        int curEndPadding = (int) (curPageWidth - curLineEndX);
+        if (curTextBlock.getX() == null) {
+            assert curTextBlock.getY() == null;
+            assert curTextBlock.getRotation() == null;
+            curTextBlock.setX(textPositions.get(0).getX());
+            curTextBlock.setY(textPositions.get(0).getY());
+            curTextBlock.setRotation(getAngle(textPositions.get(0)));
+        }
 
-        if (prevEndPadding != null && curEndPadding != prevEndPadding) {
+        // Block ends when the current line is shorter than the previous one
+        // and isn't at the start of a block.
+        if (prevEndPadding != null && curEndPadding > prevEndPadding) {
             curTextBlock.addText(curText.toString());
             textBlocks.add(curTextBlock);
             curText = new StringBuilder();
@@ -218,6 +243,7 @@ public class Extractor extends PDFTextStripper {
         textBlocks = new ArrayList<>();
         curTextBlock = new TextBlock();
         curText = new StringBuilder();
+        prevEndPadding = null;
         getText(document);
         onPageEnd();
     }

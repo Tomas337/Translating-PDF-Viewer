@@ -50,7 +50,7 @@ public class TextBlock extends PageContent {
 
     public void setY(Float y) {
         this.y = y;
-        this.endY = y;
+//        this.endY = y;
     }
 
     public Float getEndY() {
