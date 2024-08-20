@@ -11,6 +11,7 @@ public class Page {
         int j = 0;
         int i = 0;
 
+        // 8th page is the first one with regular text
         // handle empty textBlocks or images
         if (textBlocks.isEmpty() && !images.isEmpty()) {
             orderedData = new ArrayList<>(images);

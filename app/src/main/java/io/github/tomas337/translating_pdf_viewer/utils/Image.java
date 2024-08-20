@@ -1,12 +1,7 @@
 package io.github.tomas337.translating_pdf_viewer.utils;
 
-import android.graphics.Bitmap;
-
-import java.io.ByteArrayOutputStream;
-
 public class Image extends PageContent {
 
-//    Bitmap image;
     String path;
     int x;
     int y;
@@ -15,7 +10,6 @@ public class Image extends PageContent {
 
     public Image(String path, int x, int y, int width, int height) {
         super("image");
-//        this.image = image;
         this.path = path;
         this.x = x;
         this.y = y;

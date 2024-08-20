@@ -282,28 +282,15 @@ public class Extractor extends PDFTextStripper {
                 Matrix ctmNew = getGraphicsState().getCurrentTransformationMatrix();
                 float imageXScale = ctmNew.getScalingFactorX();
                 float imageYScale = ctmNew.getScalingFactorY();
+                float pageHeight = getCurrentPage().getMediaBox().getHeight();
 
-                int scaledX = Math.round(ctmNew.getTranslateX() * (dpi / 72f));
-                int scaledY = Math.round(ctmNew.getTranslateY() * (dpi / 72f));
+                int x = Math.round(ctmNew.getTranslateX());
+                int y = Math.round(pageHeight - ctmNew.getTranslateY() - imageYScale);
                 int scaledWidth = Math.round(imageXScale * (dpi / 72f));
                 int scaledHeight = Math.round(imageYScale * (dpi / 72f));
 
-                Image image = new Image(filepath, scaledX, scaledY, scaledWidth, scaledHeight);
+                Image image = new Image(filepath, x, y, scaledWidth, scaledHeight);
                 images.add(image);
-
-                Log.i("position in px", scaledX + ", " + scaledY);
-
-
-
-                // position in user space units. 1 unit = 1/72 inch at 72 dpi
-//                Log.i("position in PDF", ctmNew.getTranslateX() + ", " + ctmNew.getTranslateY() + " in user space units");
-                // position in px
-
-                // raw size in pixels
-//                Log.i("raw image size", width + ", " + height + " in pixels");
-                // displayed size in pixels
-//                Log.i("displayed size", scaledWidth + ", " + scaledHeight);
-
             }
         } else {
             super.processOperator(operator, operands);
