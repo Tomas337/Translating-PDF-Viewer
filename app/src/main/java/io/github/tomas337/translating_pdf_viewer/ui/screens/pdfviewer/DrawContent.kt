@@ -1,28 +1,18 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
 import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -37,9 +27,6 @@ fun DrawContent(
     pageIndex: Int,
     intToTextStyleMap: Map<Int, TextStyle>,
 ) {
-    val lineSpacing = 1.5
-    val fontSizeScale = 1.5
-
     if (content is Image) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -49,9 +36,11 @@ fun DrawContent(
             contentDescription = "Image on page ${pageIndex + 1}",
         )
     } else if (content is TextBlock) {
-        val lineHeight = intToTextStyleMap[content.styles[0]]!!.fontSize.sp
-            .times(lineSpacing)
-            .times(fontSizeScale)
+        val fontSizeScale = 1.5
+        val lineSpacing = 4
+
+        val lineHeight =
+            (intToTextStyleMap[content.styles[0]]!!.fontSize * fontSizeScale + lineSpacing).sp
 
         Text(
             buildAnnotatedString {
@@ -73,6 +62,7 @@ fun DrawContent(
             lineHeight = lineHeight,
             modifier = Modifier.rotate(content.rotation),
             style = androidx.compose.ui.text.TextStyle.Default.copy(
+                // TODO don't split headings
                 hyphens = Hyphens.Auto,
                 lineBreak = LineBreak.Paragraph.copy(
                     strategy = LineBreak.Strategy.HighQuality,
