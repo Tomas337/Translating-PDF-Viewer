@@ -114,14 +114,12 @@ public class Extractor extends PDFTextStripper {
         int curLineEndX = Math.round(textPositions.get(textPositions.size() - 1).getEndX());
         int curEndPadding = curPageWidth - curLineEndX;
 
-        Log.d("line", text);
+//        Log.d("line", text);
 
         // Block ends when the current line is longer than the previous one
         // and isn't at the start of a block.
         if (prevEndPadding != null && curEndPadding < prevEndPadding) {
-            assert curTextBlock.getY() != null;
-            assert curTextBlock.getX() != null;
-            assert curTextBlock.getRotation() != null;
+            assert curTextBlock.isInitialized();
             curTextBlock.addText(curText.toString());
             textBlocks.add(curTextBlock);
             curText = new StringBuilder();
@@ -166,16 +164,12 @@ public class Extractor extends PDFTextStripper {
                     curText = new StringBuilder();
                 }
 
-                // TODO: fix - in "ℓ1 and ℓ2 Regularization" the block is executed when position is "1"
                 // Block ends when the font size changes between lines
                 if (fontSize != prevFontSize &&
-                    !Objects.equals(curTextBlock.getEndY(), position.getY()) &&
+                    Objects.equals(position, textPositions.get(0)) &&
                     !curTextBlock.isEmpty()
                 ) {
-                    Log.d("textBlockY  positionY", curTextBlock.getEndY() + "  " + position.getY());
-                    assert curTextBlock.getY() != null;
-                    assert curTextBlock.getX() != null;
-                    assert curTextBlock.getRotation() != null;
+                    assert curTextBlock.isInitialized();
                     textBlocks.add(curTextBlock);
                     curTextBlock = new TextBlock();
                     prevEndPadding = null;
@@ -202,9 +196,7 @@ public class Extractor extends PDFTextStripper {
             curTextBlock.setEndY(position.getY());
         }
 
-        if (curTextBlock.getX() == null) {
-            assert curTextBlock.getY() == null;
-            assert curTextBlock.getRotation() == null;
+        if (!curTextBlock.isInitialized()) {
             curTextBlock.setX(textPositions.get(0).getX());
             curTextBlock.setY(textPositions.get(0).getY());
             curTextBlock.setRotation(getAngle(textPositions.get(0)));
@@ -213,10 +205,7 @@ public class Extractor extends PDFTextStripper {
         // Block ends when the current line is shorter than the previous one
         // and isn't at the start of a block.
         if (prevEndPadding != null && curEndPadding > prevEndPadding) {
-            assert curTextBlock.getY() != null;
-            assert curTextBlock.getX() != null;
-            assert curTextBlock.getRotation() != null;
-
+            assert curTextBlock.isInitialized();
             curTextBlock.addText(curText.toString());
             textBlocks.add(curTextBlock);
             curText = new StringBuilder();

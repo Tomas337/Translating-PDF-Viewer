@@ -40,4 +40,8 @@ public class TextBlock extends PageContent {
     public void setRotation(Float rotation) {
         this.rotation = rotation;
     }
+
+    public boolean isInitialized() {
+        return y != null && x != null && rotation != null;
+    }
 }
