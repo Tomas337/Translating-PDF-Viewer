@@ -115,6 +115,8 @@ fun PdfViewerScreen(
                         pageIndex = pageIndex,
                         intToTextStyleMap = fileInfo.intToTextStyleMap
                     )
+                    Log.d("pageIndex", pageIndex.toString())
+                    Log.d("y yEnd",  "${content.y}  ${content.endY}")
                 }
             }
         }

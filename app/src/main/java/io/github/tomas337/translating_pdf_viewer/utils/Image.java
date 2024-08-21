@@ -3,18 +3,17 @@ package io.github.tomas337.translating_pdf_viewer.utils;
 public class Image extends PageContent {
 
     String path;
-    int x;
-    int y;
     int width;
     int height;
 
-    public Image(String path, int x, int y, int width, int height) {
+    public Image(String path, float x, float y, float endY, int scaledWidth, int scaledHeight) {
         super("image");
+        super.setX(x);
+        super.setY(y);
+        super.setEndY(endY);
         this.path = path;
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
+        this.width = scaledWidth;
+        this.height = scaledHeight;
     }
 
     public int getWidth() {
@@ -29,7 +28,4 @@ public class Image extends PageContent {
         return path;
     }
 
-    public int getY() {
-        return y;
-    }
 }

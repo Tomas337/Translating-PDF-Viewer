@@ -110,15 +110,18 @@ public class Extractor extends PDFTextStripper {
     protected void writeString(String text, List<TextPosition> textPositions) throws IOException {
         StringBuilder builder = new StringBuilder();
 
-        Log.d("line", text);
-
         int curPageWidth = (int) textPositions.get(0).getPageWidth();
         int curLineEndX = Math.round(textPositions.get(textPositions.size() - 1).getEndX());
         int curEndPadding = curPageWidth - curLineEndX;
 
+        Log.d("line", text);
+
         // Block ends when the current line is longer than the previous one
         // and isn't at the start of a block.
         if (prevEndPadding != null && curEndPadding < prevEndPadding) {
+            assert curTextBlock.getY() != null;
+            assert curTextBlock.getX() != null;
+            assert curTextBlock.getRotation() != null;
             curTextBlock.addText(curText.toString());
             textBlocks.add(curTextBlock);
             curText = new StringBuilder();
@@ -163,11 +166,16 @@ public class Extractor extends PDFTextStripper {
                     curText = new StringBuilder();
                 }
 
+                // TODO: fix - in "ℓ1 and ℓ2 Regularization" the block is executed when position is "1"
                 // Block ends when the font size changes between lines
                 if (fontSize != prevFontSize &&
                     !Objects.equals(curTextBlock.getEndY(), position.getY()) &&
                     !curTextBlock.isEmpty()
                 ) {
+                    Log.d("textBlockY  positionY", curTextBlock.getEndY() + "  " + position.getY());
+                    assert curTextBlock.getY() != null;
+                    assert curTextBlock.getX() != null;
+                    assert curTextBlock.getRotation() != null;
                     textBlocks.add(curTextBlock);
                     curTextBlock = new TextBlock();
                     prevEndPadding = null;
@@ -205,6 +213,10 @@ public class Extractor extends PDFTextStripper {
         // Block ends when the current line is shorter than the previous one
         // and isn't at the start of a block.
         if (prevEndPadding != null && curEndPadding > prevEndPadding) {
+            assert curTextBlock.getY() != null;
+            assert curTextBlock.getX() != null;
+            assert curTextBlock.getRotation() != null;
+
             curTextBlock.addText(curText.toString());
             textBlocks.add(curTextBlock);
             curText = new StringBuilder();
@@ -284,12 +296,20 @@ public class Extractor extends PDFTextStripper {
                 float imageYScale = ctmNew.getScalingFactorY();
                 float pageHeight = getCurrentPage().getMediaBox().getHeight();
 
-                int x = Math.round(ctmNew.getTranslateX());
-                int y = Math.round(pageHeight - ctmNew.getTranslateY() - imageYScale);
+                float x = Math.round(ctmNew.getTranslateX());
+                float y = Math.round(pageHeight - ctmNew.getTranslateY() - imageYScale);
+                float endY = Math.round(pageHeight - ctmNew.getTranslateY());
                 int scaledWidth = Math.round(imageXScale * (dpi / 72f));
                 int scaledHeight = Math.round(imageYScale * (dpi / 72f));
 
-                Image image = new Image(filepath, x, y, scaledWidth, scaledHeight);
+                Image image = new Image(
+                        filepath,
+                        x,
+                        y,
+                        endY,
+                        scaledWidth,
+                        scaledHeight
+                );
                 images.add(image);
             }
         } else {

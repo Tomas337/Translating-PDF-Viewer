@@ -5,9 +5,6 @@ import java.util.List;
 
 public class TextBlock extends PageContent {
 
-    Float x = null;
-    Float y = null;
-    Float endY = null;
     Float rotation = null;
     List<String> texts = new ArrayList<>();
     List<Integer> styles = new ArrayList<>();
@@ -34,31 +31,6 @@ public class TextBlock extends PageContent {
 
     public List<Integer> getStyles() {
         return styles;
-    }
-
-    public Float getX() {
-        return x;
-    }
-
-    public void setX(Float x) {
-        this.x = x;
-    }
-
-    public Float getY() {
-        return this.y;
-    }
-
-    public void setY(Float y) {
-        this.y = y;
-//        this.endY = y;
-    }
-
-    public Float getEndY() {
-        return endY;
-    }
-
-    public void setEndY(Float y) {
-        endY = y;
     }
 
     public Float getRotation() {
