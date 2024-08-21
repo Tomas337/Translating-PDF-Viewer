@@ -28,4 +28,8 @@ public class Image extends PageContent {
     public String getPath() {
         return path;
     }
+
+    public int getY() {
+        return y;
+    }
 }

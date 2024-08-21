@@ -1,6 +1,8 @@
 package io.github.tomas337.translating_pdf_viewer.utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class Page {
@@ -11,33 +13,22 @@ public class Page {
         int j = 0;
         int i = 0;
 
-        // 8th page is the first one with regular text
         // handle empty textBlocks or images
         if (textBlocks.isEmpty() && !images.isEmpty()) {
             orderedData = new ArrayList<>(images);
             return;
-        } else if (images.isEmpty()) {
+        } else if (images.isEmpty() && !textBlocks.isEmpty()) {
             orderedData = new ArrayList<>(textBlocks);
+            return;
+        } else if (images.isEmpty()) {
             return;
         }
 
-        // handle start of the page
-        while (i == 0 && j < images.size()) {
-            int sumOfHeights = orderedData.stream().mapToInt(o -> ((Image) o).getHeight()).sum();
+        textBlocks.sort(Comparator.comparing(TextBlock::getY));
+        images.sort(Comparator.comparingInt(Image::getY));
 
-            // TODO account for top padding
-            if (textBlocks.get(i).getY() < (images.get(j).getHeight() + sumOfHeights)) {
-                orderedData.add(textBlocks.get(i));
-                i++;
-            } else {
-                orderedData.add(images.get(j));
-                j++;
-            }
-        }
-
-        // handle middle of the page
         while (i < textBlocks.size() && j < images.size()) {
-            if ((textBlocks.get(i-1).getEndY() - textBlocks.get(i).getY()) < images.get(j).getHeight()) {
+            if (textBlocks.get(i).getY() < images.get(j).getY()) {
                 orderedData.add(textBlocks.get(i));
                 i++;
             } else {
@@ -46,7 +37,6 @@ public class Page {
             }
         }
 
-        // handle end of the page
         while (i != textBlocks.size()) {
             orderedData.add(textBlocks.get(i));
             i++;
