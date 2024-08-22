@@ -6,11 +6,13 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.VerticalPager
@@ -19,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +35,7 @@ import androidx.navigation.NavController
 import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
 import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.PdfViewerViewModel
 import io.github.tomas337.translating_pdf_viewer.utils.PageContent
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -105,19 +107,76 @@ fun PdfViewerScreen(
                         )
                     },
             ) {
-                itemsIndexed(pageContent) { i, content ->
+                // TODO move this logic to domain layer
+                var i = 0
+                val xOrderedData = mutableListOf<List<PageContent>>()
+                while (i < pageContent.size) {
+                    val curObject: PageContent = pageContent[i]
+                    val rowContent: MutableList<PageContent> = ArrayList()
+                    rowContent.add(curObject)
+                    var containsText = curObject.type == "text-block"
+
+                    for (j in i + 1..<pageContent.size) {
+                        val nextObject: PageContent = pageContent[j]
+
+                        if (nextObject.type == "text-block" && containsText) {
+                            break
+                        }
+                        if ((curObject.endY >= nextObject.y && curObject.y <= nextObject.y) ||
+                            (curObject.endY >= nextObject.endY && curObject.y <= nextObject.endY)
+                        ) {
+                            if (nextObject.type == "text-block") {
+                                containsText = true
+                            }
+                            rowContent.add(nextObject)
+                        } else {
+                            break
+                        }
+                        i = j
+                    }
+                    i += 1
+                    Log.d("i", i.toString())
+                    rowContent.sortWith(Comparator.comparing(PageContent::getX))
+                    xOrderedData.add(rowContent)
+                }
+                items(xOrderedData) { row ->
                     val paragraphSpacing = 10.dp
                     if (i != 0) {
                         Spacer(modifier = Modifier.size(paragraphSpacing))
                     }
-                    DrawContent(
-                        content = content,
-                        pageIndex = pageIndex,
-                        intToTextStyleMap = fileInfo.intToTextStyleMap
-                    )
-                    Log.d("pageIndex", pageIndex.toString())
-                    Log.d("y yEnd",  "${content.y}  ${content.endY}")
+                    if (row.size > 1) {
+                        Row {
+                            row.forEach { content ->
+                                DrawContent(
+                                    content = content,
+                                    pageIndex = pageIndex,
+                                    intToTextStyleMap = fileInfo.intToTextStyleMap
+                                )
+                                Log.d("pageIndex", pageIndex.toString())
+                                Log.d("y yEnd", "${content.y}  ${content.endY}")
+                            }
+                        }
+                    } else {
+                        DrawContent(
+                            content = row[0],
+                            pageIndex = pageIndex,
+                            intToTextStyleMap = fileInfo.intToTextStyleMap
+                        )
+                    }
                 }
+//                itemsIndexed(pageContent) { i, content ->
+//                    val paragraphSpacing = 10.dp
+//                    if (i != 0) {
+//                        Spacer(modifier = Modifier.size(paragraphSpacing))
+//                    }
+//                    DrawContent(
+//                        content = content,
+//                        pageIndex = pageIndex,
+//                        intToTextStyleMap = fileInfo.intToTextStyleMap
+//                    )
+//                    Log.d("pageIndex", pageIndex.toString())
+//                    Log.d("y yEnd",  "${content.y}  ${content.endY}")
+//                }
             }
         }
         PageSlider(

@@ -59,6 +59,7 @@ import io.github.tomas337.translating_pdf_viewer.utils.TextStyle;
 public class Extractor extends PDFTextStripper {
 
     // variables for text extraction
+    private final float MAX_LINE_SPACE = 3f;
     private List<TextBlock> textBlocks;
     private TextBlock curTextBlock;
     private StringBuilder curText;
@@ -116,9 +117,18 @@ public class Extractor extends PDFTextStripper {
 
 //        Log.d("line", text);
 
-        // Block ends when the current line is longer than the previous one
-        // and isn't at the start of a block.
-        if (prevEndPadding != null && curEndPadding < prevEndPadding) {
+        float lineSpacePx = curTextBlock.isInitialized()
+                ? textPositions.get(0).getY() - curTextBlock.getEndY()
+                : 0;
+        float lineSpace = lineSpacePx / textPositions.get(0).getHeight();
+
+        // Block ends when the current line isn't at the start of a block
+        // and is longer than the previous one
+        // or the line spacing is larger than MAX_LINE_SPACE.
+        if (prevEndPadding != null &&
+            (curEndPadding < prevEndPadding ||
+             lineSpace > MAX_LINE_SPACE)
+        ) {
             assert curTextBlock.isInitialized();
             curTextBlock.addText(curText.toString());
             textBlocks.add(curTextBlock);
@@ -194,6 +204,12 @@ public class Extractor extends PDFTextStripper {
             builder.append(unicode);
 
             curTextBlock.setEndY(position.getY());
+        }
+
+        if (curTextBlock.isInitialized()) {
+            Log.d("block start", curTextBlock.getY().toString());
+            Log.d("block end", curTextBlock.getEndY().toString());
+            Log.d("line height", String.valueOf(textPositions.get(0).getHeight()));
         }
 
         if (!curTextBlock.isInitialized()) {

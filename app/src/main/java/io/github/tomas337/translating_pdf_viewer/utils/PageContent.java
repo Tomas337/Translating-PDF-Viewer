@@ -34,4 +34,8 @@ public class PageContent {
     public Float getEndY() {
         return endY;
     }
+
+    public String getType() {
+        return type;
+    }
 }

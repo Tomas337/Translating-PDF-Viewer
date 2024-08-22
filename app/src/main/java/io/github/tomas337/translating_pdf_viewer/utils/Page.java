@@ -11,13 +11,9 @@ public class Page {
     List<PageContent> orderedData = new ArrayList<>();
 
     public Page(List<TextBlock> textBlocks, List<Image> images) {
-        try {
-            orderedData.addAll(textBlocks);
-            orderedData.addAll(images);
-            orderedData.sort(Comparator.comparing(PageContent::getY));
-        } catch (NullPointerException e) {
-            Log.e("error", e.getMessage());
-        }
+        orderedData.addAll(textBlocks);
+        orderedData.addAll(images);
+        orderedData.sort(Comparator.comparing(PageContent::getY));
     }
 
     public List<PageContent> getOrderedData() {
