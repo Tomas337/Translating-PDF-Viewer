@@ -28,8 +28,8 @@ class PdfViewerViewModel(
         }
     }
 
-    fun getPageContent(pageIndex: Int, id: Int): LiveData<List<PageContent>> {
-        val result = MutableLiveData<List<PageContent>>()
+    fun getPageContent(pageIndex: Int, id: Int): LiveData<List<List<PageContent>>> {
+        val result = MutableLiveData<List<List<PageContent>>>()
         viewModelScope.launch {
             result.postValue(getPageContentUseCase(pageIndex, id))
         }

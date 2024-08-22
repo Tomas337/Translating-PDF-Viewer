@@ -58,6 +58,8 @@ import io.github.tomas337.translating_pdf_viewer.utils.TextStyle;
  */
 public class Extractor extends PDFTextStripper {
 
+    private Float margin = null;
+
     // variables for text extraction
     private final float MAX_LINE_SPACE = 3f;
     private List<TextBlock> textBlocks;
@@ -110,17 +112,22 @@ public class Extractor extends PDFTextStripper {
     @Override
     protected void writeString(String text, List<TextPosition> textPositions) throws IOException {
         StringBuilder builder = new StringBuilder();
+        TextPosition firstPosition = textPositions.get(0);
 
-        int curPageWidth = (int) textPositions.get(0).getPageWidth();
+        if (margin == null || firstPosition.getX() < margin) {
+            margin = firstPosition.getX();
+        }
+
+        int curPageWidth = (int) firstPosition.getPageWidth();
         int curLineEndX = Math.round(textPositions.get(textPositions.size() - 1).getEndX());
         int curEndPadding = curPageWidth - curLineEndX;
 
 //        Log.d("line", text);
 
         float lineSpacePx = curTextBlock.isInitialized()
-                ? textPositions.get(0).getY() - curTextBlock.getEndY()
+                ? firstPosition.getY() - curTextBlock.getEndY()
                 : 0;
-        float lineSpace = lineSpacePx / textPositions.get(0).getHeight();
+        float lineSpace = lineSpacePx / firstPosition.getHeight();
 
         // Block ends when the current line isn't at the start of a block
         // and is longer than the previous one
@@ -152,6 +159,8 @@ public class Extractor extends PDFTextStripper {
 
         for (TextPosition position : textPositions) {
 
+            // TODO if difference in x in positions on the same line is too big, end block
+
             // Handle non ASCII separator
             if (position == null) {
                 String separator = getWordSeparator();
@@ -176,7 +185,7 @@ public class Extractor extends PDFTextStripper {
 
                 // Block ends when the font size changes between lines
                 if (fontSize != prevFontSize &&
-                    Objects.equals(position, textPositions.get(0)) &&
+                    Objects.equals(position, firstPosition) &&
                     !curTextBlock.isEmpty()
                 ) {
                     assert curTextBlock.isInitialized();
@@ -209,13 +218,13 @@ public class Extractor extends PDFTextStripper {
         if (curTextBlock.isInitialized()) {
             Log.d("block start", curTextBlock.getY().toString());
             Log.d("block end", curTextBlock.getEndY().toString());
-            Log.d("line height", String.valueOf(textPositions.get(0).getHeight()));
+            Log.d("line height", String.valueOf(firstPosition.getHeight()));
         }
 
         if (!curTextBlock.isInitialized()) {
-            curTextBlock.setX(textPositions.get(0).getX());
-            curTextBlock.setY(textPositions.get(0).getY());
-            curTextBlock.setRotation(getAngle(textPositions.get(0)));
+            curTextBlock.setX(firstPosition.getX());
+            curTextBlock.setY(firstPosition.getY());
+            curTextBlock.setRotation(getAngle(firstPosition));
         }
 
         // Block ends when the current line is shorter than the previous one
@@ -252,6 +261,9 @@ public class Extractor extends PDFTextStripper {
             curTextBlock.addText(curText.toString());
             textBlocks.add(curTextBlock);
         }
+        if (margin == null) {
+            margin = 0f;
+        }
     }
 
     private void extractDocument(PDDocument document) throws IOException {
@@ -260,6 +272,7 @@ public class Extractor extends PDFTextStripper {
         curTextBlock = new TextBlock();
         curText = new StringBuilder();
         prevEndPadding = null;
+        margin = null;
         getText(document);
         onPageEnd();
     }
@@ -268,7 +281,8 @@ public class Extractor extends PDFTextStripper {
         try (PDDocument document = new PDDocument()) {
             document.addPage(page);
             extractDocument(document);
-            return new Page(textBlocks, images);
+            float pageWidth = page.getMediaBox().getWidth();
+            return new Page(textBlocks, images, margin, pageWidth);
         }
     }
 
@@ -316,6 +330,10 @@ public class Extractor extends PDFTextStripper {
                         scaledHeight
                 );
                 images.add(image);
+
+                if (margin == null || ctmNew.getTranslateX() < margin) {
+                    margin = ctmNew.getTranslateX();
+                }
             }
         } else {
             super.processOperator(operator, operands);

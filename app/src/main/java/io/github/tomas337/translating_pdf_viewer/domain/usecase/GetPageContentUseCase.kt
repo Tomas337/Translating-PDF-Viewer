@@ -12,7 +12,7 @@ import java.io.File
 class GetPageContentUseCase(
     private val pageRepository: PageRepository
 ) {
-    suspend operator fun invoke(pageIndex: Int, id: Int): List<PageContent> {
+    suspend operator fun invoke(pageIndex: Int, id: Int): List<List<PageContent>> {
         val pagePath =  pageRepository.getPagePath(pageIndex, id)
         val file = File(pagePath)
         val stringifiedPage = file.readText()
