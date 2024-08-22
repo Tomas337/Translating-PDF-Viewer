@@ -1,6 +1,5 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -13,9 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.VerticalPager
@@ -24,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -32,14 +28,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
 import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.PdfViewerViewModel
-import io.github.tomas337.translating_pdf_viewer.utils.Page
 import io.github.tomas337.translating_pdf_viewer.utils.PageContent
 
 
@@ -114,27 +111,36 @@ fun PdfViewerScreen(
                     },
             ) {
                 itemsIndexed(pageContent) { i, row ->
-                    val paragraphSpacing = 10.dp
+                    var y = 0
+                    val x = Math.round(boxWithConstraintsScope.constraints.maxWidth * row[0].x)
+
+                    val handleXPositionModifier = Modifier
+                        .onGloballyPositioned {
+                            val rootPosition = it.positionInRoot()
+                            y = Math.round(rootPosition.y)
+                        }
+                        .layout { measurable, constraints ->
+                            val placeable = measurable.measure(constraints)
+                            layout(placeable.width, placeable.height) {
+                                placeable.place(x, y)
+                            }
+                        }
+
                     if (i != 0) {
+                        val paragraphSpacing = 10.dp
                         Spacer(modifier = Modifier.size(paragraphSpacing))
                     }
                     if (row.size > 1) {
                         Row(
-                            verticalAlignment = Alignment.CenterVertically
-//                            modifier = Modifier
-//                                .width(
-//                                    with (LocalDensity.current) {
-//                                        val maxWidth = boxWithConstraintsScope.constraints.maxWidth
-//                                        (maxWidth - 2 * maxWidth * row[0].x).toDp()
-//                                    }
-//                                )
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = handleXPositionModifier.fillMaxWidth()
                         ) {
                             row.forEach { content ->
                                 DrawContent(
                                     content = content,
                                     pageIndex = pageIndex,
                                     intToTextStyleMap = fileInfo.intToTextStyleMap,
-                                    maxWidth = boxWithConstraintsScope.constraints.maxWidth,
                                 )
                             }
                         }
@@ -143,7 +149,7 @@ fun PdfViewerScreen(
                             content = row[0],
                             pageIndex = pageIndex,
                             intToTextStyleMap = fileInfo.intToTextStyleMap,
-                            maxWidth = boxWithConstraintsScope.constraints.maxWidth,
+                            modifier = handleXPositionModifier
                         )
                     }
                 }
