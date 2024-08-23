@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -130,15 +131,19 @@ fun PdfViewerScreen(
 
                 itemsIndexed(pageContent) { i, row ->
                     var y = 0
-                    var x = with (LocalDensity.current) {
+                    var x = LocalDensity.current.run {
                         val startX = maxWidth * row[0].x
                         Math.round(startX + pagePadding.roundToPx())
                     }
-                    var width = with (LocalDensity.current) {
-                        (maxWidth - 2*x).toDp()
-                    }
 
-                    val widthModifier = if (row[0].x > 0.25) Modifier else Modifier.width(width)
+                    val widthModifier =
+                        if (row[0].x > 0.25) {
+                            val maxWidthDp = LocalDensity.current.run { maxWidth.toDp() }
+                            Modifier.widthIn(max = maxWidthDp - 2 * pagePadding)
+                        } else {
+                            val width = LocalDensity.current.run { (maxWidth - 2*x).toDp() }
+                            Modifier.width(width)
+                        }
 
                     val handleXPositionModifier = widthModifier
                         .onGloballyPositioned {
@@ -156,20 +161,13 @@ fun PdfViewerScreen(
                                 if (xDifference > 0) {
                                     x -= xDifference
                                     if (x < 0) {
-                                        width += x.toDp() - pagePadding
                                         x = pagePadding.roundToPx()
-                                        Log.d("width", width.roundToPx().toString())
-                                    } else {
-                                        width = placeable.width.toDp()
-                                        Log.d("x", x.toString())
-                                        Log.d("width", width.roundToPx().toString())
                                     }
                                 }
 
                                 placeable.place(x, y)
                             }
                         }
-                        .background(color = Color.Cyan)
 
                     if (i != 0) {
                         val paragraphSpacing = 10.dp
