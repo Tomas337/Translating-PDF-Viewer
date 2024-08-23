@@ -159,8 +159,6 @@ public class Extractor extends PDFTextStripper {
 
         for (TextPosition position : textPositions) {
 
-            // TODO if difference in x in positions on the same line is too big, end block
-
             // Handle non ASCII separator
             if (position == null) {
                 String separator = getWordSeparator();
@@ -213,12 +211,6 @@ public class Extractor extends PDFTextStripper {
             builder.append(unicode);
 
             curTextBlock.setEndY(position.getY());
-        }
-
-        if (curTextBlock.isInitialized()) {
-            Log.d("block start", curTextBlock.getY().toString());
-            Log.d("block end", curTextBlock.getEndY().toString());
-            Log.d("line height", String.valueOf(firstPosition.getHeight()));
         }
 
         if (!curTextBlock.isInitialized()) {

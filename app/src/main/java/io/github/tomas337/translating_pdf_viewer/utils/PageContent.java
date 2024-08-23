@@ -11,12 +11,8 @@ public class PageContent {
         this.type = type;
     }
 
-    public void setY(Float y) {
-        this.y = y;
-    }
-
-    public Float getY() {
-        return y;
+    public String getType() {
+        return type;
     }
 
     public void setX(Float x) {
@@ -27,15 +23,19 @@ public class PageContent {
         return x;
     }
 
+    public void setY(Float y) {
+        this.y = y;
+    }
+
+    public Float getY() {
+        return y;
+    }
+
     public void setEndY(Float y) {
         endY = y;
     }
 
     public Float getEndY() {
         return endY;
-    }
-
-    public String getType() {
-        return type;
     }
 }

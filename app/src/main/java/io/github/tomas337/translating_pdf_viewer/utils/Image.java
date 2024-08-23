@@ -6,7 +6,14 @@ public class Image extends PageContent {
     int width;
     int height;
 
-    public Image(String path, float x, float y, float endY, int scaledWidth, int scaledHeight) {
+    public Image(
+            String path,
+            float x,
+            float y,
+            float endY,
+            int scaledWidth,
+            int scaledHeight
+    ) {
         super("image");
         super.setX(x);
         super.setY(y);

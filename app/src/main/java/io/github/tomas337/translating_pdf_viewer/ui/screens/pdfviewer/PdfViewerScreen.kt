@@ -1,5 +1,6 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -10,8 +11,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -21,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -28,11 +32,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.boundsInParent
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.times
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
@@ -66,6 +77,8 @@ fun PdfViewerScreen(
         )
         var isScrollable by remember { mutableStateOf(false) }
 
+        val maxWidth = boxWithConstraintsScope.constraints.maxWidth
+
         BackHandler(enabled = !isToolbarVisible) {
             isToolbarVisible = true
         }
@@ -83,12 +96,13 @@ fun PdfViewerScreen(
 
             val lazyColumnState = rememberLazyListState()
 
+            val pagePadding = 25.dp
+
             LazyColumn(
                 state = lazyColumnState,
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.White)
-                    .padding(20.dp)
                     .pointerInput(Unit) {
                         detectAndHandleScroll(
                             lazyColumnState = lazyColumnState,
@@ -110,11 +124,23 @@ fun PdfViewerScreen(
                         )
                     },
             ) {
+                item {
+                    Spacer(modifier = Modifier.height(pagePadding))
+                }
+
                 itemsIndexed(pageContent) { i, row ->
                     var y = 0
-                    val x = Math.round(boxWithConstraintsScope.constraints.maxWidth * row[0].x)
+                    var x = with (LocalDensity.current) {
+                        val startX = maxWidth * row[0].x
+                        Math.round(startX + pagePadding.roundToPx())
+                    }
+                    var width = with (LocalDensity.current) {
+                        (maxWidth - 2*x).toDp()
+                    }
 
-                    val handleXPositionModifier = Modifier
+                    val widthModifier = if (row[0].x > 0.25) Modifier else Modifier.width(width)
+
+                    val handleXPositionModifier = widthModifier
                         .onGloballyPositioned {
                             val rootPosition = it.positionInRoot()
                             y = Math.round(rootPosition.y)
@@ -122,9 +148,28 @@ fun PdfViewerScreen(
                         .layout { measurable, constraints ->
                             val placeable = measurable.measure(constraints)
                             layout(placeable.width, placeable.height) {
+                                val right = x + placeable.width
+                                val parentRight = maxWidth - pagePadding.roundToPx()
+
+                                val xDifference =  right - parentRight
+
+                                if (xDifference > 0) {
+                                    x -= xDifference
+                                    if (x < 0) {
+                                        width += x.toDp() - pagePadding
+                                        x = pagePadding.roundToPx()
+                                        Log.d("width", width.roundToPx().toString())
+                                    } else {
+                                        width = placeable.width.toDp()
+                                        Log.d("x", x.toString())
+                                        Log.d("width", width.roundToPx().toString())
+                                    }
+                                }
+
                                 placeable.place(x, y)
                             }
                         }
+                        .background(color = Color.Cyan)
 
                     if (i != 0) {
                         val paragraphSpacing = 10.dp
@@ -132,9 +177,9 @@ fun PdfViewerScreen(
                     }
                     if (row.size > 1) {
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            horizontalArrangement =  Arrangement.spacedBy(10.dp),
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = handleXPositionModifier.fillMaxWidth()
+                            modifier = handleXPositionModifier,
                         ) {
                             row.forEach { content ->
                                 DrawContent(
@@ -149,9 +194,13 @@ fun PdfViewerScreen(
                             content = row[0],
                             pageIndex = pageIndex,
                             intToTextStyleMap = fileInfo.intToTextStyleMap,
-                            modifier = handleXPositionModifier
+                            modifier = handleXPositionModifier,
                         )
                     }
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(pagePadding))
                 }
             }
         }
@@ -159,7 +208,7 @@ fun PdfViewerScreen(
             pageCount = fileInfo.pageCount,
             curPage = pagerState.currentPage,
             setPage = { page -> pagerState.animateScrollToPage(page) },
-            maxWidth = boxWithConstraintsScope.constraints.maxWidth,
+            maxWidth = maxWidth,
             maxHeight = boxWithConstraintsScope.constraints.maxHeight,
             isVisible = isToolbarVisible
         )

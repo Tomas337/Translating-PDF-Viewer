@@ -1,5 +1,6 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -11,7 +12,9 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.LineBreak
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -25,7 +28,7 @@ fun DrawContent(
     content: PageContent,
     pageIndex: Int,
     intToTextStyleMap: Map<Int, TextStyle>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (content is Image) {
         AsyncImage(
@@ -59,10 +62,11 @@ fun DrawContent(
                     }
                 }
             },
+            textAlign = TextAlign.Justify,
             lineHeight = lineHeight,
             style = androidx.compose.ui.text.TextStyle.Default.copy(
                 // TODO don't split headings
-                hyphens = Hyphens.Auto,
+//                hyphens = Hyphens.Auto,
                 lineBreak = LineBreak.Paragraph.copy(
                     strategy = LineBreak.Strategy.HighQuality,
                 )
