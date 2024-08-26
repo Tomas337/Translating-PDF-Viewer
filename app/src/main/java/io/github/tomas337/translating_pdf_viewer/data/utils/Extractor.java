@@ -213,11 +213,14 @@ public class Extractor extends PDFTextStripper {
             curTextBlock.setEndY(position.getY());
         }
 
-        if (!curTextBlock.isInitialized()) {
-            curTextBlock.setX(firstPosition.getX());
+        if (curTextBlock.getY() == null &&
+            curTextBlock.getRotation() == null
+        ) {
             curTextBlock.setY(firstPosition.getY());
             curTextBlock.setRotation(getAngle(firstPosition));
         }
+        // Set x to the x of the last concatenated line to handle block starting with an indent.
+        curTextBlock.setX(firstPosition.getX());
 
         // Block ends when the current line is shorter than the previous one
         // and isn't at the start of a block.

@@ -42,6 +42,6 @@ public class TextBlock extends PageContent {
     }
 
     public boolean isInitialized() {
-        return y != null && x != null && rotation != null;
+        return y != null && x != null && rotation != null && endY != null;
     }
 }

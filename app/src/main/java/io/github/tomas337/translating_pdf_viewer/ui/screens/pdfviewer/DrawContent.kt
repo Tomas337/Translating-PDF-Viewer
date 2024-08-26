@@ -1,18 +1,24 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,6 +64,15 @@ fun DrawContent(
                 TextAlign.Justify
             }
 
+//        val bulletString = "\u2022\t\t"
+//        val textStyle = LocalTextStyle.current
+//        val textMeasurer = rememberTextMeasurer()
+//        val bulletStringWidth = remember(textStyle, textMeasurer) {
+//            textMeasurer.measure(text = bulletString, style = textStyle).size.width
+//        }
+//        val restLine = with(LocalDensity.current) { bulletStringWidth.toSp() }
+//        val textIndent = TextIndent(restLine = restLine)
+
         Text(
             buildAnnotatedString {
                 content.texts.forEachIndexed { i, text ->
@@ -78,6 +93,7 @@ fun DrawContent(
             textAlign = textAlign,
             lineHeight = lineHeight,
             style = androidx.compose.ui.text.TextStyle.Default.copy(
+//                textIndent = textIndent,
                 lineBreak = LineBreak.Paragraph.copy(
                     strategy = LineBreak.Strategy.HighQuality,
                 )
