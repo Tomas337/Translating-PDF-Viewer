@@ -28,6 +28,7 @@ fun DrawContent(
     content: PageContent,
     pageIndex: Int,
     intToTextStyleMap: Map<Int, TextStyle>,
+    isRightAligned: Boolean,
     modifier: Modifier = Modifier,
 ) {
     if (content is Image) {
@@ -44,6 +45,18 @@ fun DrawContent(
         val lineSpacing = 4
         val lineHeight =
             (intToTextStyleMap[content.styles[0]]!!.fontSize * fontSizeScale + lineSpacing).sp
+
+        val textAlign =
+            if (isRightAligned) {
+                TextAlign.Right
+            } else if (content.texts.size == 1 &&
+                intToTextStyleMap[content.styles[0]]!!.fontWeight >= 600
+            ) {
+                // if is a heading
+                TextAlign.Left
+            } else {
+                TextAlign.Justify
+            }
 
         Text(
             buildAnnotatedString {
@@ -62,11 +75,9 @@ fun DrawContent(
                     }
                 }
             },
-            textAlign = TextAlign.Justify,
+            textAlign = textAlign,
             lineHeight = lineHeight,
             style = androidx.compose.ui.text.TextStyle.Default.copy(
-                // TODO don't split headings
-//                hyphens = Hyphens.Auto,
                 lineBreak = LineBreak.Paragraph.copy(
                     strategy = LineBreak.Strategy.HighQuality,
                 )
