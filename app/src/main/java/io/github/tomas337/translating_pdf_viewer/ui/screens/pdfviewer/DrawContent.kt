@@ -64,15 +64,14 @@ fun DrawContent(
                 TextAlign.Justify
             }
 
-        val bulletString = "\u2022\t\t"
-        val textStyle = LocalTextStyle.current
-        val textMeasurer = rememberTextMeasurer()
-        val bulletStringWidth = remember(textStyle, textMeasurer) {
-            textMeasurer.measure(text = bulletString, style = textStyle).size.width
-        }
-        val bulletOffset = with(LocalDensity.current) { bulletStringWidth.toSp() }
         val textIndent =
-            if (content.isList) {
+            if (content.listPrefix != null) {
+                val textStyle = LocalTextStyle.current
+                val textMeasurer = rememberTextMeasurer()
+                val bulletStringWidth = remember(textStyle, textMeasurer) {
+                    textMeasurer.measure(text = content.listPrefix, style = textStyle).size.width
+                }
+                val bulletOffset = with(LocalDensity.current) { bulletStringWidth.toSp() }
                 TextIndent(restLine = bulletOffset)
             } else {
                 TextIndent()
@@ -91,8 +90,8 @@ fun DrawContent(
                             fontStyle = if (style.isItalic) FontStyle.Italic else FontStyle.Normal,
                         )
                     ) {
-                        if (i == 0 && content.isList) {
-                            append(bulletString)
+                        if (i == 0 && content.listPrefix != null) {
+                            append(content.listPrefix)
                         }
                         append(text)
                     }

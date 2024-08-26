@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import io.github.tomas337.translating_pdf_viewer.utils.Image;
 import io.github.tomas337.translating_pdf_viewer.utils.Page;
@@ -136,13 +137,33 @@ public class Extractor extends PDFTextStripper {
             (curEndPadding < prevEndPadding ||
              lineSpace > MAX_LINE_SPACE)
         ) {
-            assert curTextBlock.isInitialized();
-            curTextBlock.addText(curText.toString());
-            textBlocks.add(curTextBlock);
-            curText = new StringBuilder();
-            curTextBlock = new TextBlock();
-            prevEndPadding = null;
+            onEndOfBlock();
         }
+
+//         Handle current line being the start of a list item
+//        int firstIndex = 0;
+//        try {
+//            String lineBeginning = textPositions.get(0).getUnicode() + textPositions.get(1).getUnicode();
+//            if (textPositions.size() > 2 && Pattern.matches("^([•◦▪0-9])", lineBeginning)) {
+//                if (!curTextBlock.isEmpty()) {
+//                    onEndOfBlock();
+//                }
+//                curTextBlock.setListPrefix(lineBeginning + "\t\t");
+//                firstIndex = 2;
+//            } if (textPositions.size() > 3 && Pattern.matches("^[a-zA-Z0-9][).]", lineBeginning)) {
+//                if (!curTextBlock.isEmpty()) {
+//                    onEndOfBlock();
+//                }
+//                curTextBlock.setListPrefix(lineBeginning + "\t\t");
+//                firstIndex = 3;
+//            }
+//        } catch (NullPointerException ignore) {}
+//
+//        firstPosition = textPositions.get(firstIndex);
+//        while (firstPosition == null) {
+//            firstIndex++;
+//            firstPosition = textPositions.get(firstIndex);
+//        }
 
         // Join parts of a word or separate sentences
         if (curText.length() != 0) {
@@ -157,6 +178,7 @@ public class Extractor extends PDFTextStripper {
             }
         }
 
+//        for (int i = firstIndex; i < textPositions.size(); i++) {
         for (int i = 0; i < textPositions.size(); i++) {
             TextPosition position = textPositions.get(i);
 
@@ -168,8 +190,17 @@ public class Extractor extends PDFTextStripper {
                 continue;
             }
 
-            if (i == 0 && position.getUnicode().equals("•")) {
-                curTextBlock.setIsList(true);
+            String unicode = position.getUnicode();
+            if (i == 0 &&
+                (unicode.equals("•") ||
+                 unicode.equals("◦") ||
+                 unicode.equals("▪"))
+            ) {
+                if (!curTextBlock.isEmpty()) {
+                    onEndOfBlock();
+                }
+                curTextBlock.setListPrefix(unicode + "\t\t");
+                curTextBlock.setX(firstPosition.getX());
                 i++;
                 firstPosition = textPositions.get(2);
                 continue;
@@ -214,7 +245,6 @@ public class Extractor extends PDFTextStripper {
                 prevFontSize = fontSize;
             }
 
-            String unicode = position.getUnicode();
             curText.append(unicode);
             builder.append(unicode);
 
@@ -228,17 +258,14 @@ public class Extractor extends PDFTextStripper {
             curTextBlock.setRotation(getAngle(firstPosition));
         }
         // Set x to the x of the last concatenated line to handle block starting with an indent.
-        curTextBlock.setX(firstPosition.getX());
+        if (curTextBlock.getX() == null || firstPosition.getX() < curTextBlock.getX()) {
+            curTextBlock.setX(firstPosition.getX());
+        }
 
         // Block ends when the current line is shorter than the previous one
         // and isn't at the start of a block.
         if (prevEndPadding != null && curEndPadding > prevEndPadding) {
-            assert curTextBlock.isInitialized();
-            curTextBlock.addText(curText.toString());
-            textBlocks.add(curTextBlock);
-            curText = new StringBuilder();
-            curTextBlock = new TextBlock();
-            prevEndPadding = null;
+            onEndOfBlock();
         } else {
             prevEndPadding = curEndPadding;
         }
@@ -254,6 +281,15 @@ public class Extractor extends PDFTextStripper {
 
     public HashMap<Integer, TextStyle> getIntToTextStyleMap() {
         return intToTextStyleMap;
+    }
+
+    private void onEndOfBlock() {
+        assert curTextBlock.isInitialized();
+        curTextBlock.addText(curText.toString());
+        textBlocks.add(curTextBlock);
+        curText = new StringBuilder();
+        curTextBlock = new TextBlock();
+        prevEndPadding = null;
     }
 
     /**

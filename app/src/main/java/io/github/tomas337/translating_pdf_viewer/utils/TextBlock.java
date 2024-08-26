@@ -9,6 +9,7 @@ public class TextBlock extends PageContent {
     List<String> texts = new ArrayList<>();
     List<Integer> styles = new ArrayList<>();
     boolean isList = false;
+    String listPrefix = null;
 
     public TextBlock() {
         super("text-block");
@@ -42,12 +43,12 @@ public class TextBlock extends PageContent {
         this.rotation = rotation;
     }
 
-    public boolean getIsList() {
-        return isList;
+    public String getListPrefix() {
+        return listPrefix;
     }
 
-    public void setIsList(boolean isList) {
-        this.isList = isList;
+    public void setListPrefix(String prefix) {
+        listPrefix = prefix;
     }
 
     public boolean isInitialized() {
