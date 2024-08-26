@@ -157,13 +157,21 @@ public class Extractor extends PDFTextStripper {
             }
         }
 
-        for (TextPosition position : textPositions) {
+        for (int i = 0; i < textPositions.size(); i++) {
+            TextPosition position = textPositions.get(i);
 
             // Handle non ASCII separator
             if (position == null) {
                 String separator = getWordSeparator();
                 curText.append(separator);
                 builder.append(separator);
+                continue;
+            }
+
+            if (i == 0 && position.getUnicode().equals("•")) {
+                curTextBlock.setIsList(true);
+                i++;
+                firstPosition = textPositions.get(2);
                 continue;
             }
 

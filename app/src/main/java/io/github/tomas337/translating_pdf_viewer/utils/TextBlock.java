@@ -8,6 +8,7 @@ public class TextBlock extends PageContent {
     Float rotation = null;
     List<String> texts = new ArrayList<>();
     List<Integer> styles = new ArrayList<>();
+    boolean isList = false;
 
     public TextBlock() {
         super("text-block");
@@ -39,6 +40,14 @@ public class TextBlock extends PageContent {
 
     public void setRotation(Float rotation) {
         this.rotation = rotation;
+    }
+
+    public boolean getIsList() {
+        return isList;
+    }
+
+    public void setIsList(boolean isList) {
+        this.isList = isList;
     }
 
     public boolean isInitialized() {

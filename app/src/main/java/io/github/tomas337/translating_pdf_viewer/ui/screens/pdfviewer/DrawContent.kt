@@ -64,14 +64,19 @@ fun DrawContent(
                 TextAlign.Justify
             }
 
-//        val bulletString = "\u2022\t\t"
-//        val textStyle = LocalTextStyle.current
-//        val textMeasurer = rememberTextMeasurer()
-//        val bulletStringWidth = remember(textStyle, textMeasurer) {
-//            textMeasurer.measure(text = bulletString, style = textStyle).size.width
-//        }
-//        val restLine = with(LocalDensity.current) { bulletStringWidth.toSp() }
-//        val textIndent = TextIndent(restLine = restLine)
+        val bulletString = "\u2022\t\t"
+        val textStyle = LocalTextStyle.current
+        val textMeasurer = rememberTextMeasurer()
+        val bulletStringWidth = remember(textStyle, textMeasurer) {
+            textMeasurer.measure(text = bulletString, style = textStyle).size.width
+        }
+        val bulletOffset = with(LocalDensity.current) { bulletStringWidth.toSp() }
+        val textIndent =
+            if (content.isList) {
+                TextIndent(restLine = bulletOffset)
+            } else {
+                TextIndent()
+            }
 
         Text(
             buildAnnotatedString {
@@ -86,6 +91,9 @@ fun DrawContent(
                             fontStyle = if (style.isItalic) FontStyle.Italic else FontStyle.Normal,
                         )
                     ) {
+                        if (i == 0 && content.isList) {
+                            append(bulletString)
+                        }
                         append(text)
                     }
                 }
@@ -93,7 +101,7 @@ fun DrawContent(
             textAlign = textAlign,
             lineHeight = lineHeight,
             style = androidx.compose.ui.text.TextStyle.Default.copy(
-//                textIndent = textIndent,
+                textIndent = textIndent,
                 lineBreak = LineBreak.Paragraph.copy(
                     strategy = LineBreak.Strategy.HighQuality,
                 )
