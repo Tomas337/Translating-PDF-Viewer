@@ -21,6 +21,18 @@ import android.util.Log;
 
 import com.tom_roush.pdfbox.contentstream.operator.DrawObject;
 import com.tom_roush.pdfbox.contentstream.operator.Operator;
+import com.tom_roush.pdfbox.contentstream.operator.color.SetNonStrokingColor;
+import com.tom_roush.pdfbox.contentstream.operator.color.SetNonStrokingColorN;
+import com.tom_roush.pdfbox.contentstream.operator.color.SetNonStrokingColorSpace;
+import com.tom_roush.pdfbox.contentstream.operator.color.SetNonStrokingDeviceCMYKColor;
+import com.tom_roush.pdfbox.contentstream.operator.color.SetNonStrokingDeviceGrayColor;
+import com.tom_roush.pdfbox.contentstream.operator.color.SetNonStrokingDeviceRGBColor;
+import com.tom_roush.pdfbox.contentstream.operator.color.SetStrokingColor;
+import com.tom_roush.pdfbox.contentstream.operator.color.SetStrokingColorN;
+import com.tom_roush.pdfbox.contentstream.operator.color.SetStrokingColorSpace;
+import com.tom_roush.pdfbox.contentstream.operator.color.SetStrokingDeviceCMYKColor;
+import com.tom_roush.pdfbox.contentstream.operator.color.SetStrokingDeviceGrayColor;
+import com.tom_roush.pdfbox.contentstream.operator.color.SetStrokingDeviceRGBColor;
 import com.tom_roush.pdfbox.contentstream.operator.state.Concatenate;
 import com.tom_roush.pdfbox.contentstream.operator.state.Restore;
 import com.tom_roush.pdfbox.contentstream.operator.state.Save;
@@ -44,6 +56,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -70,9 +83,19 @@ public class Extractor extends PDFTextStripper {
     private PDFont prevFont;
     private float prevFontSize;
     private int curMaxStyleIndex;
-    private Integer prevEndPadding = null;
+    private Integer prevEndPadding;
+    private List<float[]> colors;
+//    private List<List<ExtractedColor>> colors;
+//    private List<ExtractedColor> colors;
+//    private int curLineIndex;
+    private int curColorIndex;
+    private float[] prevColor;
     private final HashMap<TextStyle, Integer> textStyleToIntMap = new HashMap<>();
     private final HashMap<Integer, TextStyle> intToTextStyleMap = new HashMap<>();
+
+    // Variables for text color extraction.
+//    private List<ExtractedColor> curLineColors;
+//    private int curPositionIndex;
 
     // Variables for image extraction.
     private final int dpi;
@@ -91,13 +114,63 @@ public class Extractor extends PDFTextStripper {
         this.dpi = dpi;
         this.path = path;
 
-        // Initialize operators for image extraction
+        // Initialize operators for image extraction.
         addOperator(new Concatenate());
         addOperator(new DrawObject());
         addOperator(new SetGraphicsStateParameters());
         addOperator(new Save());
         addOperator(new Restore());
         addOperator(new SetMatrix());
+
+        // Initialize operators for color extraction;
+        addOperator(new SetStrokingColorSpace());
+        addOperator(new SetNonStrokingColorSpace());
+        addOperator(new SetStrokingDeviceCMYKColor());
+        addOperator(new SetNonStrokingDeviceCMYKColor());
+        addOperator(new SetNonStrokingDeviceRGBColor());
+        addOperator(new SetStrokingDeviceRGBColor());
+        addOperator(new SetNonStrokingDeviceGrayColor());
+        addOperator(new SetStrokingDeviceGrayColor());
+        addOperator(new SetStrokingColor());
+        addOperator(new SetStrokingColorN());
+        addOperator(new SetNonStrokingColor());
+        addOperator(new SetNonStrokingColorN());
+    }
+
+    public Page getPageObject(PDPage page) throws IOException {
+        try (PDDocument document = new PDDocument()) {
+            document.addPage(page);
+            extractDocument(document);
+            float pageWidth = page.getMediaBox().getWidth();
+            return new Page(textBlocks, images, margin, pageWidth);
+        }
+    }
+
+    private void extractDocument(PDDocument document) throws IOException {
+        images = new ArrayList<>();
+        textBlocks = new ArrayList<>();
+        curTextBlock = new TextBlock();
+        curText = new StringBuilder();
+        prevEndPadding = null;
+        margin = null;
+        colors = new ArrayList<>();
+        curColorIndex = 0;
+        prevColor = new float[]{};
+        getText(document);
+        onPageEnd();
+    }
+
+    /**
+     * Handles the case when page ends with a line of maximum length.
+     */
+    private void onPageEnd() {
+        if (curText.length() != 0) {
+            curTextBlock.addText(curText.toString());
+            textBlocks.add(curTextBlock);
+        }
+        if (margin == null) {
+            margin = 0f;
+        }
     }
 
     /**
@@ -114,6 +187,7 @@ public class Extractor extends PDFTextStripper {
     @Override
     protected void writeString(String text, List<TextPosition> textPositions) throws IOException {
         StringBuilder builder = new StringBuilder();
+
         TextPosition firstPosition = textPositions.get(0);
 
         if (margin == null || firstPosition.getX() < margin) {
@@ -184,10 +258,12 @@ public class Extractor extends PDFTextStripper {
             PDFont baseFont = position.getFont();
             PDFont font = baseFont != null ? baseFont : prevFont;
             float fontSize = position.getFontSize();
+            float[] curColor = colors.get(curColorIndex);
 
             // Handle style change.
             if (!Objects.deepEquals(font, prevFont) ||
                 fontSize != prevFontSize ||
+                !Arrays.equals(curColor, prevColor) ||
                 (curTextBlock.isEmpty() && curText.length() == 0)
             ) {
                 if (curText.length() != 0) {
@@ -206,7 +282,11 @@ public class Extractor extends PDFTextStripper {
                     prevEndPadding = null;
                 }
 
-                TextStyle style = new TextStyle(fontSize, font);
+                TextStyle style = new TextStyle(
+                        fontSize,
+                        font,
+                        curColor
+                );
 
                 if (textStyleToIntMap.containsKey(style)) {
                     curTextBlock.addStyle(textStyleToIntMap.get(style));
@@ -225,6 +305,9 @@ public class Extractor extends PDFTextStripper {
             builder.append(unicode);
 
             curTextBlock.setEndY(position.getY());
+
+            prevColor = curColor;
+            curColorIndex++;
         }
 
         if (curTextBlock.getY() == null &&
@@ -269,37 +352,10 @@ public class Extractor extends PDFTextStripper {
         prevEndPadding = null;
     }
 
-    /**
-     * Handles the case when page ends with a line of maximum length.
-     */
-    private void onPageEnd() {
-        if (curText.length() != 0) {
-            curTextBlock.addText(curText.toString());
-            textBlocks.add(curTextBlock);
-        }
-        if (margin == null) {
-            margin = 0f;
-        }
-    }
-
-    private void extractDocument(PDDocument document) throws IOException {
-        images = new ArrayList<>();
-        textBlocks = new ArrayList<>();
-        curTextBlock = new TextBlock();
-        curText = new StringBuilder();
-        prevEndPadding = null;
-        margin = null;
-        getText(document);
-        onPageEnd();
-    }
-
-    public Page getPageObject(PDPage page) throws IOException {
-        try (PDDocument document = new PDDocument()) {
-            document.addPage(page);
-            extractDocument(document);
-            float pageWidth = page.getMediaBox().getWidth();
-            return new Page(textBlocks, images, margin, pageWidth);
-        }
+    @Override
+    protected void processTextPosition(TextPosition text) {
+        super.processTextPosition(text);
+        colors.add(getGraphicsState().getNonStrokingColor().getComponents());
     }
 
     /**

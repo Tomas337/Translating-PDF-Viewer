@@ -5,7 +5,7 @@ import android.util.Log;
 import com.tom_roush.pdfbox.pdmodel.font.PDFont;
 import com.tom_roush.pdfbox.pdmodel.font.PDFontDescriptor;
 
-import java.util.regex.Matcher;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 public class TextStyle {
@@ -13,9 +13,12 @@ public class TextStyle {
     float fontSize;
     int fontWeight;
     boolean isItalic;
+    float[] color;
 
-    public TextStyle(float fontSize, PDFont font) {
+    public TextStyle(float fontSize, PDFont font, float[] color) {
         this.fontSize = fontSize;
+        this.color = color;
+
         PDFontDescriptor descriptor = font.getFontDescriptor();
         String fontName = font.getName();
 
@@ -54,6 +57,10 @@ public class TextStyle {
         return isItalic;
     }
 
+    public float[] getColor() {
+        return color;
+    }
+
     @Override
     public int hashCode()
     {
@@ -82,6 +89,9 @@ public class TextStyle {
             return false;
         }
         if (this.isItalic != other.isItalic) {
+            return false;
+        }
+        if (!Arrays.equals(this.color, other.color)) {
             return false;
         }
 

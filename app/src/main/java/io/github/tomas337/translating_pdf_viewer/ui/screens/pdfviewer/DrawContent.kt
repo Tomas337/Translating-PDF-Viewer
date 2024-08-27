@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.ParagraphStyle
@@ -29,6 +30,7 @@ import io.github.tomas337.translating_pdf_viewer.utils.Image
 import io.github.tomas337.translating_pdf_viewer.utils.PageContent
 import io.github.tomas337.translating_pdf_viewer.utils.TextBlock
 import io.github.tomas337.translating_pdf_viewer.utils.TextStyle
+import kotlin.math.roundToInt
 
 @Composable
 fun DrawContent(
@@ -78,19 +80,24 @@ fun DrawContent(
                 TextIndent()
             }
 
-        Log.d("text", content.texts.toString())
-
         Text(
             buildAnnotatedString {
                 content.texts.forEachIndexed { i, text ->
                     val styleIndex = content.styles[i]
                     val style = intToTextStyleMap[styleIndex]
+//                    Log.d("color", style!!.color.contentToString())
 
                     withStyle(
                         style = SpanStyle(
                             fontSize = style!!.fontSize.sp * fontSizeScale,
                             fontWeight = FontWeight(style.fontWeight),
                             fontStyle = if (style.isItalic) FontStyle.Italic else FontStyle.Normal,
+                            color =
+                                if (style.color.size == 3) {
+                                    Color(style.color[0], style.color[1], style.color[2])
+                                } else {
+                                    Color(style.color[0], style.color[0], style.color[0])
+                                },
                         )
                     ) {
                         if (i == 0 && content.listPrefix != null) {

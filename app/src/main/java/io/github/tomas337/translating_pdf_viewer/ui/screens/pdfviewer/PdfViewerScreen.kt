@@ -144,7 +144,6 @@ fun PdfViewerScreen(
                             val width = LocalDensity.current.run { (maxWidth - 2*x).toDp() }
                             Modifier.width(width)
                         }
-                    Log.d("x", row[0].x.toString())
                     val isRightAligned = row[0].x > 0.25
 
                     val handleXPositionModifier = widthModifier
