@@ -152,13 +152,12 @@ public class Extractor extends PDFTextStripper {
         prevEndPadding = null;
 
         // The current version doesn't except cover pages from being extracted,
-        // where the margin may be smaller or equal to zero than on normal pages.
+        // where the margin may be equal to zero or smaller than on normal pages.
         // Thus we need to reset margin for each page.
         margin = null;
 
         colors = new ArrayList<>();
         curColorIndex = 0;
-        prevColor = new float[]{};
         getText(document);
         onPageEnd();
     }
