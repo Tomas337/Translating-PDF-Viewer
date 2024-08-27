@@ -75,7 +75,7 @@ import io.github.tomas337.translating_pdf_viewer.utils.TextStyle;
  */
 public class Extractor extends PDFTextStripper {
 
-    private Float margin = null;
+    private Float margin = Float.MAX_VALUE;
 
     // Variables for text extraction.
     private final float MAX_LINE_SPACE = 3f;
@@ -154,7 +154,7 @@ public class Extractor extends PDFTextStripper {
         // The current version doesn't except cover pages from being extracted,
         // where the margin may be equal to zero or smaller than on normal pages.
         // Thus we need to reset margin for each page.
-        margin = null;
+        margin = Float.MAX_VALUE;
 
         colors = new ArrayList<>();
         curColorIndex = 0;
@@ -188,7 +188,7 @@ public class Extractor extends PDFTextStripper {
         StringBuilder builder = new StringBuilder();
         TextPosition firstPosition = textPositions.get(0);
 
-        if (margin == null || firstPosition.getX() < margin) {
+        if (firstPosition.getX() < margin) {
             margin = firstPosition.getX();
         }
 
@@ -401,7 +401,7 @@ public class Extractor extends PDFTextStripper {
                 );
                 images.add(image);
 
-                if (margin == null || ctmNew.getTranslateX() < margin) {
+                if (ctmNew.getTranslateX() < margin) {
                     margin = ctmNew.getTranslateX();
                 }
             }
