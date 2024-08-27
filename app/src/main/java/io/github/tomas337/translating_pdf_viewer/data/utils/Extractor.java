@@ -33,6 +33,7 @@ import com.tom_roush.pdfbox.contentstream.operator.color.SetStrokingColorSpace;
 import com.tom_roush.pdfbox.contentstream.operator.color.SetStrokingDeviceCMYKColor;
 import com.tom_roush.pdfbox.contentstream.operator.color.SetStrokingDeviceGrayColor;
 import com.tom_roush.pdfbox.contentstream.operator.color.SetStrokingDeviceRGBColor;
+import com.tom_roush.pdfbox.contentstream.operator.graphics.AppendRectangleToPath;
 import com.tom_roush.pdfbox.contentstream.operator.state.Concatenate;
 import com.tom_roush.pdfbox.contentstream.operator.state.Restore;
 import com.tom_roush.pdfbox.contentstream.operator.state.Save;
@@ -40,6 +41,7 @@ import com.tom_roush.pdfbox.contentstream.operator.state.SetGraphicsStateParamet
 import com.tom_roush.pdfbox.contentstream.operator.state.SetMatrix;
 import com.tom_roush.pdfbox.cos.COSBase;
 import com.tom_roush.pdfbox.cos.COSName;
+import com.tom_roush.pdfbox.cos.COSNumber;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
 import com.tom_roush.pdfbox.pdmodel.PDPage;
 import com.tom_roush.pdfbox.pdmodel.font.PDFont;
@@ -85,17 +87,10 @@ public class Extractor extends PDFTextStripper {
     private int curMaxStyleIndex;
     private Integer prevEndPadding;
     private List<float[]> colors;
-//    private List<List<ExtractedColor>> colors;
-//    private List<ExtractedColor> colors;
-//    private int curLineIndex;
     private int curColorIndex;
     private float[] prevColor;
     private final HashMap<TextStyle, Integer> textStyleToIntMap = new HashMap<>();
     private final HashMap<Integer, TextStyle> intToTextStyleMap = new HashMap<>();
-
-    // Variables for text color extraction.
-//    private List<ExtractedColor> curLineColors;
-//    private int curPositionIndex;
 
     // Variables for image extraction.
     private final int dpi;
@@ -122,7 +117,7 @@ public class Extractor extends PDFTextStripper {
         addOperator(new Restore());
         addOperator(new SetMatrix());
 
-        // Initialize operators for color extraction;
+        // Initialize operators for color extraction.
         addOperator(new SetStrokingColorSpace());
         addOperator(new SetNonStrokingColorSpace());
         addOperator(new SetStrokingDeviceCMYKColor());
@@ -135,6 +130,9 @@ public class Extractor extends PDFTextStripper {
         addOperator(new SetStrokingColorN());
         addOperator(new SetNonStrokingColor());
         addOperator(new SetNonStrokingColorN());
+
+        // Initialize operators for rectangle extraction.
+//        addOperator(new AppendRectangleToPath());
     }
 
     public Page getPageObject(PDPage page) throws IOException {
@@ -152,7 +150,12 @@ public class Extractor extends PDFTextStripper {
         curTextBlock = new TextBlock();
         curText = new StringBuilder();
         prevEndPadding = null;
+
+        // The current version doesn't except cover pages from being extracted,
+        // where the margin may be smaller or equal to zero than on normal pages.
+        // Thus we need to reset margin for each page.
         margin = null;
+
         colors = new ArrayList<>();
         curColorIndex = 0;
         prevColor = new float[]{};
@@ -167,9 +170,6 @@ public class Extractor extends PDFTextStripper {
         if (curText.length() != 0) {
             curTextBlock.addText(curText.toString());
             textBlocks.add(curTextBlock);
-        }
-        if (margin == null) {
-            margin = 0f;
         }
     }
 
@@ -187,7 +187,6 @@ public class Extractor extends PDFTextStripper {
     @Override
     protected void writeString(String text, List<TextPosition> textPositions) throws IOException {
         StringBuilder builder = new StringBuilder();
-
         TextPosition firstPosition = textPositions.get(0);
 
         if (margin == null || firstPosition.getX() < margin) {
@@ -407,7 +406,13 @@ public class Extractor extends PDFTextStripper {
                     margin = ctmNew.getTranslateX();
                 }
             }
-        } else {
+        }/* else if ("re".equals(operation)) {
+            COSNumber x = (COSNumber) operands.get(0);
+            COSNumber y = (COSNumber) operands.get(1);
+            COSNumber w = (COSNumber) operands.get(2);
+            COSNumber h = (COSNumber) operands.get(3);
+
+        } */else {
             super.processOperator(operator, operands);
         }
     }
