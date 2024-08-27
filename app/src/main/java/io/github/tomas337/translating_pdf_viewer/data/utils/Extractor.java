@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import io.github.tomas337.translating_pdf_viewer.utils.Image;
@@ -61,7 +62,7 @@ public class Extractor extends PDFTextStripper {
 
     private Float margin = null;
 
-    // variables for text extraction
+    // Variables for text extraction.
     private final float MAX_LINE_SPACE = 3f;
     private List<TextBlock> textBlocks;
     private TextBlock curTextBlock;
@@ -73,7 +74,7 @@ public class Extractor extends PDFTextStripper {
     private final HashMap<TextStyle, Integer> textStyleToIntMap = new HashMap<>();
     private final HashMap<Integer, TextStyle> intToTextStyleMap = new HashMap<>();
 
-    // variables for image extraction
+    // Variables for image extraction.
     private final int dpi;
     private final Path path;
     private List<Image> images;
@@ -140,37 +141,28 @@ public class Extractor extends PDFTextStripper {
             onEndOfBlock();
         }
 
-//         Handle current line being the start of a list item
-//        int firstIndex = 0;
-//        try {
-//            String lineBeginning = textPositions.get(0).getUnicode() + textPositions.get(1).getUnicode();
-//            if (textPositions.size() > 2 && Pattern.matches("^([•◦▪0-9])", lineBeginning)) {
-//                if (!curTextBlock.isEmpty()) {
-//                    onEndOfBlock();
-//                }
-//                curTextBlock.setListPrefix(lineBeginning + "\t\t");
-//                firstIndex = 2;
-//            } if (textPositions.size() > 3 && Pattern.matches("^[a-zA-Z0-9][).]", lineBeginning)) {
-//                if (!curTextBlock.isEmpty()) {
-//                    onEndOfBlock();
-//                }
-//                curTextBlock.setListPrefix(lineBeginning + "\t\t");
-//                firstIndex = 3;
-//            }
-//        } catch (NullPointerException ignore) {}
-//
-//        firstPosition = textPositions.get(firstIndex);
-//        while (firstPosition == null) {
-//            firstIndex++;
-//            firstPosition = textPositions.get(firstIndex);
-//        }
+        // Handle bullet prefix.
+        int firstIndex = 0;
+        Pattern bulletPattern = Pattern.compile("^([•◦▪]|([0-9]{1,2}[).])|([a-zA-Z][).]))(?= )");
+        Matcher bulletMatcher = bulletPattern.matcher(text);
+        if (bulletMatcher.find()) {
+            if (!curTextBlock.isEmpty()) {
+                onEndOfBlock();
+            }
+            String bulletString = bulletMatcher.group();
+            firstIndex = bulletString.length() + 1;
+            firstPosition = textPositions.get(firstIndex);
+            assert firstPosition != null;
+            curTextBlock.setListPrefix(bulletString + "\t\t");
+            curTextBlock.setX(firstPosition.getX());
+        }
 
-        // Join parts of a word or separate sentences
+        // Join parts of a word or separate sentences.
         if (curText.length() != 0) {
             int lastIndex = curText.length() - 1;
             char lastChar = curText.charAt(lastIndex);
 
-            // hyphen-minus and hyphen character
+            // hyphen-minus and hyphen character.
             if (lastChar == '-' || lastChar == '‐') {
                 curText.deleteCharAt(lastIndex);
             } else if (lastChar != ' ') {
@@ -178,11 +170,10 @@ public class Extractor extends PDFTextStripper {
             }
         }
 
-//        for (int i = firstIndex; i < textPositions.size(); i++) {
-        for (int i = 0; i < textPositions.size(); i++) {
+        for (int i = firstIndex; i < textPositions.size(); i++) {
             TextPosition position = textPositions.get(i);
 
-            // Handle non ASCII separator
+            // Handle non ASCII separator.
             if (position == null) {
                 String separator = getWordSeparator();
                 curText.append(separator);
@@ -190,27 +181,11 @@ public class Extractor extends PDFTextStripper {
                 continue;
             }
 
-            String unicode = position.getUnicode();
-            if (i == 0 &&
-                (unicode.equals("•") ||
-                 unicode.equals("◦") ||
-                 unicode.equals("▪"))
-            ) {
-                if (!curTextBlock.isEmpty()) {
-                    onEndOfBlock();
-                }
-                curTextBlock.setListPrefix(unicode + "\t\t");
-                curTextBlock.setX(firstPosition.getX());
-                i++;
-                firstPosition = textPositions.get(2);
-                continue;
-            }
-
             PDFont baseFont = position.getFont();
             PDFont font = baseFont != null ? baseFont : prevFont;
             float fontSize = position.getFontSize();
 
-            // Handle style change
+            // Handle style change.
             if (!Objects.deepEquals(font, prevFont) ||
                 fontSize != prevFontSize ||
                 (curTextBlock.isEmpty() && curText.length() == 0)
@@ -220,7 +195,7 @@ public class Extractor extends PDFTextStripper {
                     curText = new StringBuilder();
                 }
 
-                // Block ends when the font size changes between lines
+                // Block ends when the font size changes between lines.
                 if (fontSize != prevFontSize &&
                     Objects.equals(position, firstPosition) &&
                     !curTextBlock.isEmpty()
@@ -245,6 +220,7 @@ public class Extractor extends PDFTextStripper {
                 prevFontSize = fontSize;
             }
 
+            String unicode = position.getUnicode();
             curText.append(unicode);
             builder.append(unicode);
 
@@ -257,7 +233,8 @@ public class Extractor extends PDFTextStripper {
             curTextBlock.setY(firstPosition.getY());
             curTextBlock.setRotation(getAngle(firstPosition));
         }
-        // Set x to the x of the last concatenated line to handle block starting with an indent.
+
+        // Set x to the x of the most left line to handle block starting with an indent or bullet.
         if (curTextBlock.getX() == null || firstPosition.getX() < curTextBlock.getX()) {
             curTextBlock.setX(firstPosition.getX());
         }

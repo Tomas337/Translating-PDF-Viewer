@@ -1,5 +1,6 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
+import android.util.Log
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
@@ -76,6 +77,8 @@ fun DrawContent(
             } else {
                 TextIndent()
             }
+
+        Log.d("text", content.texts.toString())
 
         Text(
             buildAnnotatedString {

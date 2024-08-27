@@ -8,7 +8,6 @@ public class TextBlock extends PageContent {
     Float rotation = null;
     List<String> texts = new ArrayList<>();
     List<Integer> styles = new ArrayList<>();
-    boolean isList = false;
     String listPrefix = null;
 
     public TextBlock() {
