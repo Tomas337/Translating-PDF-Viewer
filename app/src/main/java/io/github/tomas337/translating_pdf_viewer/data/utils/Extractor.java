@@ -229,6 +229,7 @@ public class Extractor extends PDFTextStripper {
             assert firstPosition != null;
             curTextBlock.setListPrefix(bulletString + "\t\t");
             curTextBlock.setX(firstPosition.getX());
+            curColorIndex += bulletString.length();
         }
 
         // Join parts of a word or separate sentences.
@@ -298,16 +299,15 @@ public class Extractor extends PDFTextStripper {
                 }
                 prevFont = font;
                 prevFontSize = fontSize;
+                prevColor = curColor;
             }
+            curColorIndex++;
 
             String unicode = position.getUnicode();
             curText.append(unicode);
             builder.append(unicode);
 
             curTextBlock.setEndY(position.getY());
-
-            prevColor = curColor;
-            curColorIndex++;
         }
 
         if (curTextBlock.getY() == null &&
