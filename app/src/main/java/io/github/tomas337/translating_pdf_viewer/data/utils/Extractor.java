@@ -96,6 +96,10 @@ public class Extractor extends PDFTextStripper {
     private final int dpi;
     private final Path path;
     private List<Image> images;
+    private int imageIndex = 0;
+
+    // Variables for rectangle extraction.
+//    private List<> rectangles;
 
     /**
      * Default constructor.
@@ -130,9 +134,6 @@ public class Extractor extends PDFTextStripper {
         addOperator(new SetStrokingColorN());
         addOperator(new SetNonStrokingColor());
         addOperator(new SetNonStrokingColorN());
-
-        // Initialize operators for rectangle extraction.
-//        addOperator(new AppendRectangleToPath());
     }
 
     public Page getPageObject(PDPage page) throws IOException {
@@ -378,7 +379,7 @@ public class Extractor extends PDFTextStripper {
                 PDImageXObject imageObject = (PDImageXObject) xObject;
 
                 Bitmap imageBitmap = imageObject.getImage();
-                String filepath = saveImage(imageBitmap, objectName.getName());
+                String filepath = saveImage(imageBitmap);
 
                 Matrix ctmNew = getGraphicsState().getCurrentTransformationMatrix();
                 float imageXScale = ctmNew.getScalingFactorX();
@@ -405,26 +406,28 @@ public class Extractor extends PDFTextStripper {
                     margin = ctmNew.getTranslateX();
                 }
             }
-        }/* else if ("re".equals(operation)) {
+        } else if ("re".equals(operation)) {
             COSNumber x = (COSNumber) operands.get(0);
             COSNumber y = (COSNumber) operands.get(1);
             COSNumber w = (COSNumber) operands.get(2);
             COSNumber h = (COSNumber) operands.get(3);
 
-        } */else {
+            Log.d("stuff", x + " " + y + " " + w + " " + h);
+            Log.d("nonstroking color", Arrays.toString(getGraphicsState().getNonStrokingColor().getComponents()));
+            Log.d("stroking color", Arrays.toString(getGraphicsState().getStrokingColor().getComponents()));
+        } else {
             super.processOperator(operator, operands);
         }
     }
 
-    private String saveImage(Bitmap image, String name) throws IOException {
-        Path filepath = path.resolve(name + ".png");
+    private String saveImage(Bitmap image) throws IOException {
+        Path filepath = path.resolve(imageIndex + ".png");
         String filepathString = filepath.toString();
 
-        if (!Files.exists(filepath)) {
-            try (FileOutputStream fos = new FileOutputStream(filepathString)) {
-                image.compress(Bitmap.CompressFormat.PNG, 100, fos);
-            }
+        try (FileOutputStream fos = new FileOutputStream(filepathString)) {
+            image.compress(Bitmap.CompressFormat.PNG, 100, fos);
         }
+        imageIndex++;
         return filepathString;
     }
 }

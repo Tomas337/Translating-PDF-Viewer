@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -30,7 +31,6 @@ import io.github.tomas337.translating_pdf_viewer.utils.Image
 import io.github.tomas337.translating_pdf_viewer.utils.PageContent
 import io.github.tomas337.translating_pdf_viewer.utils.TextBlock
 import io.github.tomas337.translating_pdf_viewer.utils.TextStyle
-import kotlin.math.roundToInt
 
 @Composable
 fun DrawContent(
@@ -47,7 +47,7 @@ fun DrawContent(
                 .size(content.width, content.height)
                 .build(),
             contentDescription = "Image on page ${pageIndex + 1}",
-            modifier = modifier
+            modifier = modifier,
         )
     } else if (content is TextBlock) {
         val fontSizeScale = 1.5
