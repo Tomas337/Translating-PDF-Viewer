@@ -1,5 +1,6 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -72,27 +73,23 @@ fun PageSlider(
                     }
                 }
                 .pointerInput(Unit) {
-                    var newY = y
+                    var curY = y.toFloat()
                     detectVerticalDragGestures(
-                        onDragStart = { newY = y },
+                        onDragStart = { curY = y.toFloat() },
                         onDragEnd = {
-                            newY = y
+                            curY = y.toFloat()
                             isActive = false
                         },
                         onDragCancel = {
-                            newY = y
+                            curY = y.toFloat()
                             isActive = false
                         },
                         onVerticalDrag = { _, dragAmount ->
-                            newY += dragAmount.roundToInt()
-                            val isAtTop = (y == 0)
-                            val isAtBottom = (y == (maxHeight - height.roundToPx()))
+                            curY += dragAmount
+                            val newY = Math.round(curY / stepSize) * stepSize;
 
-                            if (newY > (y + stepSize / 2) && !isAtBottom) {
-                                y += stepSize
-                                coroutineScope.launch { setPage(y / stepSize) }
-                            } else if (newY < (y - stepSize / 2) && !isAtTop) {
-                                y -= stepSize
+                            if (newY != y) {
+                                y = newY
                                 coroutineScope.launch { setPage(y / stepSize) }
                             }
                         }

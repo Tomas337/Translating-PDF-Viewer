@@ -60,13 +60,16 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import io.github.tomas337.translating_pdf_viewer.utils.Image;
 import io.github.tomas337.translating_pdf_viewer.utils.Page;
+import io.github.tomas337.translating_pdf_viewer.utils.Rectangle;
 import io.github.tomas337.translating_pdf_viewer.utils.TextBlock;
 import io.github.tomas337.translating_pdf_viewer.utils.TextStyle;
 
@@ -99,7 +102,8 @@ public class Extractor extends PDFTextStripper {
     private int imageIndex = 0;
 
     // Variables for rectangle extraction.
-//    private List<> rectangles;
+    private List<Rectangle> rectangles;
+    private Rectangle curRectangle;
 
     /**
      * Default constructor.
@@ -151,14 +155,16 @@ public class Extractor extends PDFTextStripper {
         curTextBlock = new TextBlock();
         curText = new StringBuilder();
         prevEndPadding = null;
+        colors = new ArrayList<>();
+        curColorIndex = 0;
+        rectangles = new ArrayList<>();
+        curRectangle = new Rectangle();
 
         // The current version doesn't except cover pages from being extracted,
         // where the margin may be equal to zero or smaller than on normal pages.
         // Thus we need to reset margin for each page.
         margin = Float.MAX_VALUE;
 
-        colors = new ArrayList<>();
-        curColorIndex = 0;
         getText(document);
         onPageEnd();
     }
@@ -354,6 +360,7 @@ public class Extractor extends PDFTextStripper {
     @Override
     protected void processTextPosition(TextPosition text) {
         super.processTextPosition(text);
+//        Log.d("text position", text.toString());
         colors.add(getGraphicsState().getNonStrokingColor().getComponents());
     }
 
@@ -370,6 +377,8 @@ public class Extractor extends PDFTextStripper {
     @Override
     protected void processOperator(Operator operator, List<COSBase> operands) throws IOException {
         String operation = operator.getName();
+
+//        Log.d("operation", operation);
 
         if ("Do".equals(operation)) {
             COSName objectName = (COSName) operands.get(0);
@@ -407,14 +416,22 @@ public class Extractor extends PDFTextStripper {
                 }
             }
         } else if ("re".equals(operation)) {
-            COSNumber x = (COSNumber) operands.get(0);
-            COSNumber y = (COSNumber) operands.get(1);
-            COSNumber w = (COSNumber) operands.get(2);
-            COSNumber h = (COSNumber) operands.get(3);
+            float x = ((COSNumber) operands.get(0)).floatValue();
+            float y = ((COSNumber) operands.get(1)).floatValue();
+            float w = ((COSNumber) operands.get(2)).floatValue();
+            float h = ((COSNumber) operands.get(3)).floatValue();
 
-            Log.d("stuff", x + " " + y + " " + w + " " + h);
-            Log.d("nonstroking color", Arrays.toString(getGraphicsState().getNonStrokingColor().getComponents()));
-            Log.d("stroking color", Arrays.toString(getGraphicsState().getStrokingColor().getComponents()));
+            float pageWidth = getCurrentPage().getMediaBox().getWidth();
+            float pageHeight = getCurrentPage().getMediaBox().getHeight();
+
+//            Rectangle rect = new Rectangle(x, y, y, (int) h, (int) w, getGraphicsState().getNonStrokingColor().getComponents());
+
+//            Log.d("stuff", "x: " + x/pageWidth + "   y: " + y/pageHeight + "   width: " + w + "   height: " + h);
+//            Log.d("nonstroking color", Arrays.toString(getGraphicsState().getNonStrokingColor().getComponents()));
+//            Log.d("stroking color", Arrays.toString(getGraphicsState().getStrokingColor().getComponents()));
+
+//            rectangles.add(rect);
+
         } else {
             super.processOperator(operator, operands);
         }
