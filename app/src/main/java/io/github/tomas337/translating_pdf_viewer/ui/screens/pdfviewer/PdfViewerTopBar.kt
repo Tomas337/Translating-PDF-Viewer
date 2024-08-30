@@ -36,6 +36,8 @@ fun PdfViewerTopBar(
             }
         },
         actions = {
+            var hasContentPage = false
+
             IconButton(onClick = { /*TODO*/ }) {
                 Icon(
                     imageVector = Icons.Filled.Search,
@@ -43,12 +45,14 @@ fun PdfViewerTopBar(
                     tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.List,
-                    contentDescription = "Contents",
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
+            if (hasContentPage) {
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.List,
+                        contentDescription = "Contents",
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
             }
             IconButton(onClick = { /*TODO*/ }) {
                 Icon(
