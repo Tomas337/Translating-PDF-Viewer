@@ -11,12 +11,14 @@ import io.github.tomas337.translating_pdf_viewer.di.MyApp
 import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.GetFileInfoUseCase
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.GetPageContentUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.UpdateCurrentPageUseCase
 import io.github.tomas337.translating_pdf_viewer.utils.PageContent
 import kotlinx.coroutines.launch
 
 class PdfViewerViewModel(
     private val getFileInfoUseCase: GetFileInfoUseCase,
-    private val getPageContentUseCase: GetPageContentUseCase
+    private val updateCurrentPageUseCase: UpdateCurrentPageUseCase,
+    private val getPageContentUseCase: GetPageContentUseCase,
 ) : ViewModel() {
 
     private val _fileInfo = MutableLiveData<FileModel>()
@@ -25,6 +27,12 @@ class PdfViewerViewModel(
     fun initFileInfo(id: Int) {
         viewModelScope.launch {
             _fileInfo.postValue(getFileInfoUseCase(id))
+        }
+    }
+
+    fun updateCurrentPage(pageIndex: Int, id: Int) {
+        viewModelScope.launch {
+            updateCurrentPageUseCase(pageIndex, id)
         }
     }
 
@@ -43,7 +51,8 @@ class PdfViewerViewModel(
                 val pageRepository = MyApp.appModule.pageRepository
                 PdfViewerViewModel(
                     GetFileInfoUseCase(fileInfoRepository),
-                    GetPageContentUseCase(pageRepository)
+                    UpdateCurrentPageUseCase(fileInfoRepository),
+                    GetPageContentUseCase(pageRepository),
                 )
             }
         }

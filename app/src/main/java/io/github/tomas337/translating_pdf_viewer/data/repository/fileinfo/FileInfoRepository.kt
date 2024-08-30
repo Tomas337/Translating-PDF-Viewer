@@ -7,5 +7,6 @@ interface FileInfoRepository {
     suspend fun getThumbnailPath(id: Int): String
     suspend fun insertFileInfo(fileInfoDto: FileInfoDto)
     suspend fun updateName(name: String, id: Int)
+    suspend fun updateCurrentPage(pageIndex: Int, id: Int)
     suspend fun deleteFile(id: Int)
 }

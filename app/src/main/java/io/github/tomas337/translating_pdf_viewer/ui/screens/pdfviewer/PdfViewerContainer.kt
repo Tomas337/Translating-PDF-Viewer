@@ -15,7 +15,8 @@ import androidx.navigation.NavController
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PdfViewerContainer(
-    isVisible: Boolean,
+    isToolbarVisible: Boolean,
+    isInitialized: Boolean,
     navController: NavController,
     content: @Composable() (BoxWithConstraintsScope) -> Unit
 ) {
@@ -26,15 +27,17 @@ fun PdfViewerContainer(
             .fillMaxSize()
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            if (isVisible) {
+            if (isToolbarVisible) {
                 PdfViewerTopBar(navController = navController)
             }
         },
     ) { innerPadding ->
-        BoxWithConstraints(
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            content(this)
+        if (isInitialized) {
+            BoxWithConstraints(
+                modifier = Modifier.padding(innerPadding)
+            ) {
+                content(this)
+            }
         }
     }
 }

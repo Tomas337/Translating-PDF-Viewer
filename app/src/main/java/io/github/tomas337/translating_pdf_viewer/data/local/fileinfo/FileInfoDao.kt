@@ -25,6 +25,9 @@ interface FileInfoDao {
     @Query("UPDATE file_info SET name = :name WHERE id == :id")
     suspend fun updateName(name: String, id: Int)
 
+    @Query("UPDATE file_info SET cur_page = :pageIndex WHERE id == :id")
+    suspend fun updateCurrentPage(pageIndex: Int, id: Int)
+
     @Query("DELETE FROM file_info WHERE id == :id")
     suspend fun deleteFile(id: Int)
 }

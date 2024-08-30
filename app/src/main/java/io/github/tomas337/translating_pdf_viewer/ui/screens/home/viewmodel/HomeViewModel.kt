@@ -40,9 +40,9 @@ class HomeViewModel(
             _allFileInfo.postValue(getAllFileInfoUseCase())
         }
 
-    fun deleteFile(context: Context, fileId: Int) =
+    fun deleteFile(context: Context, id: Int) =
         viewModelScope.launch {
-            deleteFileUseCase(context, fileId)
+            deleteFileUseCase(context, id)
             _allFileInfo.postValue(getAllFileInfoUseCase())
         }
 

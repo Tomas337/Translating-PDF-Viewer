@@ -33,6 +33,10 @@ class FileInfoRepositoryImpl(
         fileInfoDao.updateName(name, id)
     }
 
+    override suspend fun updateCurrentPage(pageIndex: Int, id: Int) {
+        fileInfoDao.updateCurrentPage(pageIndex, id)
+    }
+
     override suspend fun deleteFile(id: Int) {
         fileInfoDao.deleteFile(id)
     }

@@ -65,10 +65,12 @@ fun PdfViewerScreen(
     val fileInfo: FileModel by pdfViewerViewModel.fileInfo.observeAsState(FileModel())
 
     var isToolbarVisible by remember { mutableStateOf(true) }
+    val isInitialized = fileInfo.pageCount != 0
     val context = LocalContext.current
 
     PdfViewerContainer(
-        isVisible = isToolbarVisible,
+        isToolbarVisible = isToolbarVisible,
+        isInitialized = isInitialized,
         navController = navController
     ) { boxWithConstraintsScope ->
 
@@ -77,6 +79,10 @@ fun PdfViewerScreen(
             pageCount = { fileInfo.pageCount }
         )
         var isScrollable by remember { mutableStateOf(false) }
+
+        LaunchedEffect(pagerState.currentPage) {
+            pdfViewerViewModel.updateCurrentPage(pagerState.currentPage, fileId)
+        }
 
         val maxWidth = boxWithConstraintsScope.constraints.maxWidth
 
@@ -157,7 +163,7 @@ fun PdfViewerScreen(
                                 val right = x + placeable.width
                                 val parentRight = maxWidth - pagePadding.roundToPx()
 
-                                val xDifference =  right - parentRight
+                                val xDifference = right - parentRight
 
                                 if (xDifference > 0) {
                                     x -= xDifference
