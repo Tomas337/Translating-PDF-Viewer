@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -73,7 +74,9 @@ fun PageSlider(
                     }
                 }
                 .pointerInput(Unit) {
+                    val maxY = maxHeight - height.roundToPx()
                     var curY = y.toFloat()
+
                     detectVerticalDragGestures(
                         onDragStart = { curY = y.toFloat() },
                         onDragEnd = {
@@ -86,10 +89,14 @@ fun PageSlider(
                         },
                         onVerticalDrag = { _, dragAmount ->
                             curY += dragAmount
-                            val newY = Math.round(curY / stepSize) * stepSize;
+                            val newY = Math.round(curY / stepSize * stepSize)
 
                             if (newY != y) {
-                                y = newY
+                                y = when {
+                                    newY < 0 -> 0
+                                    newY > maxY -> maxY
+                                    else -> newY
+                                }
                                 coroutineScope.launch { setPage(y / stepSize) }
                             }
                         }
