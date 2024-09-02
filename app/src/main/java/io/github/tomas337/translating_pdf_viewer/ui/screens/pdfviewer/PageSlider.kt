@@ -21,6 +21,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,12 +49,16 @@ fun PageSlider(
     val height = 40.dp
     var stepSize by remember { mutableFloatStateOf(0f) }
     var y by remember { mutableIntStateOf(0) }
+    var updatedCurPage by remember { mutableIntStateOf(curPage) }
 
     LaunchedEffect(pageCount, maxHeight) {
         with (density) {
             stepSize = if (pageCount > 1) (maxHeight - height.toPx()) / (pageCount - 1) else 0f
-            y = Math.round(curPage * stepSize)
         }
+    }
+    LaunchedEffect(curPage) {
+        y = Math.round(curPage * stepSize)
+        updatedCurPage = curPage
     }
 
     var isActive by remember { mutableStateOf(false) }
@@ -69,7 +74,6 @@ fun PageSlider(
                     }
                 }
                 .pointerInput(Unit) {
-                    val maxY = maxHeight - height.roundToPx()
                     var curY = y.toFloat()
 
                     detectVerticalDragGestures(
@@ -86,13 +90,7 @@ fun PageSlider(
                             curY += dragAmount
                             val newPage = Math.round(curY / stepSize)
 
-                            if (newPage != curPage) {
-                                val newY = Math.round(newPage * stepSize)
-                                y = when {
-                                    newY < 0 -> 0
-                                    newY > maxY -> maxY
-                                    else -> newY
-                                }
+                            if (newPage != updatedCurPage) {
                                 coroutineScope.launch { setPage(newPage) }
                             }
                         }
