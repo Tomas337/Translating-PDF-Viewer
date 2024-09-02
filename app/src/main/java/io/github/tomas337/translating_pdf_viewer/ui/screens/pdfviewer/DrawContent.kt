@@ -31,6 +31,7 @@ import io.github.tomas337.translating_pdf_viewer.utils.Image
 import io.github.tomas337.translating_pdf_viewer.utils.PageContent
 import io.github.tomas337.translating_pdf_viewer.utils.TextBlock
 import io.github.tomas337.translating_pdf_viewer.utils.TextStyle
+import kotlin.math.abs
 
 @Composable
 fun DrawContent(
@@ -44,7 +45,7 @@ fun DrawContent(
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(content.path)
-                .size(content.width, content.height)
+                .size(abs(content.width), abs(content.height))  // TODO fix: abs only used to prevent mirrored images from throwing exception
                 .build(),
             contentDescription = "Image on page ${pageIndex + 1}",
             modifier = modifier,

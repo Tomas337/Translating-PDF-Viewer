@@ -263,7 +263,8 @@ public class Extractor extends PDFTextStripper {
 
             PDFont baseFont = position.getFont();
             PDFont font = baseFont != null ? baseFont : prevFont;
-            float fontSize = position.getFontSize();
+//            float fontSize = position.getFontSize();
+            float fontSize = position.getFontSizeInPt();
             float[] curColor = colors.get(curColorIndex);
 
             // Handle style change.
@@ -360,7 +361,6 @@ public class Extractor extends PDFTextStripper {
     @Override
     protected void processTextPosition(TextPosition text) {
         super.processTextPosition(text);
-//        Log.d("text position", text.toString());
         colors.add(getGraphicsState().getNonStrokingColor().getComponents());
     }
 
