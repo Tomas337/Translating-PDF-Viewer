@@ -49,16 +49,14 @@ fun PageSlider(
     val density = LocalDensity.current
     val width = 40.dp
     val height = 40.dp
-    var stepSize by remember { mutableIntStateOf(0) }
+    var stepSize by remember { mutableFloatStateOf(0f) }
     var y by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(pageCount, maxHeight) {
         with (density) {
-            stepSize = if (pageCount > 1) (maxHeight - height.roundToPx()) / (pageCount - 1) else 0
+            stepSize = if (pageCount > 1) (maxHeight - height.toPx()) / (pageCount - 1) else 0f
+            y = Math.round(curPage * stepSize)
         }
-    }
-    LaunchedEffect(curPage, stepSize) {
-        y = curPage * stepSize
     }
 
     var isActive by remember { mutableStateOf(false) }
@@ -89,15 +87,16 @@ fun PageSlider(
                         },
                         onVerticalDrag = { _, dragAmount ->
                             curY += dragAmount
-                            val newY = Math.round(curY / stepSize * stepSize)
+                            val newPage = Math.round(curY / stepSize)
 
-                            if (newY != y) {
+                            if (newPage != curPage) {
+                                val newY = Math.round(newPage * stepSize)
                                 y = when {
                                     newY < 0 -> 0
                                     newY > maxY -> maxY
                                     else -> newY
                                 }
-                                coroutineScope.launch { setPage(y / stepSize) }
+                                coroutineScope.launch { setPage(newPage) }
                             }
                         }
                     )
