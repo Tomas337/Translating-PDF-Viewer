@@ -86,7 +86,6 @@ fun DrawContent(
                 content.texts.forEachIndexed { i, text ->
                     val styleIndex = content.styles[i]
                     val style = intToTextStyleMap[styleIndex]
-//                    Log.d("color", style!!.color.contentToString())
 
                     withStyle(
                         style = SpanStyle(

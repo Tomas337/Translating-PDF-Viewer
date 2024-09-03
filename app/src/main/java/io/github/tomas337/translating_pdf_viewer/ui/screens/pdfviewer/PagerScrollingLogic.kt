@@ -1,6 +1,5 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
-import android.util.Log
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventPass

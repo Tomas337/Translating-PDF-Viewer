@@ -69,7 +69,6 @@ import java.util.regex.Pattern;
 
 import io.github.tomas337.translating_pdf_viewer.utils.Image;
 import io.github.tomas337.translating_pdf_viewer.utils.Page;
-import io.github.tomas337.translating_pdf_viewer.utils.Rectangle;
 import io.github.tomas337.translating_pdf_viewer.utils.TextBlock;
 import io.github.tomas337.translating_pdf_viewer.utils.TextStyle;
 
@@ -100,10 +99,6 @@ public class Extractor extends PDFTextStripper {
     private final Path path;
     private List<Image> images;
     private int imageIndex = 0;
-
-    // Variables for rectangle extraction.
-    private List<Rectangle> rectangles;
-    private Rectangle curRectangle;
 
     /**
      * Default constructor.
@@ -157,8 +152,6 @@ public class Extractor extends PDFTextStripper {
         prevEndPadding = null;
         colors = new ArrayList<>();
         curColorIndex = 0;
-        rectangles = new ArrayList<>();
-        curRectangle = new Rectangle();
 
         // The current version doesn't except cover pages from being extracted,
         // where the margin may be equal to zero or smaller than on normal pages.
@@ -263,7 +256,6 @@ public class Extractor extends PDFTextStripper {
 
             PDFont baseFont = position.getFont();
             PDFont font = baseFont != null ? baseFont : prevFont;
-//            float fontSize = position.getFontSize();
             float fontSize = position.getFontSizeInPt();
             float[] curColor = colors.get(curColorIndex);
 
@@ -378,8 +370,6 @@ public class Extractor extends PDFTextStripper {
     protected void processOperator(Operator operator, List<COSBase> operands) throws IOException {
         String operation = operator.getName();
 
-//        Log.d("operation", operation);
-
         if ("Do".equals(operation)) {
             COSName objectName = (COSName) operands.get(0);
             PDXObject xObject = getResources().getXObject(objectName);
@@ -415,23 +405,6 @@ public class Extractor extends PDFTextStripper {
                     margin = ctmNew.getTranslateX();
                 }
             }
-        } else if ("re".equals(operation)) {
-            float x = ((COSNumber) operands.get(0)).floatValue();
-            float y = ((COSNumber) operands.get(1)).floatValue();
-            float w = ((COSNumber) operands.get(2)).floatValue();
-            float h = ((COSNumber) operands.get(3)).floatValue();
-
-            float pageWidth = getCurrentPage().getMediaBox().getWidth();
-            float pageHeight = getCurrentPage().getMediaBox().getHeight();
-
-//            Rectangle rect = new Rectangle(x, y, y, (int) h, (int) w, getGraphicsState().getNonStrokingColor().getComponents());
-
-//            Log.d("stuff", "x: " + x/pageWidth + "   y: " + y/pageHeight + "   width: " + w + "   height: " + h);
-//            Log.d("nonstroking color", Arrays.toString(getGraphicsState().getNonStrokingColor().getComponents()));
-//            Log.d("stroking color", Arrays.toString(getGraphicsState().getStrokingColor().getComponents()));
-
-//            rectangles.add(rect);
-
         } else {
             super.processOperator(operator, operands);
         }
