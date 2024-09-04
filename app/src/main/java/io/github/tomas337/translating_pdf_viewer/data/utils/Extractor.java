@@ -207,8 +207,8 @@ public class Extractor extends PDFTextStripper {
         // and is longer than the previous one
         // or the line spacing is larger than MAX_LINE_SPACE.
         if (prevEndPadding != null &&
-            (curEndPadding < prevEndPadding ||
-             lineSpace > MAX_LINE_SPACE)
+                (curEndPadding < prevEndPadding ||
+                        lineSpace > MAX_LINE_SPACE)
         ) {
             onEndOfBlock();
         }
@@ -221,9 +221,9 @@ public class Extractor extends PDFTextStripper {
             if (!curTextBlock.isEmpty()) {
                 onEndOfBlock();
             }
-            curTextBlock.setX(firstPosition.getX());
             String bulletString = bulletMatcher.group();
             curTextBlock.setListPrefix(bulletString + "\t\t");
+            curTextBlock.setX(firstPosition.getX());
             curColorIndex += bulletString.length();
             firstIndex = bulletString.length() + 1;
             firstPosition = textPositions.get(firstIndex);
@@ -261,9 +261,9 @@ public class Extractor extends PDFTextStripper {
 
             // Handle style change.
             if (!Objects.deepEquals(font, prevFont) ||
-                fontSize != prevFontSize ||
-                !Arrays.equals(curColor, prevColor) ||
-                (curTextBlock.isEmpty() && curText.length() == 0)
+                    fontSize != prevFontSize ||
+                    !Arrays.equals(curColor, prevColor) ||
+                    (curTextBlock.isEmpty() && curText.length() == 0)
             ) {
                 if (curText.length() != 0) {
                     curTextBlock.addText(curText.toString());
@@ -272,8 +272,8 @@ public class Extractor extends PDFTextStripper {
 
                 // Block ends when the font size changes between lines.
                 if (fontSize != prevFontSize &&
-                    Objects.equals(position, firstPosition) &&
-                    !curTextBlock.isEmpty()
+                        Objects.equals(position, firstPosition) &&
+                        !curTextBlock.isEmpty()
                 ) {
                     assert curTextBlock.isInitialized();
                     textBlocks.add(curTextBlock);
@@ -316,8 +316,24 @@ public class Extractor extends PDFTextStripper {
         }
 
         // Set x to the x of the most left line to handle block starting with an indent.
-        if (curTextBlock.getX() == null || firstPosition.getX() < curTextBlock.getX()) {
-            curTextBlock.setX(firstPosition.getX());
+        if (curTextBlock.getX() == null || Math.round(firstPosition.getX()) < curTextBlock.getX()) {
+            curTextBlock.setX((float) Math.round(firstPosition.getX()));
+        }
+
+        // Handle text alignment.
+        int lineCenter = (Math.round(firstPosition.getX()) + curLineEndX) / 2;
+        int pageCenter = curPageWidth / 2;
+
+        if (Math.round(firstPosition.getX()) == curTextBlock.getX()) {
+            curTextBlock.setTextAlign("justified");
+        } else if (lineCenter == pageCenter) {
+            curTextBlock.setTextAlign("center");
+        } else if (Objects.equals(curTextBlock.getEndY(), curTextBlock.getY())) {
+            curTextBlock.setTextAlign("left");
+        } else if (Math.round(firstPosition.getX()) > curTextBlock.getX() &&
+                   curTextBlock.getListPrefix() == null
+        ) {
+            curTextBlock.setTextAlign("right");
         }
 
         // Block ends when the current line is shorter than the previous one

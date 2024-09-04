@@ -9,6 +9,7 @@ public class TextBlock extends PageContent {
     List<String> texts = new ArrayList<>();
     List<Integer> styles = new ArrayList<>();
     String listPrefix = null;
+    String textAlign = null;
 
     public TextBlock() {
         super("text-block");
@@ -52,5 +53,13 @@ public class TextBlock extends PageContent {
 
     public boolean isInitialized() {
         return y != null && x != null && rotation != null && endY != null;
+    }
+
+    public String getTextAlign() {
+        return textAlign;
+    }
+
+    public void setTextAlign(String textAlign) {
+        this.textAlign = textAlign;
     }
 }
