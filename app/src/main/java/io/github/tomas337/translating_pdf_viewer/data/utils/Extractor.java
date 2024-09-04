@@ -187,9 +187,10 @@ public class Extractor extends PDFTextStripper {
     protected void writeString(String text, List<TextPosition> textPositions) throws IOException {
         StringBuilder builder = new StringBuilder();
         TextPosition firstPosition = textPositions.get(0);
+        float startX = Math.round(firstPosition.getX());
 
-        if (firstPosition.getX() < margin) {
-            margin = firstPosition.getX();
+        if (startX < margin) {
+            margin = startX;
         }
 
         int curPageWidth = (int) firstPosition.getPageWidth();
@@ -223,11 +224,8 @@ public class Extractor extends PDFTextStripper {
             }
             String bulletString = bulletMatcher.group();
             curTextBlock.setListPrefix(bulletString + "\t\t");
-            curTextBlock.setX(firstPosition.getX());
             curColorIndex += bulletString.length();
             firstIndex = bulletString.length() + 1;
-            firstPosition = textPositions.get(firstIndex);
-            assert firstPosition != null;
         }
 
         // Join parts of a word or separate sentences.
@@ -272,8 +270,8 @@ public class Extractor extends PDFTextStripper {
 
                 // Block ends when the font size changes between lines.
                 if (fontSize != prevFontSize &&
-                        Objects.equals(position, firstPosition) &&
-                        !curTextBlock.isEmpty()
+                    i == firstIndex &&
+                    !curTextBlock.isEmpty()
                 ) {
                     assert curTextBlock.isInitialized();
                     textBlocks.add(curTextBlock);
@@ -316,21 +314,21 @@ public class Extractor extends PDFTextStripper {
         }
 
         // Set x to the x of the most left line to handle block starting with an indent.
-        if (curTextBlock.getX() == null || Math.round(firstPosition.getX()) < curTextBlock.getX()) {
-            curTextBlock.setX((float) Math.round(firstPosition.getX()));
+        if (curTextBlock.getX() == null || startX < curTextBlock.getX()) {
+            curTextBlock.setX(startX);
         }
 
         // Handle text alignment.
-        int lineCenter = (Math.round(firstPosition.getX()) + curLineEndX) / 2;
+        int lineCenter = (int) ((startX + curLineEndX) / 2);
         int pageCenter = curPageWidth / 2;
 
-        if (Math.round(firstPosition.getX()) == curTextBlock.getX()) {
+        if (startX == curTextBlock.getX()) {
             curTextBlock.setTextAlign("justified");
         } else if (lineCenter == pageCenter) {
             curTextBlock.setTextAlign("center");
         } else if (Objects.equals(curTextBlock.getEndY(), curTextBlock.getY())) {
             curTextBlock.setTextAlign("left");
-        } else if (Math.round(firstPosition.getX()) > curTextBlock.getX() &&
+        } else if (startX > curTextBlock.getX() &&
                    curTextBlock.getListPrefix() == null
         ) {
             curTextBlock.setTextAlign("right");
