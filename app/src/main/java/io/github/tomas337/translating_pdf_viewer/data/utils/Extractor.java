@@ -221,13 +221,13 @@ public class Extractor extends PDFTextStripper {
             if (!curTextBlock.isEmpty()) {
                 onEndOfBlock();
             }
+            curTextBlock.setX(firstPosition.getX());
             String bulletString = bulletMatcher.group();
+            curTextBlock.setListPrefix(bulletString + "\t\t");
+            curColorIndex += bulletString.length();
             firstIndex = bulletString.length() + 1;
             firstPosition = textPositions.get(firstIndex);
             assert firstPosition != null;
-            curTextBlock.setListPrefix(bulletString + "\t\t");
-            curTextBlock.setX(firstPosition.getX());
-            curColorIndex += bulletString.length();
         }
 
         // Join parts of a word or separate sentences.
@@ -315,7 +315,7 @@ public class Extractor extends PDFTextStripper {
             curTextBlock.setRotation(getAngle(firstPosition));
         }
 
-        // Set x to the x of the most left line to handle block starting with an indent or bullet.
+        // Set x to the x of the most left line to handle block starting with an indent.
         if (curTextBlock.getX() == null || firstPosition.getX() < curTextBlock.getX()) {
             curTextBlock.setX(firstPosition.getX());
         }
