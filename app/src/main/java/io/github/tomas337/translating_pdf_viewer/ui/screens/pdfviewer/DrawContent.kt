@@ -38,7 +38,6 @@ fun DrawContent(
     content: PageContent,
     pageIndex: Int,
     intToTextStyleMap: Map<Int, TextStyle>,
-    isRightAligned: Boolean,
     modifier: Modifier = Modifier,
 ) {
     if (content is Image) {
@@ -56,17 +55,6 @@ fun DrawContent(
         val lineHeight =
             (intToTextStyleMap[content.styles[0]]!!.fontSize * fontSizeScale + lineSpacing).sp
 
-//        val textAlign =
-//            if (isRightAligned) {
-//                TextAlign.Right
-//            } else if (content.texts.size == 1 &&
-//                intToTextStyleMap[content.styles[0]]!!.fontWeight >= 600
-//            ) {
-//                // if is a heading
-//                TextAlign.Left
-//            } else {
-//                TextAlign.Justify
-//            }
         val textAlign = when (content.textAlign) {
             "center" -> TextAlign.Center
             "left" -> TextAlign.Left

@@ -140,7 +140,6 @@ fun PdfViewerScreen(
                             val width = LocalDensity.current.run { (maxWidth - 2*x).toDp() }
                             Modifier.width(width)
                         }
-                    val isRightAligned = row[0].x > 0.25
 
                     val handleXPositionModifier = widthModifier
                         .onGloballyPositioned {
@@ -150,15 +149,19 @@ fun PdfViewerScreen(
                         .layout { measurable, constraints ->
                             val placeable = measurable.measure(constraints)
                             layout(placeable.width, placeable.height) {
-                                val right = x + placeable.width
-                                val parentRight = maxWidth - pagePadding.roundToPx()
+                                if (row[0].isCentered) {
+                                    x = (maxWidth / 2) - (placeable.width / 2)
+                                } else {
+                                    val right = x + placeable.width
+                                    val parentRight = maxWidth - pagePadding.roundToPx()
 
-                                val xDifference = right - parentRight
+                                    val xDifference = right - parentRight
 
-                                if (xDifference > 0) {
-                                    x -= xDifference
-                                    if (x < 0) {
-                                        x = pagePadding.roundToPx()
+                                    if (xDifference > 0) {
+                                        x -= xDifference
+                                        if (x < 0) {
+                                            x = pagePadding.roundToPx()
+                                        }
                                     }
                                 }
 
@@ -181,7 +184,6 @@ fun PdfViewerScreen(
                                     content = content,
                                     pageIndex = pageIndex,
                                     intToTextStyleMap = fileInfo.intToTextStyleMap,
-                                    isRightAligned = isRightAligned,
                                 )
                             }
                         }
@@ -190,7 +192,6 @@ fun PdfViewerScreen(
                             content = row[0],
                             pageIndex = pageIndex,
                             intToTextStyleMap = fileInfo.intToTextStyleMap,
-                            isRightAligned = isRightAligned,
                             modifier = handleXPositionModifier,
                         )
                     }

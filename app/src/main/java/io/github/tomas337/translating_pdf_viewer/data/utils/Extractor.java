@@ -324,14 +324,16 @@ public class Extractor extends PDFTextStripper {
 
         if (startX == curTextBlock.getX()) {
             curTextBlock.setTextAlign("justified");
-        } else if (lineCenter == pageCenter) {
-            curTextBlock.setTextAlign("center");
         } else if (Objects.equals(curTextBlock.getEndY(), curTextBlock.getY())) {
             curTextBlock.setTextAlign("left");
-        } else if (startX > curTextBlock.getX() &&
+        } else if (startX > curTextBlock.getX() &&  // TODO endX is equal to startX when the text is centered
                    curTextBlock.getListPrefix() == null
         ) {
             curTextBlock.setTextAlign("right");
+        }
+
+        if (lineCenter > pageCenter + 3 || lineCenter < pageCenter - 3) {
+            curTextBlock.setIsCentered(false);
         }
 
         // Block ends when the current line is shorter than the previous one

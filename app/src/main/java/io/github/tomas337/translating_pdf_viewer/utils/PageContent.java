@@ -6,6 +6,7 @@ public class PageContent {
     Float x;
     Float y;
     Float endY;
+    boolean isCentered = true;
 
     public PageContent(String type) {
         this.type = type;
@@ -37,5 +38,13 @@ public class PageContent {
 
     public Float getEndY() {
         return endY;
+    }
+
+    public void setIsCentered(boolean isCentered) {
+        this.isCentered = isCentered;
+    }
+
+    public boolean isCentered() {
+        return isCentered;
     }
 }
