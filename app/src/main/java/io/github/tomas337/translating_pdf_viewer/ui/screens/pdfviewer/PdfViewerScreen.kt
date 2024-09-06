@@ -137,7 +137,7 @@ fun PdfViewerScreen(
                             val maxWidthDp = LocalDensity.current.run { maxWidth.toDp() }
                             Modifier.widthIn(max = maxWidthDp - 2 * pagePadding)
                         } else {
-                            val width = LocalDensity.current.run { (maxWidth - 2*x).toDp() }
+                            val width = LocalDensity.current.run { (maxWidth - 2 * x).toDp() }
                             Modifier.width(width)
                         }
 
@@ -173,27 +173,21 @@ fun PdfViewerScreen(
                         val paragraphSpacing = 10.dp
                         Spacer(modifier = Modifier.size(paragraphSpacing))
                     }
-                    if (row.size > 1) {
-                        Row(
-                            horizontalArrangement =  Arrangement.spacedBy(10.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = handleXPositionModifier,
-                        ) {
-                            row.forEach { content ->
-                                DrawContent(
-                                    content = content,
-                                    pageIndex = pageIndex,
-                                    intToTextStyleMap = fileInfo.intToTextStyleMap,
-                                )
-                            }
+                    Row(
+                        horizontalArrangement = when (row[0].isCentered) {
+                            true -> Arrangement.SpaceEvenly
+                            else -> Arrangement.spacedBy(10.dp)
+                        },
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = handleXPositionModifier,
+                    ) {
+                        row.forEach { content ->
+                            DrawContent(
+                                content = content,
+                                pageIndex = pageIndex,
+                                intToTextStyleMap = fileInfo.intToTextStyleMap,
+                            )
                         }
-                    } else {
-                        DrawContent(
-                            content = row[0],
-                            pageIndex = pageIndex,
-                            intToTextStyleMap = fileInfo.intToTextStyleMap,
-                            modifier = handleXPositionModifier,
-                        )
                     }
                 }
 

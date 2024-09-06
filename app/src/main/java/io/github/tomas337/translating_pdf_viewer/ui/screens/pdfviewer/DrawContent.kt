@@ -62,6 +62,10 @@ fun DrawContent(
             else -> TextAlign.Justify
         }
 
+        Log.d("text", content.texts.toString())
+        Log.d("alignment", content.textAlign)
+        Log.d("isCenterd", content.isCentered.toString())
+
         val textIndent =
             if (content.listPrefix != null) {
                 val textStyle = LocalTextStyle.current

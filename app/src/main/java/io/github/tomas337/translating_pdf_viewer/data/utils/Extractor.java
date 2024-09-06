@@ -322,18 +322,20 @@ public class Extractor extends PDFTextStripper {
         int lineCenter = (int) ((startX + curLineEndX) / 2);
         int pageCenter = curPageWidth / 2;
 
-        if (startX == curTextBlock.getX()) {
-            curTextBlock.setTextAlign("justified");
-        } else if (Objects.equals(curTextBlock.getEndY(), curTextBlock.getY())) {
+        if (lineCenter > pageCenter + 3 || lineCenter < pageCenter - 3) {
+            curTextBlock.setIsCentered(false);
+        }
+
+        if (Objects.equals(curTextBlock.getEndY(), curTextBlock.getY())) {
             curTextBlock.setTextAlign("left");
-        } else if (startX > curTextBlock.getX() &&  // TODO endX is equal to startX when the text is centered
+        } else if (startX == curTextBlock.getX()) {
+            curTextBlock.setTextAlign("justified");
+        } else if (startX < curEndPadding + 3 && startX > curEndPadding - 3) {
+            curTextBlock.setTextAlign("center");
+        } else if (startX > curTextBlock.getX() &&
                    curTextBlock.getListPrefix() == null
         ) {
             curTextBlock.setTextAlign("right");
-        }
-
-        if (lineCenter > pageCenter + 3 || lineCenter < pageCenter - 3) {
-            curTextBlock.setIsCentered(false);
         }
 
         // Block ends when the current line is shorter than the previous one
