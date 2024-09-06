@@ -319,10 +319,13 @@ public class Extractor extends PDFTextStripper {
         }
 
         // Handle text alignment.
+        int CENTER_TOLERATION = 3;
         int lineCenter = (int) ((startX + curLineEndX) / 2);
         int pageCenter = curPageWidth / 2;
 
-        if (lineCenter > pageCenter + 3 || lineCenter < pageCenter - 3) {
+        if (lineCenter > pageCenter + CENTER_TOLERATION ||
+            lineCenter < pageCenter - CENTER_TOLERATION
+        ) {
             curTextBlock.setIsCentered(false);
         }
 
@@ -330,7 +333,9 @@ public class Extractor extends PDFTextStripper {
             curTextBlock.setTextAlign("left");
         } else if (startX == curTextBlock.getX()) {
             curTextBlock.setTextAlign("justified");
-        } else if (startX < curEndPadding + 3 && startX > curEndPadding - 3) {
+        } else if (startX < curEndPadding + CENTER_TOLERATION &&
+                   startX > curEndPadding - CENTER_TOLERATION
+        ) {
             curTextBlock.setTextAlign("center");
         } else if (startX > curTextBlock.getX() &&
                    curTextBlock.getListPrefix() == null
