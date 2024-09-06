@@ -331,7 +331,7 @@ public class Extractor extends PDFTextStripper {
 
         if (Objects.equals(curTextBlock.getEndY(), curTextBlock.getY())) {
             curTextBlock.setTextAlign("left");
-        } else if (startX == curTextBlock.getX()) {
+        } else if (startX == curTextBlock.getX() || curTextBlock.getListPrefix() != null) {
             curTextBlock.setTextAlign("justified");
         } else if (startX < curEndPadding + CENTER_TOLERATION &&
                    startX > curEndPadding - CENTER_TOLERATION
