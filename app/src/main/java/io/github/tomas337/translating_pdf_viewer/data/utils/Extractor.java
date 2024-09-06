@@ -81,6 +81,7 @@ public class Extractor extends PDFTextStripper {
 
     // Variables for text extraction.
     private final float MAX_LINE_SPACE = 3f;
+    private final int TEXT_TOLERATION = 3;
     private List<TextBlock> textBlocks;
     private TextBlock curTextBlock;
     private StringBuilder curText;
@@ -197,7 +198,9 @@ public class Extractor extends PDFTextStripper {
         int curLineEndX = Math.round(textPositions.get(textPositions.size() - 1).getEndX());
         int curEndPadding = curPageWidth - curLineEndX;
 
-//        Log.d("line", text);
+        Log.d("text", text);
+        Log.d("textPositions", textPositions.toString());
+        Log.d("curEndPadding", String.valueOf(curEndPadding));
 
         float lineSpacePx = curTextBlock.isInitialized()
                 ? firstPosition.getY() - curTextBlock.getEndY()
@@ -208,8 +211,8 @@ public class Extractor extends PDFTextStripper {
         // and is longer than the previous one
         // or the line spacing is larger than MAX_LINE_SPACE.
         if (prevEndPadding != null &&
-                (curEndPadding < prevEndPadding ||
-                        lineSpace > MAX_LINE_SPACE)
+            (curEndPadding < prevEndPadding - TEXT_TOLERATION ||
+             lineSpace > MAX_LINE_SPACE)
         ) {
             onEndOfBlock();
         }
@@ -259,9 +262,9 @@ public class Extractor extends PDFTextStripper {
 
             // Handle style change.
             if (!Objects.deepEquals(font, prevFont) ||
-                    fontSize != prevFontSize ||
-                    !Arrays.equals(curColor, prevColor) ||
-                    (curTextBlock.isEmpty() && curText.length() == 0)
+                fontSize != prevFontSize ||
+                !Arrays.equals(curColor, prevColor) ||
+                (curTextBlock.isEmpty() && curText.length() == 0)
             ) {
                 if (curText.length() != 0) {
                     curTextBlock.addText(curText.toString());
@@ -319,12 +322,11 @@ public class Extractor extends PDFTextStripper {
         }
 
         // Handle text alignment.
-        int CENTER_TOLERATION = 3;
         int lineCenter = (int) ((startX + curLineEndX) / 2);
         int pageCenter = curPageWidth / 2;
 
-        if (lineCenter > pageCenter + CENTER_TOLERATION ||
-            lineCenter < pageCenter - CENTER_TOLERATION
+        if (lineCenter > pageCenter + TEXT_TOLERATION ||
+            lineCenter < pageCenter - TEXT_TOLERATION
         ) {
             curTextBlock.setIsCentered(false);
         }
@@ -333,8 +335,8 @@ public class Extractor extends PDFTextStripper {
             curTextBlock.setTextAlign("left");
         } else if (startX == curTextBlock.getX() || curTextBlock.getListPrefix() != null) {
             curTextBlock.setTextAlign("justified");
-        } else if (startX < curEndPadding + CENTER_TOLERATION &&
-                   startX > curEndPadding - CENTER_TOLERATION
+        } else if (startX < curEndPadding + TEXT_TOLERATION &&
+                   startX > curEndPadding - TEXT_TOLERATION
         ) {
             curTextBlock.setTextAlign("center");
         } else if (startX > curTextBlock.getX() &&
@@ -345,7 +347,7 @@ public class Extractor extends PDFTextStripper {
 
         // Block ends when the current line is shorter than the previous one
         // and isn't at the start of a block.
-        if (prevEndPadding != null && curEndPadding > prevEndPadding) {
+        if (prevEndPadding != null && curEndPadding - TEXT_TOLERATION > prevEndPadding) {
             onEndOfBlock();
         } else {
             prevEndPadding = curEndPadding;
