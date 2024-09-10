@@ -1,6 +1,5 @@
-package io.github.tomas337.translating_pdf_viewer.domain.usecase
+package io.github.tomas337.translating_pdf_viewer.domain.usecase.content
 
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.github.tomas337.translating_pdf_viewer.data.repository.page.PageRepository
 import io.github.tomas337.translating_pdf_viewer.data.utils.PageDeserializer

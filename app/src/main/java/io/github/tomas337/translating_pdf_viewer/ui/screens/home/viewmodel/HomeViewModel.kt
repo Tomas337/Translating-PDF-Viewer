@@ -11,11 +11,11 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import io.github.tomas337.translating_pdf_viewer.di.MyApp
 import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
-import io.github.tomas337.translating_pdf_viewer.domain.usecase.AddFileUseCase
-import io.github.tomas337.translating_pdf_viewer.domain.usecase.DeleteFileUseCase
-import io.github.tomas337.translating_pdf_viewer.domain.usecase.GetAllFileInfoUseCase
-import io.github.tomas337.translating_pdf_viewer.domain.usecase.GetThumbnailPathUseCase
-import io.github.tomas337.translating_pdf_viewer.domain.usecase.UpdateNameUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.content.AddFileUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.content.DeleteFileUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.content.GetAllFileInfoUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.content.GetThumbnailPathUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.content.UpdateNameUseCase
 import kotlinx.coroutines.launch
 
 class HomeViewModel(

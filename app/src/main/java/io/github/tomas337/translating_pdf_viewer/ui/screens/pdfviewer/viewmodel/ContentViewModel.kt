@@ -9,9 +9,9 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import io.github.tomas337.translating_pdf_viewer.di.MyApp
 import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
-import io.github.tomas337.translating_pdf_viewer.domain.usecase.GetFileInfoUseCase
-import io.github.tomas337.translating_pdf_viewer.domain.usecase.GetPageContentUseCase
-import io.github.tomas337.translating_pdf_viewer.domain.usecase.UpdateCurrentPageUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.content.GetFileInfoUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.content.GetPageContentUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.content.UpdateCurrentPageUseCase
 import io.github.tomas337.translating_pdf_viewer.utils.PageContent
 import kotlinx.coroutines.launch
 

@@ -5,16 +5,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import io.github.tomas337.translating_pdf_viewer.di.MyApp
-import io.github.tomas337.translating_pdf_viewer.domain.usecase.GetFontSizeScaleUseCase
-import io.github.tomas337.translating_pdf_viewer.domain.usecase.GetLineSpacingUseCase
-import io.github.tomas337.translating_pdf_viewer.domain.usecase.GetPagePaddingUseCase
-import io.github.tomas337.translating_pdf_viewer.domain.usecase.GetPageSpacingUseCase
-import io.github.tomas337.translating_pdf_viewer.domain.usecase.GetParagraphSpacingUseCase
-import io.github.tomas337.translating_pdf_viewer.domain.usecase.UpdateFontSizeScaleUseCase
-import io.github.tomas337.translating_pdf_viewer.domain.usecase.UpdateLineSpacingUseCase
-import io.github.tomas337.translating_pdf_viewer.domain.usecase.UpdatePagePaddingUseCase
-import io.github.tomas337.translating_pdf_viewer.domain.usecase.UpdatePageSpacingUseCase
-import io.github.tomas337.translating_pdf_viewer.domain.usecase.UpdateParagraphSpacingUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.preferences.GetFontSizeScaleUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.preferences.GetLineSpacingUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.preferences.GetPagePaddingUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.preferences.GetPageSpacingUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.preferences.GetParagraphSpacingUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.preferences.UpdateFontSizeScaleUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.preferences.UpdateLineSpacingUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.preferences.UpdatePagePaddingUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.preferences.UpdatePageSpacingUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.preferences.UpdateParagraphSpacingUseCase
 
 class PreferencesViewModel(
     private val getFontSizeScaleUseCase: GetFontSizeScaleUseCase,
@@ -27,7 +27,6 @@ class PreferencesViewModel(
     private val updatePagePaddingUseCase: UpdatePagePaddingUseCase,
     private val updatePageSpacingUseCase: UpdatePageSpacingUseCase,
     private val updateParagraphSpacingUseCase: UpdateParagraphSpacingUseCase
-
 ) : ViewModel() {
 
     companion object {

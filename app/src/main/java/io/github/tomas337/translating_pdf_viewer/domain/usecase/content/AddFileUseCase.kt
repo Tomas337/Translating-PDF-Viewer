@@ -1,4 +1,4 @@
-package io.github.tomas337.translating_pdf_viewer.domain.usecase
+package io.github.tomas337.translating_pdf_viewer.domain.usecase.content
 
 import android.content.Context
 import android.net.Uri
