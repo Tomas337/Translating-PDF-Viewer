@@ -198,10 +198,6 @@ public class Extractor extends PDFTextStripper {
         int curLineEndX = Math.round(textPositions.get(textPositions.size() - 1).getEndX());
         int curEndPadding = curPageWidth - curLineEndX;
 
-        Log.d("text", text);
-        Log.d("textPositions", textPositions.toString());
-        Log.d("curEndPadding", String.valueOf(curEndPadding));
-
         float lineSpacePx = curTextBlock.isInitialized()
                 ? firstPosition.getY() - curTextBlock.getEndY()
                 : 0;
