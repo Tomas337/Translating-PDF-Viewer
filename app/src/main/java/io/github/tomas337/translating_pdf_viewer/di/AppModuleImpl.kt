@@ -6,6 +6,8 @@ import io.github.tomas337.translating_pdf_viewer.data.repository.fileinfo.FileIn
 import io.github.tomas337.translating_pdf_viewer.data.repository.fileinfo.FileInfoRepositoryImpl
 import io.github.tomas337.translating_pdf_viewer.data.repository.page.PageRepository
 import io.github.tomas337.translating_pdf_viewer.data.repository.page.PageRepositoryImpl
+import io.github.tomas337.translating_pdf_viewer.data.repository.preferences.PreferencesRepository
+import io.github.tomas337.translating_pdf_viewer.data.repository.preferences.PreferencesRepositoryImpl
 
 class AppModuleImpl(
     private val appContext: Context
@@ -21,5 +23,9 @@ class AppModuleImpl(
 
     override val pageRepository: PageRepository by lazy {
         PageRepositoryImpl(pageDao)
+    }
+
+    override val preferencesRepository: PreferencesRepository by lazy {
+        PreferencesRepositoryImpl(appContext)
     }
 }

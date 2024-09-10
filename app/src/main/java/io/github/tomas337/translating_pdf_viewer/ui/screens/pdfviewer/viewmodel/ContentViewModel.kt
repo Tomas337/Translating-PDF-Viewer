@@ -15,7 +15,7 @@ import io.github.tomas337.translating_pdf_viewer.domain.usecase.UpdateCurrentPag
 import io.github.tomas337.translating_pdf_viewer.utils.PageContent
 import kotlinx.coroutines.launch
 
-class PdfViewerViewModel(
+class ContentViewModel(
     private val getFileInfoUseCase: GetFileInfoUseCase,
     private val updateCurrentPageUseCase: UpdateCurrentPageUseCase,
     private val getPageContentUseCase: GetPageContentUseCase,
@@ -49,7 +49,7 @@ class PdfViewerViewModel(
             initializer {
                 val fileInfoRepository = MyApp.appModule.fileInfoRepository
                 val pageRepository = MyApp.appModule.pageRepository
-                PdfViewerViewModel(
+                ContentViewModel(
                     GetFileInfoUseCase(fileInfoRepository),
                     UpdateCurrentPageUseCase(fileInfoRepository),
                     GetPageContentUseCase(pageRepository),

@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.times
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
-import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.PdfViewerViewModel
+import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.ContentViewModel
 import io.github.tomas337.translating_pdf_viewer.utils.PageContent
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -47,12 +47,12 @@ import io.github.tomas337.translating_pdf_viewer.utils.PageContent
 fun PdfViewerScreen(
     navController: NavController,
     fileId: Int,
-    pdfViewerViewModel: PdfViewerViewModel = viewModel(factory = PdfViewerViewModel.Factory)
+    contentViewModel: ContentViewModel = viewModel(factory = ContentViewModel.Factory)
 ) {
     LaunchedEffect(Unit) {
-        pdfViewerViewModel.initFileInfo(fileId)
+        contentViewModel.initFileInfo(fileId)
     }
-    val fileInfo: FileModel by pdfViewerViewModel.fileInfo.observeAsState(FileModel())
+    val fileInfo: FileModel by contentViewModel.fileInfo.observeAsState(FileModel())
 
     var isToolbarVisible by remember { mutableStateOf(true) }
     val isInitialized = fileInfo.pageCount != 0
@@ -71,7 +71,7 @@ fun PdfViewerScreen(
         var isScrollable by remember { mutableStateOf(false) }
 
         LaunchedEffect(pagerState.currentPage) {
-            pdfViewerViewModel.updateCurrentPage(pagerState.currentPage, fileId)
+            contentViewModel.updateCurrentPage(pagerState.currentPage, fileId)
         }
 
         val maxWidth = boxWithConstraintsScope.constraints.maxWidth
@@ -87,7 +87,7 @@ fun PdfViewerScreen(
             pageSpacing = 30.dp,
             userScrollEnabled = isScrollable
         ) { pageIndex ->
-            val pageContent: List<List<PageContent>> by pdfViewerViewModel
+            val pageContent: List<List<PageContent>> by contentViewModel
                 .getPageContent(pageIndex, fileId)
                 .observeAsState(emptyList())
 
