@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -25,8 +27,10 @@ import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.PreferencesViewModel
 import io.github.tomas337.translating_pdf_viewer.utils.Image
 import io.github.tomas337.translating_pdf_viewer.utils.PageContent
 import io.github.tomas337.translating_pdf_viewer.utils.TextBlock
@@ -39,6 +43,7 @@ fun DrawContent(
     pageIndex: Int,
     intToTextStyleMap: Map<Int, TextStyle>,
     modifier: Modifier = Modifier,
+    preferencesViewModel: PreferencesViewModel = viewModel(factory = PreferencesViewModel.Factory)
 ) {
     if (content is Image) {
         AsyncImage(
@@ -50,8 +55,8 @@ fun DrawContent(
             modifier = modifier,
         )
     } else if (content is TextBlock) {
-        val fontSizeScale = 1.5
-        val lineSpacing = 4
+        val fontSizeScale by preferencesViewModel.fontSizeScale.collectAsState()
+        val lineSpacing by preferencesViewModel.lineSpacing.collectAsState()
         val lineHeight =
             (intToTextStyleMap[content.styles[0]]!!.fontSize * fontSizeScale + lineSpacing).sp
 

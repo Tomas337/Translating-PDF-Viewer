@@ -20,6 +20,7 @@ import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -40,6 +41,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
 import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.ContentViewModel
+import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.PreferencesViewModel
 import io.github.tomas337.translating_pdf_viewer.utils.PageContent
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -47,7 +49,8 @@ import io.github.tomas337.translating_pdf_viewer.utils.PageContent
 fun PdfViewerScreen(
     navController: NavController,
     fileId: Int,
-    contentViewModel: ContentViewModel = viewModel(factory = ContentViewModel.Factory)
+    contentViewModel: ContentViewModel = viewModel(factory = ContentViewModel.Factory),
+    preferencesViewModel: PreferencesViewModel = viewModel(factory = PreferencesViewModel.Factory)
 ) {
     LaunchedEffect(Unit) {
         contentViewModel.initFileInfo(fileId)
@@ -69,6 +72,7 @@ fun PdfViewerScreen(
             pageCount = { fileInfo.pageCount }
         )
         var isScrollable by remember { mutableStateOf(false) }
+        val pageSpacing by preferencesViewModel.pageSpacing.collectAsState()
 
         LaunchedEffect(pagerState.currentPage) {
             contentViewModel.updateCurrentPage(pagerState.currentPage, fileId)
@@ -84,7 +88,8 @@ fun PdfViewerScreen(
                 .fillMaxSize(),
             state = pagerState,
             beyondBoundsPageCount = 1,
-            pageSpacing = 30.dp,
+//            pageSpacing = 30.dp,
+            pageSpacing = pageSpacing,
             userScrollEnabled = isScrollable
         ) { pageIndex ->
             val pageContent: List<List<PageContent>> by contentViewModel
@@ -93,7 +98,8 @@ fun PdfViewerScreen(
 
             val lazyColumnState = rememberLazyListState()
 
-            val pagePadding = 25.dp
+//            val pagePadding = 25.dp
+            val pagePadding by preferencesViewModel.pagePadding.collectAsState()
 
             LazyColumn(
                 state = lazyColumnState,
@@ -170,7 +176,8 @@ fun PdfViewerScreen(
                         }
 
                     if (i != 0) {
-                        val paragraphSpacing = 10.dp
+//                        val paragraphSpacing = 10.dp
+                        val paragraphSpacing by preferencesViewModel.paragraphSpacing.collectAsState()
                         Spacer(modifier = Modifier.size(paragraphSpacing))
                     }
                     Row(
