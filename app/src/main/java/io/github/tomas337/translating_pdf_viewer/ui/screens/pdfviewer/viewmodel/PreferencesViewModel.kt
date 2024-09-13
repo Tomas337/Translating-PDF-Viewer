@@ -18,8 +18,8 @@ import io.github.tomas337.translating_pdf_viewer.domain.usecase.preferences.Upda
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.preferences.UpdatePagePaddingUseCase
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.preferences.UpdatePageSpacingUseCase
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.preferences.UpdateParagraphSpacingUseCase
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class PreferencesViewModel(
@@ -41,50 +41,40 @@ class PreferencesViewModel(
     private val _pageSpacing = MutableStateFlow(0.dp)
     private val _paragraphSpacing = MutableStateFlow(0.dp)
 
-    val fontSizeScale = _fontSizeScale
-    val lineSpacing = _lineSpacing
-    val pagePadding = _pagePadding
-    val pageSpacing = _pageSpacing
-    val paragraphSpacing = _paragraphSpacing
+    val fontSizeScale: StateFlow<Float> = _fontSizeScale
+    val lineSpacing: StateFlow<Int> = _lineSpacing
+    val pagePadding: StateFlow<Dp> = _pagePadding
+    val pageSpacing: StateFlow<Dp> = _pageSpacing
+    val paragraphSpacing: StateFlow<Dp> = _paragraphSpacing
 
     init {
         viewModelScope.launch {
-            getFontSizeScaleUseCase().collect {
-                _fontSizeScale.value = it
+            launch {
+                getFontSizeScaleUseCase().collect {
+                    _fontSizeScale.value = it
+                }
             }
-            getLineSpacingUseCase().collect {
-                _lineSpacing.value = it
+            launch {
+                getLineSpacingUseCase().collect {
+                    _lineSpacing.value = it
+                }
             }
-            getPagePaddingUseCase().collect {
-                _pagePadding.value = it.dp
+            launch {
+                getPagePaddingUseCase().collect {
+                    _pagePadding.value = it.dp
+                }
             }
-            getPageSpacingUseCase().collect {
-                _pageSpacing.value = it.dp
+            launch {
+                getPageSpacingUseCase().collect {
+                    _pageSpacing.value = it.dp
+                }
             }
-            getParagraphSpacingUseCase().collect {
-                _paragraphSpacing.value = it.dp
+            launch {
+                getParagraphSpacingUseCase().collect {
+                    _paragraphSpacing.value = it.dp
+                }
             }
         }
-    }
-
-    fun getFontSizeScale(): Flow<Float> {
-        return fontSizeScale
-    }
-
-    fun getLineSpacing(): Flow<Int> {
-        return lineSpacing
-    }
-
-    fun getPagePadding(): Flow<Dp> {
-        return pagePadding
-    }
-
-    fun getPageSpacing(): Flow<Dp> {
-        return pageSpacing
-    }
-
-    fun getParagraphSpacing(): Flow<Dp> {
-        return paragraphSpacing
     }
 
     fun updateFontSizeScale(newFontSizeScale: Float) {

@@ -52,6 +52,7 @@ fun PdfViewerScreen(
     contentViewModel: ContentViewModel = viewModel(factory = ContentViewModel.Factory),
     preferencesViewModel: PreferencesViewModel = viewModel(factory = PreferencesViewModel.Factory)
 ) {
+    // TODO move initializing into viewmodel init
     LaunchedEffect(Unit) {
         contentViewModel.initFileInfo(fileId)
     }
@@ -88,7 +89,6 @@ fun PdfViewerScreen(
                 .fillMaxSize(),
             state = pagerState,
             beyondBoundsPageCount = 1,
-//            pageSpacing = 30.dp,
             pageSpacing = pageSpacing,
             userScrollEnabled = isScrollable
         ) { pageIndex ->
@@ -98,7 +98,6 @@ fun PdfViewerScreen(
 
             val lazyColumnState = rememberLazyListState()
 
-//            val pagePadding = 25.dp
             val pagePadding by preferencesViewModel.pagePadding.collectAsState()
 
             LazyColumn(
@@ -176,7 +175,6 @@ fun PdfViewerScreen(
                         }
 
                     if (i != 0) {
-//                        val paragraphSpacing = 10.dp
                         val paragraphSpacing by preferencesViewModel.paragraphSpacing.collectAsState()
                         Spacer(modifier = Modifier.size(paragraphSpacing))
                     }
