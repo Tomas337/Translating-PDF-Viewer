@@ -52,7 +52,6 @@ fun PdfViewerScreen(
     contentViewModel: ContentViewModel = viewModel(factory = ContentViewModel.Factory),
     preferencesViewModel: PreferencesViewModel = viewModel(factory = PreferencesViewModel.Factory)
 ) {
-    // TODO move initializing into viewmodel init
     LaunchedEffect(Unit) {
         contentViewModel.initFileInfo(fileId)
     }
@@ -179,6 +178,9 @@ fun PdfViewerScreen(
                         Spacer(modifier = Modifier.size(paragraphSpacing))
                     }
                     Row(
+                        // TODO fix: when centered and row contains text, there won't be any spacing
+                        // (fixed by grouping all images into one one screenshot,
+                        // then there won't be the need for SpaceEvenly and only spacedBy can be used)
                         horizontalArrangement = when (row[0].isCentered) {
                             true -> Arrangement.SpaceEvenly
                             else -> Arrangement.spacedBy(10.dp)

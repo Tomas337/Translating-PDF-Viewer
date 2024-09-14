@@ -17,11 +17,13 @@ import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavController
 import io.github.tomas337.translating_pdf_viewer.R
 import io.github.tomas337.translating_pdf_viewer.ui.main.navigation.NavRoute
+import kotlinx.coroutines.Job
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PdfViewerTopBar(
-    navController: NavController
+    navController: NavController,
+    setSettingsSheetVisibility: (Boolean) -> Job
 ) {
     TopAppBar(
         title = {
@@ -61,7 +63,7 @@ fun PdfViewerTopBar(
                     tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = { setSettingsSheetVisibility(true) }) {
                 Icon(
                     imageVector = Icons.Filled.Settings,
                     contentDescription = "Display settings",
