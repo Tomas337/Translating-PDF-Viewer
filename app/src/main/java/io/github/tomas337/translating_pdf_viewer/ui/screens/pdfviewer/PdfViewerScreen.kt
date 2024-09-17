@@ -65,7 +65,7 @@ fun PdfViewerScreen(
         isToolbarVisible = isToolbarVisible,
         isInitialized = isInitialized,
         navController = navController
-    ) { boxWithConstraintsScope ->
+    ) { boxWithConstraintsScope, hideBottomSheetModifier ->
 
         val pagerState = rememberPagerState(
             initialPage = fileInfo.curPage,
@@ -84,7 +84,7 @@ fun PdfViewerScreen(
             isToolbarVisible = true
         }
         VerticalPager(
-            modifier = Modifier
+            modifier = hideBottomSheetModifier
                 .fillMaxSize(),
             state = pagerState,
             beyondBoundsPageCount = 1,
