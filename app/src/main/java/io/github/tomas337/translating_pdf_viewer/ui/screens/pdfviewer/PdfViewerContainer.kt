@@ -61,9 +61,7 @@ fun PdfViewerContainer(
             .fillMaxSize()
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         sheetContent = {
-            SettingsSheet(
-                setSettingsSheetVisibility = setSettingsSheetVisibility,
-            )
+            SettingsSheet()
         },
         sheetPeekHeight = 300.dp,
         scaffoldState = scaffoldState,
