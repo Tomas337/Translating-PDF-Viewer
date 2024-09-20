@@ -29,7 +29,21 @@ fun SettingsSheet() {
             fontSize = fontSize,
         )
         SettingsRow(
+            settingName = "line spacing",
+            fontSize = fontSize,
+        )
+        SettingsRow(
             settingName = "page padding",
+            fontSize = fontSize,
+            units = "dp"
+        )
+        SettingsRow(
+            settingName = "page spacing",
+            fontSize = fontSize,
+            units = "dp"
+        )
+        SettingsRow(
+            settingName = "paragraph spacing",
             fontSize = fontSize,
             units = "dp"
         )
