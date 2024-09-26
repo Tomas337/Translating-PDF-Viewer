@@ -38,41 +38,34 @@ fun SettingsSheet(
             SettingsRow(
                 settingName = "font size scale",
                 fontSize = fontSize,
-                values = (1..100).map { "%.1f".format(it / 10f) },
-                startIndex = (fontSizeScale * 10).toInt() - 1,
-                updatePreference = { preferencesViewModel.updateFontSizeScale(it.toFloat()) },
+                curValue = fontSizeScale,
+                updatePreference = { preferencesViewModel.updateFontSizeScale(it) },
+                step = 0.1f
             )
-            SettingsRow(
-                settingName = "line spacing",
-                fontSize = fontSize,
-                values = (1..99).map { it.toString() },
-                startIndex = lineSpacing - 1,
-                updatePreference = { preferencesViewModel.updateLineSpacing(it.toInt()) },
-            )
+//            SettingsRow(
+//                settingName = "line spacing",
+//                fontSize = fontSize,
+//                updatePreference = { preferencesViewModel.updateLineSpacing(it.toInt()) },
+//            )
             SettingsRow(
                 settingName = "page padding",
                 fontSize = fontSize,
-                values = (1..99).map { it.toString() },
-                startIndex = pagePadding.value.toInt() - 1,
+                curValue = pagePadding.value,
                 updatePreference = { preferencesViewModel.updatePagePadding(it.toInt()) },
                 units = "dp"
             )
-            SettingsRow(
-                settingName = "page spacing",
-                fontSize = fontSize,
-                values = (1..99).map { it.toString() },
-                startIndex = pageSpacing.value.toInt() - 1,
-                updatePreference = { preferencesViewModel.updatePageSpacing(it.toInt()) },
-                units = "dp"
-            )
-            SettingsRow(
-                settingName = "paragraph spacing",
-                fontSize = fontSize,
-                values = (1..99).map { it.toString() },
-                startIndex = paragraphSpacing.value.toInt() - 1,
-                updatePreference = { preferencesViewModel.updateParagraphSpacing(it.toInt()) },
-                units = "dp"
-            )
+//            SettingsRow(
+//                settingName = "page spacing",
+//                fontSize = fontSize,
+//                updatePreference = { preferencesViewModel.updatePageSpacing(it.toInt()) },
+//                units = "dp"
+//            )
+//            SettingsRow(
+//                settingName = "paragraph spacing",
+//                fontSize = fontSize,
+//                updatePreference = { preferencesViewModel.updateParagraphSpacing(it.toInt()) },
+//                units = "dp"
+//            )
         }
     }
 }
