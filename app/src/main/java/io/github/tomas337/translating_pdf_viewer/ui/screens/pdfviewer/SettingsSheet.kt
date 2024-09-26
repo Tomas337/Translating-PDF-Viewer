@@ -16,7 +16,7 @@ import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.
 fun SettingsSheet(
     preferencesViewModel: PreferencesViewModel = viewModel(factory = PreferencesViewModel.Factory)
 ) {
-    val fontSize = 20.sp
+    val fontSize = 16.sp
 
     val fontSizeScale by preferencesViewModel.fontSizeScale.collectAsState()
     val lineSpacing by preferencesViewModel.lineSpacing.collectAsState()
@@ -42,11 +42,12 @@ fun SettingsSheet(
                 updatePreference = { preferencesViewModel.updateFontSizeScale(it) },
                 step = 0.1f
             )
-//            SettingsRow(
-//                settingName = "line spacing",
-//                fontSize = fontSize,
-//                updatePreference = { preferencesViewModel.updateLineSpacing(it.toInt()) },
-//            )
+            SettingsRow(
+                settingName = "line spacing",
+                fontSize = fontSize,
+                curValue = lineSpacing.toFloat(),
+                updatePreference = { preferencesViewModel.updateLineSpacing(it.toInt()) },
+            )
             SettingsRow(
                 settingName = "page padding",
                 fontSize = fontSize,
@@ -54,18 +55,20 @@ fun SettingsSheet(
                 updatePreference = { preferencesViewModel.updatePagePadding(it.toInt()) },
                 units = "dp"
             )
-//            SettingsRow(
-//                settingName = "page spacing",
-//                fontSize = fontSize,
-//                updatePreference = { preferencesViewModel.updatePageSpacing(it.toInt()) },
-//                units = "dp"
-//            )
-//            SettingsRow(
-//                settingName = "paragraph spacing",
-//                fontSize = fontSize,
-//                updatePreference = { preferencesViewModel.updateParagraphSpacing(it.toInt()) },
-//                units = "dp"
-//            )
+            SettingsRow(
+                settingName = "page spacing",
+                fontSize = fontSize,
+                curValue = pageSpacing.value,
+                updatePreference = { preferencesViewModel.updatePageSpacing(it.toInt()) },
+                units = "dp"
+            )
+            SettingsRow(
+                settingName = "paragraph spacing",
+                fontSize = fontSize,
+                curValue = paragraphSpacing.value,
+                updatePreference = { preferencesViewModel.updateParagraphSpacing(it.toInt()) },
+                units = "dp"
+            )
         }
     }
 }
