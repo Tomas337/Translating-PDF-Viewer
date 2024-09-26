@@ -35,17 +35,35 @@ class PreferencesViewModel(
     private val updateParagraphSpacingUseCase: UpdateParagraphSpacingUseCase
 ) : ViewModel() {
 
-    private val _fontSizeScale = MutableStateFlow(0f)
-    private val _lineSpacing = MutableStateFlow(0)
-    private val _pagePadding = MutableStateFlow(0.dp)
-    private val _pageSpacing = MutableStateFlow(0.dp)
-    private val _paragraphSpacing = MutableStateFlow(0.dp)
+//    private val _fontSizeScale = MutableStateFlow(0f)
+//    private val _lineSpacing = MutableStateFlow(0)
+//    private val _pagePadding = MutableStateFlow(0.dp)
+//    private val _pageSpacing = MutableStateFlow(0.dp)
+//    private val _paragraphSpacing = MutableStateFlow(0.dp)
+
+    private val _fontSizeScale = MutableStateFlow(-1f)
+    private val _lineSpacing = MutableStateFlow(-1)
+    private val _pagePadding = MutableStateFlow((-1).dp)
+    private val _pageSpacing = MutableStateFlow((-1).dp)
+    private val _paragraphSpacing = MutableStateFlow((-1).dp)
 
     val fontSizeScale: StateFlow<Float> = _fontSizeScale
     val lineSpacing: StateFlow<Int> = _lineSpacing
     val pagePadding: StateFlow<Dp> = _pagePadding
     val pageSpacing: StateFlow<Dp> = _pageSpacing
     val paragraphSpacing: StateFlow<Dp> = _paragraphSpacing
+
+//    private val _fontSizeScale: MutableStateFlow<Float?> = MutableStateFlow(null)
+//    private val _lineSpacing: MutableStateFlow<Int?> = MutableStateFlow(null)
+//    private val _pagePadding: MutableStateFlow<Dp?> = MutableStateFlow(null)
+//    private val _pageSpacing: MutableStateFlow<Dp?> = MutableStateFlow(null)
+//    private val _paragraphSpacing: MutableStateFlow<Dp?> = MutableStateFlow(null)
+//
+//    val fontSizeScale: StateFlow<Float?> = _fontSizeScale
+//    val lineSpacing: StateFlow<Int?> = _lineSpacing
+//    val pagePadding: StateFlow<Dp?> = _pagePadding
+//    val pageSpacing: StateFlow<Dp?> = _pageSpacing
+//    val paragraphSpacing: StateFlow<Dp?> = _paragraphSpacing
 
     init {
         viewModelScope.launch {
