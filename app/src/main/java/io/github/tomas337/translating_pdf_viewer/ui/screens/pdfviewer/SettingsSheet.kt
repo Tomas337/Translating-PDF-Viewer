@@ -47,6 +47,7 @@ fun SettingsSheet(
                 fontSize = fontSize,
                 curValue = lineSpacing.toFloat(),
                 updatePreference = { preferencesViewModel.updateLineSpacing(it.toInt()) },
+                units = "sp"
             )
             SettingsItem(
                 settingName = "page padding",

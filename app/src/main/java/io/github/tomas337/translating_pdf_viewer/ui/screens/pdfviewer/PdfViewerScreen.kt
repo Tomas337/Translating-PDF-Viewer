@@ -98,6 +98,9 @@ fun PdfViewerScreen(
             val lazyColumnState = rememberLazyListState()
 
             val pagePadding by preferencesViewModel.pagePadding.collectAsState()
+            val fontSizeScale by preferencesViewModel.fontSizeScale.collectAsState()
+            val lineSpacing by preferencesViewModel.lineSpacing.collectAsState()
+            val paragraphSpacing by preferencesViewModel.paragraphSpacing.collectAsState()
 
             LazyColumn(
                 state = lazyColumnState,
@@ -174,7 +177,6 @@ fun PdfViewerScreen(
                         }
 
                     if (i != 0) {
-                        val paragraphSpacing by preferencesViewModel.paragraphSpacing.collectAsState()
                         Spacer(modifier = Modifier.size(paragraphSpacing))
                     }
                     Row(
@@ -193,6 +195,8 @@ fun PdfViewerScreen(
                                 content = content,
                                 pageIndex = pageIndex,
                                 intToTextStyleMap = fileInfo.intToTextStyleMap,
+                                fontSizeScale = fontSizeScale,
+                                lineSpacing = lineSpacing,
                             )
                         }
                     }
