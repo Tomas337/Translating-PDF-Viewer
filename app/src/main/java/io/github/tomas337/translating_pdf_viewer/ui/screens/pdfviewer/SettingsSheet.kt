@@ -35,34 +35,34 @@ fun SettingsSheet(
             modifier = Modifier.fillMaxHeight(0.89f),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            SettingsRow(
+            SettingsItem(
                 settingName = "font size scale",
                 fontSize = fontSize,
                 curValue = fontSizeScale,
                 updatePreference = { preferencesViewModel.updateFontSizeScale(it) },
                 step = 0.1f
             )
-            SettingsRow(
+            SettingsItem(
                 settingName = "line spacing",
                 fontSize = fontSize,
                 curValue = lineSpacing.toFloat(),
                 updatePreference = { preferencesViewModel.updateLineSpacing(it.toInt()) },
             )
-            SettingsRow(
+            SettingsItem(
                 settingName = "page padding",
                 fontSize = fontSize,
                 curValue = pagePadding.value,
                 updatePreference = { preferencesViewModel.updatePagePadding(it.toInt()) },
                 units = "dp"
             )
-            SettingsRow(
+            SettingsItem(
                 settingName = "page spacing",
                 fontSize = fontSize,
                 curValue = pageSpacing.value,
                 updatePreference = { preferencesViewModel.updatePageSpacing(it.toInt()) },
                 units = "dp"
             )
-            SettingsRow(
+            SettingsItem(
                 settingName = "paragraph spacing",
                 fontSize = fontSize,
                 curValue = paragraphSpacing.value,
