@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
 import io.github.tomas337.translating_pdf_viewer.ui.main.navigation.NavGraph

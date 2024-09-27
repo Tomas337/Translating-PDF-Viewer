@@ -1,9 +1,11 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
-import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.BoxWithConstraintsScope
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,9 +19,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.changedToUp
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -56,54 +60,50 @@ fun PdfViewerContainer(
         }
     }
 
-    BottomSheetScaffold(
+    val isKeyboardVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
+    val focusManager = LocalFocusManager.current
+
+    Box (
         modifier = Modifier
-            .fillMaxSize()
-            .nestedScroll(scrollBehavior.nestedScrollConnection),
-        sheetContent = {
-            SettingsSheet()
-        },
-        sheetPeekHeight = 300.dp,
-        scaffoldState = scaffoldState,
-        topBar =
+            .pointerInput(isKeyboardVisible) {
+                if (isKeyboardVisible) {
+                    detectTap { focusManager.clearFocus() }
+                }
+            }
+    ) {
+        BottomSheetScaffold(
+            modifier = Modifier
+                .fillMaxSize()
+                .nestedScroll(scrollBehavior.nestedScrollConnection),
+            sheetContent = {
+                SettingsSheet()
+            },
+            sheetPeekHeight = 300.dp,
+            scaffoldState = scaffoldState,
+            topBar =
             if (isToolbarVisible) {{
                 PdfViewerTopBar(
                     navController = navController,
                     setSettingsSheetVisibility = setSettingsSheetVisibility
                 )
             }} else null,
-    ) { innerPadding ->
-        if (isInitialized) {
-            val hideBottomSheetModifier = Modifier
-                .pointerInput(scaffoldState.bottomSheetState.isVisible) {
-                    if (scaffoldState.bottomSheetState.isVisible) {
-                        awaitPointerEventScope {
-                            while (true) {
-                                val down = awaitFirstDown(pass = PointerEventPass.Initial)
-                                down.consume()
-                                val up = awaitPointerEvent(pass = PointerEventPass.Initial)
-
-                                val isPress = up.changes.any { it.changedToUp() }
-                                val isShort = up.changes.any {
-                                    (it.uptimeMillis - it.previousUptimeMillis) <= 300
-                                }
-
-                                if (isPress) {
-                                    up.changes.forEach { it.consume() }
-                                }
-                                if (isPress && isShort) {
-                                    setSettingsSheetVisibility(false)
-                                }
-                            }
+        ) { innerPadding ->
+            if (isInitialized) {
+                val hideBottomSheetModifier = Modifier
+                    .pointerInput(scaffoldState.bottomSheetState.isVisible, isKeyboardVisible) {
+                        if (scaffoldState.bottomSheetState.isVisible && !isKeyboardVisible) {
+                            detectTap(PointerEventPass.Initial) { setSettingsSheetVisibility(false) }
+                        } else if (isKeyboardVisible) {
+                            detectTap(PointerEventPass.Initial) { focusManager.clearFocus() }
                         }
                     }
-                }
 
-            BoxWithConstraints(
-                modifier = Modifier
-                    .padding(top = innerPadding.calculateTopPadding())
-            ) {
-                content(this, hideBottomSheetModifier)
+                BoxWithConstraints(
+                    modifier = Modifier
+                        .padding(top = innerPadding.calculateTopPadding())
+                ) {
+                    content(this, hideBottomSheetModifier)
+                }
             }
         }
     }

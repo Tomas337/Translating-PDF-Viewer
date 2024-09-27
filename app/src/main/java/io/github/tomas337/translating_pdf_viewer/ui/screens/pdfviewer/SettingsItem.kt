@@ -1,9 +1,14 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -19,12 +24,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 
 @Composable
 fun SettingsItem(
@@ -37,8 +47,13 @@ fun SettingsItem(
 ) {
     var isError by remember { mutableStateOf(false) }
     var textFieldValue by remember { mutableStateOf(curValue.toString()) }
+    val focusManager = LocalFocusManager.current
+    val isKeyboardVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
 
     LaunchedEffect(curValue) {
+        textFieldValue = curValue.toString()
+    }
+    LaunchedEffect(isKeyboardVisible) {
         textFieldValue = curValue.toString()
     }
 
@@ -49,13 +64,22 @@ fun SettingsItem(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Button(
-            onClick = { updatePreference(curValue - step) }
+        Box(
+            modifier = Modifier
+                .size(50.dp)
+                .let {
+                    if (!isKeyboardVisible) {
+                        it.clickable(onClick = { updatePreference(curValue - step) })
+                    } else {
+                        it
+                    }
+                }
         ) {
             Text("-")
         }
         OutlinedTextField(
             modifier = Modifier
+                .zIndex(100f)
                 .width(200.dp),
             value = textFieldValue,
             onValueChange = { textFieldValue = it },
@@ -93,13 +117,22 @@ fun SettingsItem(
                 try {
                     updatePreference(textFieldValue.toFloat())
                     isError = false
+                    focusManager.clearFocus()
                 } catch (e: NumberFormatException) {
                     isError = true
                 }
             })
         )
-        Button(
-            onClick = { updatePreference(curValue + step) }
+        Box(
+            modifier = Modifier
+                .size(50.dp)
+                .let {
+                    if (!isKeyboardVisible) {
+                        it.clickable(onClick = { updatePreference(curValue + step) })
+                    } else {
+                        it
+                    }
+                }
         ) {
             Text("+")
         }
