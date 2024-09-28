@@ -23,7 +23,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -34,7 +33,7 @@ fun PdfViewerContainer(
     isToolbarVisible: Boolean,
     isInitialized: Boolean,
     navController: NavController,
-    content: @Composable() (BoxWithConstraintsScope, Modifier) -> Unit
+    content: @Composable (BoxWithConstraintsScope, Modifier) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -81,12 +80,12 @@ fun PdfViewerContainer(
             sheetPeekHeight = 300.dp,
             scaffoldState = scaffoldState,
             topBar =
-            if (isToolbarVisible) {{
-                PdfViewerTopBar(
-                    navController = navController,
-                    setSettingsSheetVisibility = setSettingsSheetVisibility
-                )
-            }} else null,
+                if (isToolbarVisible) {{
+                    PdfViewerTopBar(
+                        navController = navController,
+                        setSettingsSheetVisibility = setSettingsSheetVisibility
+                    )
+                }} else null,
         ) { innerPadding ->
             if (isInitialized) {
                 val hideBottomSheetModifier = Modifier
