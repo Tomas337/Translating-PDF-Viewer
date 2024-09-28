@@ -1,27 +1,18 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -29,11 +20,7 @@ import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -89,12 +76,14 @@ fun PdfViewerContainer(
                 content(this, hideBottomSheetModifier)
                 if (isSettingsSheetVisible) {
                     SettingsSheet(
+                        initialHeight = 0.3f,
+                        maxHeight = this.constraints.maxHeight,
                         modifier = Modifier
-                            .pointerInput(isKeyboardVisible) {
-                                if (isKeyboardVisible) {
-                                    detectTap { focusManager.clearFocus() }
-                                }
-                            }
+//                            .pointerInput(isKeyboardVisible) {
+//                                if (isKeyboardVisible) {
+//                                    detectTap { focusManager.clearFocus() }
+//                                }
+//                            }
                     )
                 }
             }
