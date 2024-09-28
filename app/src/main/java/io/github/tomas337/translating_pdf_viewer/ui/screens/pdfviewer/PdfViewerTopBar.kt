@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavController
@@ -23,9 +24,11 @@ import kotlinx.coroutines.Job
 @Composable
 fun PdfViewerTopBar(
     navController: NavController,
-    setSettingsSheetVisibility: (Boolean) -> Job
+    setSettingsSheetVisibility: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     TopAppBar(
+        modifier = modifier,
         title = {
         },
         navigationIcon = {

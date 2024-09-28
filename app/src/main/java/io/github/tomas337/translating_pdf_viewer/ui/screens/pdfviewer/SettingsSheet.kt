@@ -1,19 +1,25 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.PreferencesViewModel
 
 @Composable
 fun SettingsSheet(
+    modifier: Modifier = Modifier,
     preferencesViewModel: PreferencesViewModel = viewModel(factory = PreferencesViewModel.Factory)
 ) {
     val fontSize = 16.sp
@@ -32,7 +38,11 @@ fun SettingsSheet(
 
     if (isInitialized) {
         Column(
-            modifier = Modifier.fillMaxHeight(0.89f),
+            modifier = modifier
+                .fillMaxHeight(0.3f)
+                .background(MaterialTheme.colorScheme.background)
+                .zIndex(1f)
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             SettingsItem(
@@ -62,6 +72,71 @@ fun SettingsSheet(
                 fontSize = fontSize,
                 curValue = pageSpacing.value,
                 updatePreference = { preferencesViewModel.updatePageSpacing(it.toInt()) },
+                units = "dp"
+            )
+            SettingsItem(
+                settingName = "paragraph spacing",
+                fontSize = fontSize,
+                curValue = paragraphSpacing.value,
+                updatePreference = { preferencesViewModel.updateParagraphSpacing(it.toInt()) },
+                units = "dp"
+            )
+
+            // Test starts here
+            SettingsItem(
+                settingName = "paragraph spacing",
+                fontSize = fontSize,
+                curValue = paragraphSpacing.value,
+                updatePreference = { preferencesViewModel.updateParagraphSpacing(it.toInt()) },
+                units = "dp"
+            )
+            SettingsItem(
+                settingName = "paragraph spacing",
+                fontSize = fontSize,
+                curValue = paragraphSpacing.value,
+                updatePreference = { preferencesViewModel.updateParagraphSpacing(it.toInt()) },
+                units = "dp"
+            )
+            SettingsItem(
+                settingName = "paragraph spacing",
+                fontSize = fontSize,
+                curValue = paragraphSpacing.value,
+                updatePreference = { preferencesViewModel.updateParagraphSpacing(it.toInt()) },
+                units = "dp"
+            )
+            SettingsItem(
+                settingName = "paragraph spacing",
+                fontSize = fontSize,
+                curValue = paragraphSpacing.value,
+                updatePreference = { preferencesViewModel.updateParagraphSpacing(it.toInt()) },
+                units = "dp"
+            )
+            SettingsItem(
+                settingName = "paragraph spacing",
+                fontSize = fontSize,
+                curValue = paragraphSpacing.value,
+                updatePreference = { preferencesViewModel.updateParagraphSpacing(it.toInt()) },
+                units = "dp"
+            )
+            SettingsItem(
+                settingName = "paragraph spacing",
+                fontSize = fontSize,
+                curValue = paragraphSpacing.value,
+                updatePreference = { preferencesViewModel.updateParagraphSpacing(it.toInt()) },
+                units = "dp"
+            )
+            SettingsItem(
+                settingName = "paragraph spacing",
+                fontSize = fontSize,
+                curValue = paragraphSpacing.value,
+                updatePreference = { preferencesViewModel.updateParagraphSpacing(it.toInt()) },
+                units = "dp"
+            )
+            SettingsItem(
+                settingName = "paragraph spacing",
+                fontSize = fontSize,
+                curValue = paragraphSpacing.value,
+                updatePreference = { preferencesViewModel.updateParagraphSpacing(it.toInt()) },
                 units = "dp"
             )
             SettingsItem(
