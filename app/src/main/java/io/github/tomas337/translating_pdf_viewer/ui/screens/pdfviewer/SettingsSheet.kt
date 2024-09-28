@@ -40,6 +40,7 @@ fun SettingsSheet(
                 fontSize = fontSize,
                 curValue = fontSizeScale,
                 updatePreference = { preferencesViewModel.updateFontSizeScale(it) },
+                precision = 1,
                 step = 0.1f
             )
             SettingsItem(

@@ -43,18 +43,19 @@ fun SettingsItem(
     curValue: Float,
     updatePreference: (Float) -> Unit,
     step: Float = 1f,
+    precision: Int = 0,
     units: String? = null,
 ) {
     var isError by remember { mutableStateOf(false) }
-    var textFieldValue by remember { mutableStateOf(curValue.toString()) }
+    var textFieldValue by remember { mutableStateOf("%.${precision}f".format(curValue)) }
     val focusManager = LocalFocusManager.current
     val isKeyboardVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
 
     LaunchedEffect(curValue) {
-        textFieldValue = curValue.toString()
+        textFieldValue = "%.${precision}f".format(curValue)
     }
     LaunchedEffect(isKeyboardVisible) {
-        textFieldValue = curValue.toString()
+        textFieldValue = "%.${precision}f".format(curValue)
     }
 
     Row(
