@@ -45,10 +45,12 @@ import kotlinx.coroutines.launch
 fun SettingsSheet(
     initialHeight: Float,
     maxHeight: Int,
+    setSettingsSheetVisibility: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     preferencesViewModel: PreferencesViewModel = viewModel(factory = PreferencesViewModel.Factory)
 ) {
     val fontSize = 16.sp
+    val dragBarHeight = 28.dp
 
     val fontSizeScale by preferencesViewModel.fontSizeScale.collectAsState()
     val lineSpacing by preferencesViewModel.lineSpacing.collectAsState()
@@ -62,7 +64,7 @@ fun SettingsSheet(
             pageSpacing.value != -1f &&
             paragraphSpacing.value != -1f)
 
-    val minSheetHeight = with (LocalDensity.current) { 20.dp.toPx() / maxHeight }
+    val minSheetHeight = with (LocalDensity.current) { dragBarHeight.toPx() / maxHeight }
     var sheetHeight by remember { mutableFloatStateOf(initialHeight) }
 
     val isKeyboardVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
@@ -92,7 +94,7 @@ fun SettingsSheet(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(32.dp)
+                    .height(dragBarHeight)
                     .background(MaterialTheme.colorScheme.secondary)
                     .pointerInput(Unit) {
                         var curY = sheetHeight * maxHeight
@@ -107,6 +109,12 @@ fun SettingsSheet(
                                     sheetHeight = minSheetHeight
                                 } else {
                                     sheetHeight = newSheetHeight
+                                }
+                            },
+                            onDragEnd = {
+                                val tolerance = 0.05
+                                if (sheetHeight < minSheetHeight + tolerance) {
+                                    setSettingsSheetVisibility(false)
                                 }
                             }
                         )

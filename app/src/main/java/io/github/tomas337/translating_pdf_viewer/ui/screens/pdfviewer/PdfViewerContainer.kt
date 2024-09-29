@@ -78,6 +78,7 @@ fun PdfViewerContainer(
                     SettingsSheet(
                         initialHeight = 0.3f,
                         maxHeight = this.constraints.maxHeight,
+                        setSettingsSheetVisibility = setSettingsSheetVisibility,
                     )
                 }
             }
