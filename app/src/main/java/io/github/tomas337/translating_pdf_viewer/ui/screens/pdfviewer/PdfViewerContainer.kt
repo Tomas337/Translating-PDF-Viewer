@@ -78,12 +78,6 @@ fun PdfViewerContainer(
                     SettingsSheet(
                         initialHeight = 0.3f,
                         maxHeight = this.constraints.maxHeight,
-                        modifier = Modifier
-//                            .pointerInput(isKeyboardVisible) {
-//                                if (isKeyboardVisible) {
-//                                    detectTap { focusManager.clearFocus() }
-//                                }
-//                            }
                     )
                 }
             }
