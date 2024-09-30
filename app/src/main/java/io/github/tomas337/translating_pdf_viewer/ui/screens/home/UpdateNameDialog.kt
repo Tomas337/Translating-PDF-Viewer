@@ -41,38 +41,35 @@ fun UpdateNameDialog(
             color = MaterialTheme.colorScheme.secondaryContainer,
             shape = RectangleShape
         ) {
-            Box(
+            Column(
+                modifier = Modifier.padding(20.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(20.dp)
+                Text(text = "Update file name")
+                Spacer(modifier = Modifier.height(spacerHeight))
+                TextField(
+                    shape = RectangleShape,
+                    value = txtField,
+                    onValueChange = { txtField = it },
+                )
+                Spacer(modifier = Modifier.height(spacerHeight))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
                 ) {
-                    Text(text = "Update file name")
-                    Spacer(modifier = Modifier.height(spacerHeight))
-                    TextField(
-                        shape = RectangleShape,
-                        value = txtField,
-                        onValueChange = { txtField = it },
-                    )
-                    Spacer(modifier = Modifier.height(spacerHeight))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
+                    TextButton(
+                        onClick = { setShowDialog(false) }
                     ) {
-                        TextButton(
-                            onClick = { setShowDialog(false) }
-                        ) {
-                            Text(text = "CANCEL")
-                        }
-                        TextButton(
-                            onClick = {
-                                if (txtField.isNotEmpty() && txtField != oldText) {
-                                    homeViewModel.updateName(txtField, id)
-                                }
-                                setShowDialog(false)
+                        Text(text = "CANCEL")
+                    }
+                    TextButton(
+                        onClick = {
+                            if (txtField.isNotEmpty() && txtField != oldText) {
+                                homeViewModel.updateName(txtField, id)
                             }
-                        ) {
-                            Text(text = "SAVE")
+                            setShowDialog(false)
                         }
+                    ) {
+                        Text(text = "SAVE")
                     }
                 }
             }
