@@ -39,6 +39,11 @@ fun PdfViewerContainer(
     val isKeyboardVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
     val focusManager = LocalFocusManager.current
 
+    var isBookmarkDialogVisible by remember { mutableStateOf(false) }
+    val setBookmarkDialogVisibility: (Boolean) -> Unit = {
+        isBookmarkDialogVisible = it
+    }
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -48,6 +53,7 @@ fun PdfViewerContainer(
                 PdfViewerTopBar(
                     navController = navController,
                     setSettingsSheetVisibility = setSettingsSheetVisibility,
+                    setBookmarkDialogVisibility = setBookmarkDialogVisibility,
                     modifier = Modifier
                         .pointerInput(isKeyboardVisible) {
                             if (isKeyboardVisible) {
@@ -58,6 +64,9 @@ fun PdfViewerContainer(
             }
         }
     ) { innerPadding ->
+        if (isBookmarkDialogVisible) {
+            BookmarkDialog(setBookmarkDialogVisibility)
+        }
         if (isInitialized) {
             val hideBottomSheetModifier = Modifier
                 .pointerInput(isSettingsSheetVisible, isKeyboardVisible) {

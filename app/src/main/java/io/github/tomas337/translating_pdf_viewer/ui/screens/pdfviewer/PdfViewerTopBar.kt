@@ -25,6 +25,7 @@ import kotlinx.coroutines.Job
 fun PdfViewerTopBar(
     navController: NavController,
     setSettingsSheetVisibility: (Boolean) -> Unit,
+    setBookmarkDialogVisibility: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
@@ -41,8 +42,6 @@ fun PdfViewerTopBar(
             }
         },
         actions = {
-            var hasContentPage = false
-
             IconButton(onClick = { /*TODO*/ }) {
                 Icon(
                     imageVector = Icons.Filled.Search,
@@ -50,16 +49,7 @@ fun PdfViewerTopBar(
                     tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
-            if (hasContentPage) {
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.List,
-                        contentDescription = "Contents",
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            }
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = { setBookmarkDialogVisibility(true) }) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.bookmarks_24dp),
                     contentDescription = "Bookmarks",
