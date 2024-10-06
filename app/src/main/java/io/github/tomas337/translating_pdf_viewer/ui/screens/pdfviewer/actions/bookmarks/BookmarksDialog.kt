@@ -1,6 +1,7 @@
-package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
+package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.actions.bookmarks
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -12,22 +13,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 
 @Composable
-fun BookmarkDialog(
+fun BookmarksDialog(
     setDialogVisibility: (Boolean) -> Unit,
+    hasContents: Boolean = false
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-    val tabs = listOf("Contents", "Bookmarks")
+    val tabs = if (hasContents) listOf("Contents", "Bookmarks") else listOf("Bookmarks")
 
     Dialog(onDismissRequest = { setDialogVisibility(false) }) {
         Surface(
             color = MaterialTheme.colorScheme.secondaryContainer,
             shape = RoundedCornerShape(8.dp)
         ) {
-            Column {
+            Column(
+                modifier = Modifier.height(400.dp)
+            ) {
                 TabRow(selectedTabIndex = selectedTabIndex) {
                     tabs.forEachIndexed { index, tabTitle ->
                         Tab(
@@ -38,6 +43,11 @@ fun BookmarkDialog(
                             }
                         )
                     }
+                }
+                if (tabs[selectedTabIndex] == "Contents") {
+                    Contents()
+                } else if (tabs[selectedTabIndex] == "Bookmarks") {
+                    Bookmarks()
                 }
             }
         }

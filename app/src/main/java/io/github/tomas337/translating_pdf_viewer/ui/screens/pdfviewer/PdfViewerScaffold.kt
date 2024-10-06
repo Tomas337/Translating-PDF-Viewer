@@ -21,10 +21,12 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.navigation.NavController
+import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.actions.bookmarks.BookmarksDialog
+import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.actions.settings.SettingsSheet
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PdfViewerContainer(
+fun PdfViewerScaffold(
     isToolbarVisible: Boolean,
     isInitialized: Boolean,
     navController: NavController,
@@ -65,7 +67,7 @@ fun PdfViewerContainer(
         }
     ) { innerPadding ->
         if (isBookmarkDialogVisible) {
-            BookmarkDialog(setBookmarkDialogVisibility)
+            BookmarksDialog(setBookmarkDialogVisibility)
         }
         if (isInitialized) {
             val hideBottomSheetModifier = Modifier

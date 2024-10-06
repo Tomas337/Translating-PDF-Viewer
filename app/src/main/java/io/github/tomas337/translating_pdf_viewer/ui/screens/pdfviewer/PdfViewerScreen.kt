@@ -61,7 +61,7 @@ fun PdfViewerScreen(
     val isInitialized = fileInfo.pageCount != 0
     val context = LocalContext.current
 
-    PdfViewerContainer(
+    PdfViewerScaffold(
         isToolbarVisible = isToolbarVisible,
         isInitialized = isInitialized,
         navController = navController

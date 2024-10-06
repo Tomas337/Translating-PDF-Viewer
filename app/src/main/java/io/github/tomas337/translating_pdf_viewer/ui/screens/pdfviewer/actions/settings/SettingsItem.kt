@@ -1,4 +1,4 @@
-package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
+package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.actions.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
