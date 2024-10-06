@@ -21,7 +21,7 @@ import io.github.tomas337.translating_pdf_viewer.data.local.fileinfo.FileInfoEnt
         Index(value = ["file_id"])
     ]
 )
-data class BookmarksEntity(
+data class BookmarkEntity(
 
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,

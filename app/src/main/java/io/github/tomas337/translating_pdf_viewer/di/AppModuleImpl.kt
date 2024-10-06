@@ -2,8 +2,8 @@ package io.github.tomas337.translating_pdf_viewer.di
 
 import android.content.Context
 import io.github.tomas337.translating_pdf_viewer.data.local.FileDatabase
-import io.github.tomas337.translating_pdf_viewer.data.repository.bookmarks.BookmarksRepository
-import io.github.tomas337.translating_pdf_viewer.data.repository.bookmarks.BookmarksRepositoryImpl
+import io.github.tomas337.translating_pdf_viewer.data.repository.bookmarks.BookmarkRepository
+import io.github.tomas337.translating_pdf_viewer.data.repository.bookmarks.BookmarkRepositoryImpl
 import io.github.tomas337.translating_pdf_viewer.data.repository.fileinfo.FileInfoRepository
 import io.github.tomas337.translating_pdf_viewer.data.repository.fileinfo.FileInfoRepositoryImpl
 import io.github.tomas337.translating_pdf_viewer.data.repository.page.PageRepository
@@ -18,7 +18,7 @@ class AppModuleImpl(
     private val db = FileDatabase.getFileDatabase(appContext)
     private val fileInfoDao = db.fileInfoDao()
     private val pageDao = db.pageDao()
-    private val bookmarksDao = db.bookmarksDao()
+    private val bookmarkDao = db.bookmarksDao()
 
     override val fileInfoRepository: FileInfoRepository by lazy {
         FileInfoRepositoryImpl(fileInfoDao)
@@ -32,7 +32,7 @@ class AppModuleImpl(
         PreferencesRepositoryImpl(appContext)
     }
 
-    override val bookmarksRepository: BookmarksRepository by lazy {
-        BookmarksRepositoryImpl(bookmarksDao)
+    override val bookmarkRepository: BookmarkRepository by lazy {
+        BookmarkRepositoryImpl(bookmarkDao)
     }
 }

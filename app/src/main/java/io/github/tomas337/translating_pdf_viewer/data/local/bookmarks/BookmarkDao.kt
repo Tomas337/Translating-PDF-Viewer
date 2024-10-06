@@ -4,8 +4,8 @@ import androidx.room.Dao
 import androidx.room.Query
 
 @Dao
-interface BookmarksDao {
+interface BookmarkDao {
 
     @Query("SELECT * FROM bookmarks WHERE file_id == :fileId")
-    suspend fun getAllBookmarks(fileId: Int): List<BookmarksEntity>
+    suspend fun getAllBookmarks(fileId: Int): List<BookmarkEntity>
 }
