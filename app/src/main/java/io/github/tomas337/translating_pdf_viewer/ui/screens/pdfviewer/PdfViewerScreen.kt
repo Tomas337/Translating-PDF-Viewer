@@ -50,7 +50,7 @@ fun PdfViewerScreen(
     navController: NavController,
     fileId: Int,
     contentViewModel: ContentViewModel = viewModel(factory = ContentViewModel.Factory),
-    preferencesViewModel: PreferencesViewModel = viewModel(factory = PreferencesViewModel.Factory)
+    preferencesViewModel: PreferencesViewModel = viewModel(factory = PreferencesViewModel.Factory),
 ) {
     LaunchedEffect(Unit) {
         contentViewModel.initFileInfo(fileId)

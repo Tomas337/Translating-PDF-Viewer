@@ -7,7 +7,7 @@ import io.github.tomas337.translating_pdf_viewer.domain.model.BookmarkModel
 class GetAllBookmarksUseCase(
     private val bookmarkRepository: BookmarkRepository
 ) {
-    suspend operator fun invoke(id: Int): List<BookmarkModel> {
-        return bookmarkRepository.getAllBookmarks(id).toBookmarkModelList()
+    suspend operator fun invoke(fileId: Int): List<BookmarkModel> {
+        return bookmarkRepository.getAllBookmarks(fileId).toBookmarkModelList()
     }
 }
