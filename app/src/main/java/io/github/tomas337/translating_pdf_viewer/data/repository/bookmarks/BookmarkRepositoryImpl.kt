@@ -16,8 +16,8 @@ class BookmarkRepositoryImpl(
         bookmarkDao.addBookmark(bookmarkDto.toBookmarkEntity())
     }
 
-    override suspend fun updateBookmarkText(fileId: Int, text: String) {
-        bookmarkDao.updateBookmarkText(fileId, text)
+    override suspend fun updateBookmarkText(fileId: Int, pageIndex: Int, text: String) {
+        bookmarkDao.updateBookmarkText(fileId, pageIndex, text)
     }
 
     override suspend fun deleteBookmark(fileId: Int, pageIndex: Int) {

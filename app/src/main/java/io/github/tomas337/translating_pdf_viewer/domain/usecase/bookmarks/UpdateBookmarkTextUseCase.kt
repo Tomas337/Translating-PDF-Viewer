@@ -5,7 +5,7 @@ import io.github.tomas337.translating_pdf_viewer.data.repository.bookmarks.Bookm
 class UpdateBookmarkTextUseCase(
     private val bookmarkRepository: BookmarkRepository
 ) {
-    suspend operator fun invoke(fileId: Int, text: String) {
-        bookmarkRepository.updateBookmarkText(fileId, text)
+    suspend operator fun invoke(fileId: Int, pageIndex: Int, text: String) {
+        bookmarkRepository.updateBookmarkText(fileId, pageIndex, text)
     }
 }

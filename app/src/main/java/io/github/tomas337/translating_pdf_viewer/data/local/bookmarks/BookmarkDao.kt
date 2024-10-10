@@ -13,8 +13,8 @@ interface BookmarkDao {
     @Insert
     suspend fun addBookmark(bookmarkEntity: BookmarkEntity)
 
-    @Query("UPDATE bookmarks SET text = :text WHERE file_id == :fileId")
-    suspend fun updateBookmarkText(fileId: Int, text: String)
+    @Query("UPDATE bookmarks SET text = :text WHERE file_id == :fileId AND page_index == :pageIndex")
+    suspend fun updateBookmarkText(fileId: Int, pageIndex: Int, text: String)
 
     @Query("DELETE FROM bookmarks WHERE file_id == :fileId AND page_index == :pageIndex")
     suspend fun deleteBookmark(fileId: Int, pageIndex: Int)
