@@ -27,6 +27,7 @@ import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.actions.se
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PdfViewerScaffold(
+    fileId: Int,
     isToolbarVisible: Boolean,
     isInitialized: Boolean,
     navController: NavController,
@@ -67,7 +68,10 @@ fun PdfViewerScaffold(
         }
     ) { innerPadding ->
         if (isBookmarkDialogVisible) {
-            BookmarksDialog(setBookmarkDialogVisibility)
+            BookmarksDialog(
+                fileId = fileId,
+                setDialogVisibility = setBookmarkDialogVisibility
+            )
         }
         if (isInitialized) {
             val hideBottomSheetModifier = Modifier

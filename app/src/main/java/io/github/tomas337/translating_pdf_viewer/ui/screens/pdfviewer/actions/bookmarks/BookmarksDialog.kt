@@ -19,6 +19,7 @@ import androidx.compose.ui.window.Dialog
 
 @Composable
 fun BookmarksDialog(
+    fileId: Int,
     setDialogVisibility: (Boolean) -> Unit,
     hasContents: Boolean = false
 ) {
@@ -47,7 +48,7 @@ fun BookmarksDialog(
                 if (tabs[selectedTabIndex] == "Contents") {
                     Contents()
                 } else if (tabs[selectedTabIndex] == "Bookmarks") {
-                    Bookmarks()
+                    Bookmarks(fileId = fileId)
                 }
             }
         }
