@@ -16,17 +16,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
+import io.github.tomas337.translating_pdf_viewer.domain.model.BookmarkModel
+import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.BookmarkViewModel
 
 @Composable
 fun BookmarksDialog(
-    fileId: Int,
-    setDialogVisibility: (Boolean) -> Unit,
-    hasContents: Boolean = false
+    bookmarks: List<BookmarkModel>,
+    setBookmarksVisibility: (Boolean) -> Unit,
+    setPage: suspend (Int) -> Unit,
+    hasContents: Boolean = false,
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = if (hasContents) listOf("Contents", "Bookmarks") else listOf("Bookmarks")
 
-    Dialog(onDismissRequest = { setDialogVisibility(false) }) {
+    Dialog(onDismissRequest = { setBookmarksVisibility(false) }) {
         Surface(
             color = MaterialTheme.colorScheme.secondaryContainer,
             shape = RoundedCornerShape(8.dp)
@@ -48,7 +52,10 @@ fun BookmarksDialog(
                 if (tabs[selectedTabIndex] == "Contents") {
                     Contents()
                 } else if (tabs[selectedTabIndex] == "Bookmarks") {
-                    Bookmarks(fileId = fileId)
+                    Bookmarks(
+                        bookmarks = bookmarks,
+                        setPage = setPage
+                    )
                 }
             }
         }

@@ -22,13 +22,9 @@ import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.
 
 @Composable
 fun Bookmarks(
-    fileId: Int,
-    bookmarkViewModel: BookmarkViewModel = viewModel(factory = BookmarkViewModel.Factory)
+    bookmarks: List<BookmarkModel>,
+    setPage: suspend (Int) -> Unit,
 ) {
-    LaunchedEffect(Unit) {
-        bookmarkViewModel.initBookmarks(fileId)
-    }
-    val bookmarks: List<BookmarkModel> by bookmarkViewModel.bookmarks.observeAsState(emptyList())
 
     Column {
         Row(

@@ -2,6 +2,8 @@ package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -34,6 +36,9 @@ class PreferencesViewModel(
     private val updatePageSpacingUseCase: UpdatePageSpacingUseCase,
     private val updateParagraphSpacingUseCase: UpdateParagraphSpacingUseCase
 ) : ViewModel() {
+
+    private val _settingsSheetVisibility = MutableLiveData(false)
+    val settingsSheetVisibility: LiveData<Boolean> = _settingsSheetVisibility
 
     private val _fontSizeScale = MutableStateFlow(-1f)
     private val _lineSpacing = MutableStateFlow(-1)
@@ -105,6 +110,10 @@ class PreferencesViewModel(
         viewModelScope.launch {
             updateParagraphSpacingUseCase(newParagraphSpacing)
         }
+    }
+
+    fun setSettingsSheetVisibility(isVisible: Boolean) {
+        _settingsSheetVisibility.postValue(isVisible)
     }
 
     companion object {

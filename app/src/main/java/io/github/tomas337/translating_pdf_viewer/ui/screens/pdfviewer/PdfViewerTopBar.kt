@@ -15,9 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import io.github.tomas337.translating_pdf_viewer.R
 import io.github.tomas337.translating_pdf_viewer.ui.main.navigation.NavRoute
+import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.BookmarkViewModel
+import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.PreferencesViewModel
 import kotlinx.coroutines.Job
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -25,8 +28,9 @@ import kotlinx.coroutines.Job
 fun PdfViewerTopBar(
     navController: NavController,
     setSettingsSheetVisibility: (Boolean) -> Unit,
-    setBookmarkDialogVisibility: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    setBookmarksVisibility: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    preferencesViewModel: PreferencesViewModel = viewModel(factory = PreferencesViewModel.Factory),
 ) {
     TopAppBar(
         modifier = modifier,
@@ -49,7 +53,7 @@ fun PdfViewerTopBar(
                     tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
-            IconButton(onClick = { setBookmarkDialogVisibility(true) }) {
+            IconButton(onClick = { setBookmarksVisibility(true) }) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.bookmarks_24dp),
                     contentDescription = "Bookmarks",

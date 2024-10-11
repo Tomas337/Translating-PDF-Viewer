@@ -9,6 +9,10 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import io.github.tomas337.translating_pdf_viewer.di.MyApp
 import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.bookmarks.AddBookmarkUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.bookmarks.DeleteBookmarkUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.bookmarks.GetAllBookmarksUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.bookmarks.UpdateBookmarkTextUseCase
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.content.GetFileInfoUseCase
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.content.GetPageContentUseCase
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.content.UpdateCurrentPageUseCase
@@ -16,6 +20,7 @@ import io.github.tomas337.translating_pdf_viewer.utils.PageContent
 import kotlinx.coroutines.launch
 
 class ContentViewModel(
+    val fileId: Int,
     private val getFileInfoUseCase: GetFileInfoUseCase,
     private val updateCurrentPageUseCase: UpdateCurrentPageUseCase,
     private val getPageContentUseCase: GetPageContentUseCase,
@@ -24,36 +29,39 @@ class ContentViewModel(
     private val _fileInfo = MutableLiveData<FileModel>()
     val fileInfo: LiveData<FileModel> = _fileInfo
 
-    fun initFileInfo(id: Int) {
+    init {
         viewModelScope.launch {
-            _fileInfo.postValue(getFileInfoUseCase(id))
+            _fileInfo.postValue(getFileInfoUseCase(fileId))
         }
     }
 
-    fun updateCurrentPage(pageIndex: Int, id: Int) {
+    fun updateCurrentPage(pageIndex: Int) {
         viewModelScope.launch {
-            updateCurrentPageUseCase(pageIndex, id)
+            updateCurrentPageUseCase(pageIndex, fileId)
         }
     }
 
-    fun getPageContent(pageIndex: Int, id: Int): LiveData<List<List<PageContent>>> {
+    fun getPageContent(pageIndex: Int): LiveData<List<List<PageContent>>> {
         val result = MutableLiveData<List<List<PageContent>>>()
         viewModelScope.launch {
-            result.postValue(getPageContentUseCase(pageIndex, id))
+            result.postValue(getPageContentUseCase(pageIndex, fileId))
         }
         return result
     }
 
     companion object {
-        val Factory : ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val fileInfoRepository = MyApp.appModule.fileInfoRepository
-                val pageRepository = MyApp.appModule.pageRepository
-                ContentViewModel(
-                    GetFileInfoUseCase(fileInfoRepository),
-                    UpdateCurrentPageUseCase(fileInfoRepository),
-                    GetPageContentUseCase(pageRepository),
-                )
+        fun provideFactory(fileId: Int): ViewModelProvider.Factory {
+            return viewModelFactory {
+                initializer {
+                    val fileInfoRepository = MyApp.appModule.fileInfoRepository
+                    val pageRepository = MyApp.appModule.pageRepository
+                    ContentViewModel(
+                        fileId,
+                        GetFileInfoUseCase(fileInfoRepository),
+                        UpdateCurrentPageUseCase(fileInfoRepository),
+                        GetPageContentUseCase(pageRepository),
+                    )
+                }
             }
         }
     }

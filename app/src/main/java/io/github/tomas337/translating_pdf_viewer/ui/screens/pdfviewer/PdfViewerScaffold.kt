@@ -27,25 +27,17 @@ import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.actions.se
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PdfViewerScaffold(
-    fileId: Int,
-    isToolbarVisible: Boolean,
     isInitialized: Boolean,
+    isToolbarVisible: Boolean,
+    setSettingsSheetVisibility: (Boolean) -> Unit,
+    setBookmarksVisibility: (Boolean) -> Unit,
     navController: NavController,
-    content: @Composable (BoxWithConstraintsScope, Modifier) -> Unit
+    content: @Composable (BoxWithConstraintsScope) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    var isSettingsSheetVisible by remember { mutableStateOf(false) }
-    val setSettingsSheetVisibility: (Boolean) -> Unit = {
-        isSettingsSheetVisible = it
-    }
     val isKeyboardVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
     val focusManager = LocalFocusManager.current
-
-    var isBookmarkDialogVisible by remember { mutableStateOf(false) }
-    val setBookmarkDialogVisibility: (Boolean) -> Unit = {
-        isBookmarkDialogVisible = it
-    }
 
     Scaffold(
         modifier = Modifier
@@ -56,7 +48,7 @@ fun PdfViewerScaffold(
                 PdfViewerTopBar(
                     navController = navController,
                     setSettingsSheetVisibility = setSettingsSheetVisibility,
-                    setBookmarkDialogVisibility = setBookmarkDialogVisibility,
+                    setBookmarksVisibility = setBookmarksVisibility,
                     modifier = Modifier
                         .pointerInput(isKeyboardVisible) {
                             if (isKeyboardVisible) {
@@ -67,35 +59,13 @@ fun PdfViewerScaffold(
             }
         }
     ) { innerPadding ->
-        if (isBookmarkDialogVisible) {
-            BookmarksDialog(
-                fileId = fileId,
-                setDialogVisibility = setBookmarkDialogVisibility
-            )
-        }
         if (isInitialized) {
-            val hideBottomSheetModifier = Modifier
-                .pointerInput(isSettingsSheetVisible, isKeyboardVisible) {
-                    if (isSettingsSheetVisible && !isKeyboardVisible) {
-                        detectTap(PointerEventPass.Initial) { setSettingsSheetVisibility(false) }
-                    } else if (isKeyboardVisible) {
-                        detectTap(PointerEventPass.Initial) { focusManager.clearFocus() }
-                    }
-                }
-
             BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(top = innerPadding.calculateTopPadding())
             ) {
-                content(this, hideBottomSheetModifier)
-                if (isSettingsSheetVisible) {
-                    SettingsSheet(
-                        initialHeight = 0.3f,
-                        maxHeight = this.constraints.maxHeight,
-                        setSettingsSheetVisibility = setSettingsSheetVisibility,
-                    )
-                }
+                content(this)
             }
         }
     }

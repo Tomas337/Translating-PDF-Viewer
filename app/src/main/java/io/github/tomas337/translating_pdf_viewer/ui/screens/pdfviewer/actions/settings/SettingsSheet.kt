@@ -30,6 +30,7 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -42,17 +43,20 @@ fun SettingsSheet(
     initialHeight: Float,
     maxHeight: Int,
     setSettingsSheetVisibility: (Boolean) -> Unit,
+    fontSizeScale: Float,
+    lineSpacing: Int,
+    pagePadding: Dp,
+    pageSpacing: Dp,
+    paragraphSpacing: Dp,
+    updateFontSizeScale: (Float) -> Unit,
+    updateLineSpacing: (Float) -> Unit,
+    updatePagePadding: (Float) -> Unit,
+    updatePageSpacing: (Float) -> Unit,
+    updateParagraphSpacing: (Float) -> Unit,
     modifier: Modifier = Modifier,
-    preferencesViewModel: PreferencesViewModel = viewModel(factory = PreferencesViewModel.Factory)
 ) {
     val fontSize = 16.sp
     val dragBarHeight = 28.dp
-
-    val fontSizeScale by preferencesViewModel.fontSizeScale.collectAsState()
-    val lineSpacing by preferencesViewModel.lineSpacing.collectAsState()
-    val pagePadding by preferencesViewModel.pagePadding.collectAsState()
-    val pageSpacing by preferencesViewModel.pageSpacing.collectAsState()
-    val paragraphSpacing by preferencesViewModel.paragraphSpacing.collectAsState()
 
     val isInitialized = (fontSizeScale != -1f &&
             lineSpacing != -1 &&
@@ -133,7 +137,7 @@ fun SettingsSheet(
                     settingName = "font size scale",
                     fontSize = fontSize,
                     curValue = fontSizeScale,
-                    updatePreference = { preferencesViewModel.updateFontSizeScale(it) },
+                    updatePreference = updateFontSizeScale,
                     precision = 1,
                     step = 0.1f
                 )
@@ -141,28 +145,28 @@ fun SettingsSheet(
                     settingName = "line spacing",
                     fontSize = fontSize,
                     curValue = lineSpacing.toFloat(),
-                    updatePreference = { preferencesViewModel.updateLineSpacing(it.toInt()) },
+                    updatePreference = updateLineSpacing,
                     units = "sp"
                 )
                 SettingsItem(
                     settingName = "page padding",
                     fontSize = fontSize,
                     curValue = pagePadding.value,
-                    updatePreference = { preferencesViewModel.updatePagePadding(it.toInt()) },
+                    updatePreference = updatePagePadding,
                     units = "dp"
                 )
                 SettingsItem(
                     settingName = "page spacing",
                     fontSize = fontSize,
                     curValue = pageSpacing.value,
-                    updatePreference = { preferencesViewModel.updatePageSpacing(it.toInt()) },
+                    updatePreference = updatePageSpacing,
                     units = "dp"
                 )
                 SettingsItem(
                     settingName = "paragraph spacing",
                     fontSize = fontSize,
                     curValue = paragraphSpacing.value,
-                    updatePreference = { preferencesViewModel.updateParagraphSpacing(it.toInt()) },
+                    updatePreference = updateParagraphSpacing,
                     units = "dp"
                 )
             }
