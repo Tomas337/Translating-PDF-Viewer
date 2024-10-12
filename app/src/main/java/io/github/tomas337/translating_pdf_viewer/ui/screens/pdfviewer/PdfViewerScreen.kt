@@ -59,6 +59,7 @@ fun PdfViewerScreen(
 
         val maxWidth = boxWithConstraintsScope.constraints.maxWidth
 
+        // TODO: check if values are initialized, value equalling to -1 throws fatal exception
         val fontSizeScale by preferencesViewModel.fontSizeScale.collectAsState()
         val lineSpacing by preferencesViewModel.lineSpacing.collectAsState()
         val pagePadding by preferencesViewModel.pagePadding.collectAsState()
@@ -106,6 +107,7 @@ fun PdfViewerScreen(
                 bookmarks = bookmarks,
                 setBookmarksVisibility = { bookmarkViewModel.setBookmarksVisibility(it) },
                 setPage = { page -> pagerState.animateScrollToPage(page) },
+                curPage = pagerState.currentPage,
             )
         }
         Pager(
