@@ -7,7 +7,7 @@ import androidx.room.Query
 @Dao
 interface BookmarkDao {
 
-    @Query("SELECT * FROM bookmarks WHERE file_id == :fileId")
+    @Query("SELECT * FROM bookmarks WHERE file_id == :fileId ORDER BY page_index ASC")
     suspend fun getAllBookmarks(fileId: Int): List<BookmarkEntity>
 
     @Insert
