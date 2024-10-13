@@ -90,7 +90,7 @@ fun PdfViewerScreen(
         }
         if (isSettingsSheetVisible) {
             SettingsSheet(
-                initialHeight = 0.3f,
+                initialHeight = 0.35f,
                 maxHeight = boxWithConstraintsScope.constraints.maxHeight,
                 setSettingsSheetVisibility = { preferencesViewModel.setSettingsSheetVisibility(it) },
                 fontSizeScale = fontSizeScale,
