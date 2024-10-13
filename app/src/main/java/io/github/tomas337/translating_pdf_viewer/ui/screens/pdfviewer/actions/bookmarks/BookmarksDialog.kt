@@ -34,7 +34,7 @@ fun BookmarksDialog(
     curPage: Int,
     addBookmark: (Int) -> Unit,
     removeBookmark: (Int) -> Unit,
-    hasContents: Boolean = true,
+    hasContents: Boolean = false,
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = if (hasContents) listOf("Contents", "Bookmarks") else listOf("Bookmarks")
