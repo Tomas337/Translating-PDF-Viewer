@@ -1,12 +1,16 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.actions.bookmarks
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -18,8 +22,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.tomas337.translating_pdf_viewer.R
 import io.github.tomas337.translating_pdf_viewer.domain.model.BookmarkModel
@@ -35,7 +41,6 @@ fun Bookmarks(
     removeBookmark: (Int) -> Unit,
 ) {
     val rowHeight = 50.dp
-    val padding = 20.dp
     val isCurrentPageBookmarked = bookmarks.any { it.pageIndex == curPage }
     val coroutineScope = rememberCoroutineScope()
 
@@ -46,6 +51,7 @@ fun Bookmarks(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(rowHeight)
+                .background(color = MaterialTheme.colorScheme.primaryContainer)
                 .clickable {
                     if (isCurrentPageBookmarked) {
                         removeBookmark(curPage)
@@ -53,29 +59,37 @@ fun Bookmarks(
                         addBookmark(curPage)
                     }
                 }
-                .padding(horizontal = padding)
+                .padding(horizontal = 25.dp)
         ) {
             if (isCurrentPageBookmarked) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.outline_bookmark_remove_24),
                     contentDescription = "Remove bookmark",
-                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
                 )
-                Text("Remove current page from bookmarks")
+                Text(
+                    text = "Remove current page from bookmarks",
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
             } else {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.outline_bookmark_add_24),
                     contentDescription = "Add bookmark",
-                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
                 )
-                Text("Add current page to bookmarks")
+                Text(
+                    text = "Add current page to bookmarks",
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
             }
         }
-        HorizontalDivider()
+        HorizontalDivider(color = MaterialTheme.colorScheme.inversePrimary)
         LazyColumn {
             itemsIndexed(bookmarks) { index, bookmark ->
                 if (index != 0) {
-                    HorizontalDivider()
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 20.dp))
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -89,7 +103,7 @@ fun Bookmarks(
                             }
                             setBookmarksVisibility(false)
                         }
-                        .padding(horizontal = padding),
+                        .padding(horizontal = 20.dp),
                 ) {
                     Text(text = bookmark.text)
                     Text(text = "${bookmark.pageIndex + 1}")

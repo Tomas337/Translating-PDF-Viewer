@@ -3,6 +3,7 @@ package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.actions.b
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
@@ -28,7 +29,7 @@ fun BookmarksDialog(
     curPage: Int,
     addBookmark: (Int) -> Unit,
     removeBookmark: (Int) -> Unit,
-    hasContents: Boolean = false,
+    hasContents: Boolean = true,
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = if (hasContents) listOf("Contents", "Bookmarks") else listOf("Bookmarks")
@@ -41,7 +42,12 @@ fun BookmarksDialog(
             Column(
                 modifier = Modifier.height(400.dp)
             ) {
-                TabRow(selectedTabIndex = selectedTabIndex) {
+                TabRow(
+                    selectedTabIndex = selectedTabIndex,
+                    divider = {
+                        HorizontalDivider(color = MaterialTheme.colorScheme.inversePrimary)
+                    }
+                ) {
                     tabs.forEachIndexed { index, tabTitle ->
                         Tab(
                             selected = selectedTabIndex == index,
