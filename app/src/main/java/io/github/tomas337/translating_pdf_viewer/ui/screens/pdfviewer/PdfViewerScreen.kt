@@ -37,8 +37,18 @@ fun PdfViewerScreen(
     bookmarkViewModel: BookmarkViewModel = viewModel(factory = BookmarkViewModel.provideFactory(fileId)),
 ) {
     val fileInfo: FileModel by contentViewModel.fileInfo.observeAsState(FileModel())
+    val fontSizeScale by preferencesViewModel.fontSizeScale.collectAsState()
+    val lineSpacing by preferencesViewModel.lineSpacing.collectAsState()
+    val pagePadding by preferencesViewModel.pagePadding.collectAsState()
+    val pageSpacing by preferencesViewModel.pageSpacing.collectAsState()
+    val paragraphSpacing by preferencesViewModel.paragraphSpacing.collectAsState()
 
-    val isInitialized = fileInfo.pageCount != 0
+    val isInitialized = fileInfo.pageCount != 0 &&
+            (fontSizeScale != -1f &&
+             lineSpacing != -1 &&
+             pagePadding.value != -1f &&
+             pageSpacing.value != -1f &&
+             paragraphSpacing.value != -1f)
     var isToolbarVisible by remember { mutableStateOf(true) }
 
     PdfViewerScaffold(
@@ -58,13 +68,6 @@ fun PdfViewerScreen(
         }
 
         val maxWidth = boxWithConstraintsScope.constraints.maxWidth
-
-        // TODO: check if values are initialized, value equalling to -1 throws fatal exception
-        val fontSizeScale by preferencesViewModel.fontSizeScale.collectAsState()
-        val lineSpacing by preferencesViewModel.lineSpacing.collectAsState()
-        val pagePadding by preferencesViewModel.pagePadding.collectAsState()
-        val pageSpacing by preferencesViewModel.pageSpacing.collectAsState()
-        val paragraphSpacing by preferencesViewModel.paragraphSpacing.collectAsState()
 
         val isSettingsSheetVisible by preferencesViewModel.settingsSheetVisibility.observeAsState(false)
         val isKeyboardVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0

@@ -58,118 +58,110 @@ fun SettingsSheet(
     val fontSize = 16.sp
     val dragBarHeight = 28.dp
 
-    val isInitialized = (fontSizeScale != -1f &&
-            lineSpacing != -1 &&
-            pagePadding.value != -1f &&
-            pageSpacing.value != -1f &&
-            paragraphSpacing.value != -1f)
-
     val minSheetHeight = with (LocalDensity.current) { dragBarHeight.toPx() / maxHeight }
     var sheetHeight by remember { mutableFloatStateOf(initialHeight) }
 
     val isKeyboardVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
     val focusManager = LocalFocusManager.current
 
-    if (isInitialized) {
-        Column(
-            modifier = modifier
-                .fillMaxHeight(sheetHeight)
-                .layout { measurable, constraints ->
-                    val placeable = measurable.measure(constraints)
-                    layout(placeable.width, placeable.height) {
-                        val y = maxHeight - placeable.height
-                        placeable.place(0, y, zIndex = 2f)
-                    }
+    Column(
+        modifier = modifier
+            .fillMaxHeight(sheetHeight)
+            .layout { measurable, constraints ->
+                val placeable = measurable.measure(constraints)
+                layout(placeable.width, placeable.height) {
+                    val y = maxHeight - placeable.height
+                    placeable.place(0, y, zIndex = 2f)
                 }
-                .pointerInput(isKeyboardVisible) {
-                    if (isKeyboardVisible) {
-                        detectTap { focusManager.clearFocus() }
-                    }
+            }
+            .pointerInput(isKeyboardVisible) {
+                if (isKeyboardVisible) {
+                    detectTap { focusManager.clearFocus() }
                 }
-                .background(MaterialTheme.colorScheme.background)
-        ) {
+            }
+            .background(MaterialTheme.colorScheme.background)
+    ) {
 
-            // Handle bar
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(dragBarHeight)
-                    .background(MaterialTheme.colorScheme.secondary)
-                    .pointerInput(Unit) {
-                        var curY = sheetHeight * maxHeight
+        // Handle bar
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(dragBarHeight)
+                .background(MaterialTheme.colorScheme.secondary)
+                .pointerInput(Unit) {
+                    var curY = sheetHeight * maxHeight
 
-                        detectVerticalDragGestures(
-                            onVerticalDrag = { _, dragAmount ->
-                                curY -= dragAmount
-                                val newSheetHeight = curY / maxHeight
+                    detectVerticalDragGestures(
+                        onVerticalDrag = { _, dragAmount ->
+                            curY -= dragAmount
+                            val newSheetHeight = curY / maxHeight
 
-                                if (newSheetHeight < minSheetHeight) {
-                                    curY = minSheetHeight * maxHeight
-                                    sheetHeight = minSheetHeight
-                                } else {
-                                    sheetHeight = newSheetHeight
-                                }
-                            },
-                            onDragEnd = {
-                                val tolerance = 0.05
-                                if (sheetHeight < minSheetHeight + tolerance) {
-                                    setSettingsSheetVisibility(false)
-                                }
+                            if (newSheetHeight < minSheetHeight) {
+                                curY = minSheetHeight * maxHeight
+                                sheetHeight = minSheetHeight
+                            } else {
+                                sheetHeight = newSheetHeight
                             }
-                        )
-                    }
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.baseline_drag_handle_48),
-                    contentDescription = "Drag handle",
-                    tint = MaterialTheme.colorScheme.onSecondary
-                )
-            }
+                        },
+                        onDragEnd = {
+                            val tolerance = 0.05
+                            if (sheetHeight < minSheetHeight + tolerance) {
+                                setSettingsSheetVisibility(false)
+                            }
+                        }
+                    )
+                }
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.baseline_drag_handle_48),
+                contentDescription = "Drag handle",
+                tint = MaterialTheme.colorScheme.onSecondary
+            )
+        }
 
-            Column(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                Spacer(modifier = Modifier.size(10.dp))
-                SettingsItem(
-                    settingName = "font size scale",
-                    fontSize = fontSize,
-                    curValue = fontSizeScale,
-                    updatePreference = updateFontSizeScale,
-                    precision = 1,
-                    step = 0.1f
-                )
-                SettingsItem(
-                    settingName = "line spacing",
-                    fontSize = fontSize,
-                    curValue = lineSpacing.toFloat(),
-                    updatePreference = updateLineSpacing,
-                    units = "sp"
-                )
-                SettingsItem(
-                    settingName = "page padding",
-                    fontSize = fontSize,
-                    curValue = pagePadding.value,
-                    updatePreference = updatePagePadding,
-                    units = "dp"
-                )
-                SettingsItem(
-                    settingName = "page spacing",
-                    fontSize = fontSize,
-                    curValue = pageSpacing.value,
-                    updatePreference = updatePageSpacing,
-                    units = "dp"
-                )
-                SettingsItem(
-                    settingName = "paragraph spacing",
-                    fontSize = fontSize,
-                    curValue = paragraphSpacing.value,
-                    updatePreference = updateParagraphSpacing,
-                    units = "dp"
-                )
-            }
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            Spacer(modifier = Modifier.size(10.dp))
+            SettingsItem(
+                settingName = "font size scale",
+                fontSize = fontSize,
+                curValue = fontSizeScale,
+                updatePreference = updateFontSizeScale,
+                precision = 1,
+                step = 0.1f
+            )
+            SettingsItem(
+                settingName = "line spacing",
+                fontSize = fontSize,
+                curValue = lineSpacing.toFloat(),
+                updatePreference = updateLineSpacing,
+                units = "sp"
+            )
+            SettingsItem(
+                settingName = "page padding",
+                fontSize = fontSize,
+                curValue = pagePadding.value,
+                updatePreference = updatePagePadding,
+                units = "dp"
+            )
+            SettingsItem(
+                settingName = "page spacing",
+                fontSize = fontSize,
+                curValue = pageSpacing.value,
+                updatePreference = updatePageSpacing,
+                units = "dp"
+            )
+            SettingsItem(
+                settingName = "paragraph spacing",
+                fontSize = fontSize,
+                curValue = paragraphSpacing.value,
+                updatePreference = updateParagraphSpacing,
+                units = "dp"
+            )
         }
     }
 }
