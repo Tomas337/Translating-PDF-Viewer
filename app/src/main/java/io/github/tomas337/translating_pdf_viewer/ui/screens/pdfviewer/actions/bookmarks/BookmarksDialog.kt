@@ -26,6 +26,8 @@ fun BookmarksDialog(
     setBookmarksVisibility: (Boolean) -> Unit,
     setPage: suspend (Int) -> Unit,
     curPage: Int,
+    addBookmark: (Int) -> Unit,
+    removeBookmark: (Int) -> Unit,
     hasContents: Boolean = false,
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
@@ -55,8 +57,11 @@ fun BookmarksDialog(
                 } else if (tabs[selectedTabIndex] == "Bookmarks") {
                     Bookmarks(
                         bookmarks = bookmarks,
+                        setBookmarksVisibility = setBookmarksVisibility,
                         setPage = setPage,
                         curPage = curPage,
+                        addBookmark = addBookmark,
+                        removeBookmark = removeBookmark,
                     )
                 }
             }

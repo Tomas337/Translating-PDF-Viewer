@@ -28,8 +28,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun Bookmarks(
     bookmarks: List<BookmarkModel>,
+    setBookmarksVisibility: (Boolean) -> Unit,
     setPage: suspend (Int) -> Unit,
     curPage: Int,
+    addBookmark: (Int) -> Unit,
+    removeBookmark: (Int) -> Unit,
 ) {
     val rowHeight = 50.dp
     val padding = 20.dp
@@ -44,7 +47,11 @@ fun Bookmarks(
                 .fillMaxWidth()
                 .height(rowHeight)
                 .clickable {
-                    /* TODO add/remove current page on click */
+                    if (isCurrentPageBookmarked) {
+                        removeBookmark(curPage)
+                    } else {
+                        addBookmark(curPage)
+                    }
                 }
                 .padding(horizontal = padding)
         ) {
@@ -80,11 +87,12 @@ fun Bookmarks(
                             coroutineScope.launch {
                                 setPage(bookmark.pageIndex)
                             }
+                            setBookmarksVisibility(false)
                         }
                         .padding(horizontal = padding),
                 ) {
                     Text(text = bookmark.text)
-                    Text(text = "${bookmark.pageIndex}")
+                    Text(text = "${bookmark.pageIndex + 1}")
                 }
             }
         }

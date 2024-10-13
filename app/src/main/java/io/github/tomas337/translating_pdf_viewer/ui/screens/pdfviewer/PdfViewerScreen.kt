@@ -106,8 +106,10 @@ fun PdfViewerScreen(
             BookmarksDialog(
                 bookmarks = bookmarks,
                 setBookmarksVisibility = { bookmarkViewModel.setBookmarksVisibility(it) },
-                setPage = { page -> pagerState.animateScrollToPage(page) },
+                setPage = { page -> pagerState.scrollToPage(page) },
                 curPage = pagerState.currentPage,
+                addBookmark = { pageIndex -> bookmarkViewModel.addBookmark(pageIndex) },
+                removeBookmark = { pageIndex -> bookmarkViewModel.deleteBookmark(pageIndex) },
             )
         }
         Pager(

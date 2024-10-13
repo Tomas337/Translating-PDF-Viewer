@@ -50,7 +50,7 @@ class BookmarkViewModel(
         }
     }
 
-    fun addBookmark(pageIndex: Int, text: String) {
+    fun addBookmark(pageIndex: Int, text: String = "Bookmark") {
         viewModelScope.launch {
             addBookmarkUseCase(fileId, pageIndex, text)
             _bookmarks.postValue(getAllBookmarksUseCase(fileId))
