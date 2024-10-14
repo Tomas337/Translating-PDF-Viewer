@@ -17,9 +17,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import io.github.tomas337.translating_pdf_viewer.domain.model.BookmarkModel
@@ -39,6 +42,15 @@ fun BookmarksDialog(
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = if (hasContents) listOf("Contents", "Bookmarks") else listOf("Bookmarks")
 
+    val tabWidths = remember {
+        val tabWidthStateList = mutableStateListOf<Dp>()
+        repeat(tabs.size) {
+            tabWidthStateList.add(0.dp)
+        }
+        tabWidthStateList
+    }
+    val density = LocalDensity.current
+
     Dialog(onDismissRequest = { setBookmarksVisibility(false) }) {
         Surface(
             color = MaterialTheme.colorScheme.secondaryContainer,
@@ -55,9 +67,11 @@ fun BookmarksDialog(
                         if (selectedTabIndex < tabPositions.size) {
                             TabRowDefaults.SecondaryIndicator(
                                 Modifier
-                                    .tabIndicatorOffset(tabPositions[selectedTabIndex])
+                                    .customWidthTabIndicatorOffset(
+                                        currentTabPosition = tabPositions[selectedTabIndex],
+                                        tabWidth = tabWidths[selectedTabIndex]
+                                    )
                                     .padding(
-                                        horizontal = 35.dp,
                                         vertical = 10.dp
                                     )
                             )
@@ -69,7 +83,14 @@ fun BookmarksDialog(
                             selected = selectedTabIndex == index,
                             onClick = { selectedTabIndex = index },
                             text = {
-                                Text(tabTitle)
+                                Text(
+                                    text = tabTitle,
+                                    onTextLayout = { textLayoutResult ->
+                                        tabWidths[index] = with(density) {
+                                            textLayoutResult.size.width.toDp()
+                                        }
+                                    }
+                                )
                             },
                             interactionSource = object : MutableInteractionSource {
                                 override val interactions: Flow<Interaction> = emptyFlow()
