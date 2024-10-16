@@ -1,24 +1,39 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.actions.bookmarks
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -39,6 +54,12 @@ fun Bookmarks(
     val isCurrentPageBookmarked = bookmarks.any { it.pageIndex == curPage }
     val coroutineScope = rememberCoroutineScope()
 
+    var inSelectionMode by remember { mutableStateOf(false) }
+    val selected = mutableSetOf<Int>()
+
+    BackHandler(enabled = inSelectionMode) {
+        inSelectionMode = false
+    }
     Column {
         Column {
             HorizontalDivider(color = MaterialTheme.colorScheme.inversePrimary)
@@ -86,25 +107,68 @@ fun Bookmarks(
         }
         LazyColumn {
             itemsIndexed(bookmarks) { index, bookmark ->
-                if (index != 0) {
-                    HorizontalDivider(modifier = Modifier.padding(horizontal = 20.dp))
-                }
+                var checked by remember { mutableStateOf(index in selected) }
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.spacedBy(20.dp),
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(rowHeight)
-                        .clickable {
-                            coroutineScope.launch {
-                                setPage(bookmark.pageIndex)
-                            }
-                            setBookmarksVisibility(false)
+                        .clickable(
+                            enabled = inSelectionMode
+                        ) {
+                            checked = !checked
                         }
-                        .padding(horizontal = 20.dp),
+                        .padding(horizontal = 20.dp)
                 ) {
-                    Text(text = bookmark.text)
-                    Text(text = "${bookmark.pageIndex + 1}")
+                    if (inSelectionMode) {
+                        Box {
+                            Icon(
+                                painter = painterResource(
+                                    id = if (checked) {
+                                        R.drawable.round_check_circle_outline_24
+                                    } else {
+                                        R.drawable.round_radio_button_unchecked_24
+                                    }
+                                ),
+                                contentDescription = "Check circle"
+                            )
+                        }
+                    }
+                    Column {
+                        val interactionSource = remember { MutableInteractionSource() }
+
+                        if (index != 0) {
+                            HorizontalDivider()
+                        }
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(rowHeight)
+                                .indication(
+                                    interactionSource = interactionSource,
+                                    indication = rememberRipple()
+                                )
+                                .pointerInput(inSelectionMode) {
+                                    // TODO show ripples
+                                    if (!inSelectionMode) {
+                                        detectTapGestures(
+                                            onTap = {
+                                                coroutineScope.launch {
+                                                    setPage(bookmark.pageIndex)
+                                                }
+                                                setBookmarksVisibility(false)
+                                            },
+                                            onLongPress = { inSelectionMode = true }
+                                        )
+                                    }
+                                }
+                        ) {
+                            Text(text = bookmark.text)
+                            Text(text = "${bookmark.pageIndex + 1}")
+                        }
+                    }
                 }
             }
         }
