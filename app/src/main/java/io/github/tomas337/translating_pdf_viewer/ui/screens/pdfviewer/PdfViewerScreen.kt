@@ -113,6 +113,9 @@ fun PdfViewerScreen(
                 curPage = pagerState.currentPage,
                 addBookmark = { pageIndex -> bookmarkViewModel.addBookmark(pageIndex) },
                 removeBookmark = { pageIndex -> bookmarkViewModel.deleteBookmark(pageIndex) },
+                renameBookmark = { pageIndex, text ->
+                    bookmarkViewModel.updateBookmarkText(pageIndex, text)
+                }
             )
         }
         Pager(

@@ -1,5 +1,6 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.actions.bookmarks
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -7,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,12 +16,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -44,13 +53,14 @@ fun Bookmarks(
     curPage: Int,
     addBookmark: (Int) -> Unit,
     removeBookmark: (Int) -> Unit,
+    renameBookmark: (Int, String) -> Unit,
 ) {
     val rowHeight = 50.dp
     val isCurrentPageBookmarked = bookmarks.any { it.pageIndex == curPage }
     val coroutineScope = rememberCoroutineScope()
 
     var inSelectionMode by remember { mutableStateOf(false) }
-    val selected = mutableSetOf<Int>()
+    val selected = remember { mutableStateListOf<Int>() }
 
     BackHandler(enabled = inSelectionMode) {
         inSelectionMode = false
@@ -100,7 +110,10 @@ fun Bookmarks(
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.inversePrimary)
         }
-        LazyColumn {
+        LazyColumn(
+            modifier = Modifier
+                .weight(5f)
+        ) {
             itemsIndexed(bookmarks) { index, bookmark ->
                 var checked by remember { mutableStateOf(index in selected) }
 
@@ -112,6 +125,11 @@ fun Bookmarks(
                             onClick = {
                                 if (inSelectionMode) {
                                     checked = !checked
+                                    if (checked) {
+                                        selected.add(index)
+                                    } else {
+                                        selected.remove(index)
+                                    }
                                 } else {
                                     coroutineScope.launch {
                                         setPage(bookmark.pageIndex)
@@ -122,6 +140,11 @@ fun Bookmarks(
                             onLongClick = {
                                 if (inSelectionMode) {
                                     checked = !checked
+                                    if (checked) {
+                                        selected.add(index)
+                                    } else {
+                                        selected.remove(index)
+                                    }
                                 } else {
                                     inSelectionMode = true
                                 }
@@ -130,18 +153,16 @@ fun Bookmarks(
                         .padding(horizontal = 20.dp)
                 ) {
                     if (inSelectionMode) {
-                        Box {
-                            Icon(
-                                painter = painterResource(
-                                    id = if (checked) {
-                                        R.drawable.round_check_circle_outline_24
-                                    } else {
-                                        R.drawable.round_radio_button_unchecked_24
-                                    }
-                                ),
-                                contentDescription = "Check circle"
-                            )
-                        }
+                        Icon(
+                            painter = painterResource(
+                                id = if (checked) {
+                                    R.drawable.round_check_circle_outline_24
+                                } else {
+                                    R.drawable.round_radio_button_unchecked_24
+                                }
+                            ),
+                            contentDescription = "Check circle"
+                        )
                     }
                     Column {
                         if (index != 0) {
@@ -160,6 +181,14 @@ fun Bookmarks(
                     }
                 }
             }
+        }
+        if (inSelectionMode && selected.size != 0) {
+            BookmarksBottomBar(
+                selected = selected,
+                rowHeight = rowHeight,
+                removeBookmark = removeBookmark,
+                renameBookmark = renameBookmark
+            )
         }
     }
 }

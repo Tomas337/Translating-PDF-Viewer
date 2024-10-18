@@ -36,6 +36,7 @@ fun BookmarksDialog(
     curPage: Int,
     addBookmark: (Int) -> Unit,
     removeBookmark: (Int) -> Unit,
+    renameBookmark: (Int, String) -> Unit,
     hasContents: Boolean = false,
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
@@ -115,6 +116,7 @@ fun BookmarksDialog(
                         curPage = curPage,
                         addBookmark = addBookmark,
                         removeBookmark = removeBookmark,
+                        renameBookmark = renameBookmark
                     )
                 }
             }
