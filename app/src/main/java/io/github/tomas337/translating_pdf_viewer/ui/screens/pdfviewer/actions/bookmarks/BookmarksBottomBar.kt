@@ -1,6 +1,5 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.actions.bookmarks
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +26,7 @@ fun BookmarksBottomBar(
     rowHeight: Dp,
     removeBookmark: (Int) -> Unit,
     renameBookmark: (Int, String) -> Unit,
+    setSelectionMode: (Boolean) -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -40,9 +40,10 @@ fun BookmarksBottomBar(
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.clickable {
-                for (index in selected) {
-                    removeBookmark(index)
+                for (pageIndex in selected) {
+                    removeBookmark(pageIndex)
                 }
+                setSelectionMode(false)
             }
         ) {
             Icon(
