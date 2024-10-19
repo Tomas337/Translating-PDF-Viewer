@@ -76,7 +76,7 @@ fun Bookmarks(
         if (inSelectionMode && selected.size != 0) {
             BookmarksBottomBar(
                 selected = selected,
-                rowHeight = rowHeight,
+                height = 60.dp,
                 removeBookmark = removeBookmark,
                 renameBookmark = renameBookmark,
                 setSelectionMode = setSelectionMode,

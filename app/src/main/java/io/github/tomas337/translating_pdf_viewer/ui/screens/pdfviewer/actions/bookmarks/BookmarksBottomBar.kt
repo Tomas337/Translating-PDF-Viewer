@@ -5,8 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -19,11 +21,12 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun BookmarksBottomBar(
     selected: SnapshotStateList<Int>,
-    rowHeight: Dp,
+    height: Dp,
     removeBookmark: (Int) -> Unit,
     renameBookmark: (Int, String) -> Unit,
     setSelectionMode: (Boolean) -> Unit
@@ -33,36 +36,50 @@ fun BookmarksBottomBar(
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier
             .fillMaxWidth()
-            .height(rowHeight)
+            .height(height)
             .background(MaterialTheme.colorScheme.secondary)
     ) {
         Column(
-            verticalArrangement = Arrangement.SpaceEvenly,
+            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.clickable {
-                for (pageIndex in selected) {
-                    removeBookmark(pageIndex)
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .clickable {
+                    for (pageIndex in selected) {
+                        removeBookmark(pageIndex)
+                    }
+                    setSelectionMode(false)
                 }
-                setSelectionMode(false)
-            }
         ) {
             Icon(
                 imageVector = Icons.Filled.Delete,
-                contentDescription = "Delete bookmark"
+                contentDescription = "Delete bookmark",
+                tint = MaterialTheme.colorScheme.onSecondary
             )
-            Text("Delete")
+            Text(
+                text = "Delete",
+                color = MaterialTheme.colorScheme.onSecondary
+            )
         }
         if (selected.size == 1) {
             VerticalDivider()
             Column(
-                verticalArrangement = Arrangement.SpaceEvenly,
-                horizontalAlignment = Alignment.CenterHorizontally
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
             ) {
                 Icon(
                     imageVector = Icons.Filled.Edit,
-                    contentDescription = "Rename bookmark"
+                    contentDescription = "Rename bookmark",
+                    tint = MaterialTheme.colorScheme.onSecondary
                 )
-                Text("Rename")
+                Text(
+                    text = "Rename",
+                    color = MaterialTheme.colorScheme.onSecondary
+                )
             }
         }
     }
