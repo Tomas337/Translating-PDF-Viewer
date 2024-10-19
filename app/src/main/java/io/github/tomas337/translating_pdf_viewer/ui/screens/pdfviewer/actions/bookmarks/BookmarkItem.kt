@@ -65,6 +65,7 @@ fun BookmarkItem(
                             unselectBookmark(bookmark.pageIndex)
                         }
                     } else {
+                        selectBookmark(bookmark.pageIndex)
                         setSelectionMode(true)
                     }
                 }
