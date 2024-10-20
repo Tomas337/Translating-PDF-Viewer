@@ -76,17 +76,6 @@ class BookmarkViewModel(
     }
 
     companion object {
-//        val Factory : ViewModelProvider.Factory = viewModelFactory {
-//            initializer {
-//                val bookmarkRepository = MyApp.appModule.bookmarkRepository
-//                BookmarkViewModel(
-//                    GetAllBookmarksUseCase(bookmarkRepository),
-//                    AddBookmarkUseCase(bookmarkRepository),
-//                    UpdateBookmarkTextUseCase(bookmarkRepository),
-//                    DeleteBookmarkUseCase(bookmarkRepository)
-//                )
-//            }
-//        }
         fun provideFactory(fileId: Int): ViewModelProvider.Factory {
             return viewModelFactory {
                 initializer {

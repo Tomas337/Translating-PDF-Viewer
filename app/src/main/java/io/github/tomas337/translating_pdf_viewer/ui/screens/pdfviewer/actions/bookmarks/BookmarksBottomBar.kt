@@ -28,7 +28,7 @@ fun BookmarksBottomBar(
     selected: SnapshotStateList<Int>,
     height: Dp,
     removeBookmark: (Int) -> Unit,
-    renameBookmark: (Int, String) -> Unit,
+    showDialog: () -> Unit,
     setSelectionMode: (Boolean) -> Unit
 ) {
     Row(
@@ -70,6 +70,9 @@ fun BookmarksBottomBar(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
+                    .clickable {
+                        showDialog()
+                    }
             ) {
                 Icon(
                     imageVector = Icons.Filled.Edit,

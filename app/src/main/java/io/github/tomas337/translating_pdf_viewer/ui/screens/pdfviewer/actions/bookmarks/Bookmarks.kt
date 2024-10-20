@@ -37,6 +37,8 @@ fun Bookmarks(
         inSelectionMode = it
     }
 
+    var showDialog by remember { mutableStateOf(false) }
+
     BackHandler(enabled = inSelectionMode) {
         setSelectionMode(false)
     }
@@ -56,6 +58,17 @@ fun Bookmarks(
 
                 LaunchedEffect(selected.size) {
                     checked = bookmark.pageIndex in selected
+                }
+                if (showDialog &&
+                    checked &&
+                    selected.size == 1
+                ) {
+                    RenameBookmarkDialog(
+                        initialText = bookmark.text,
+                        pageIndex = bookmark.pageIndex,
+                        setShowDialog = { showDialog = it },
+                        renameBookmark = renameBookmark
+                    )
                 }
 
                 BookmarkItem(
@@ -78,7 +91,7 @@ fun Bookmarks(
                 selected = selected,
                 height = 60.dp,
                 removeBookmark = removeBookmark,
-                renameBookmark = renameBookmark,
+                showDialog = { showDialog = true },
                 setSelectionMode = setSelectionMode,
             )
         }
