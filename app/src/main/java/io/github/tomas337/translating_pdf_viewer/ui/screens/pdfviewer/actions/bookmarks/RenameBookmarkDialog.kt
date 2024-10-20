@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -36,7 +37,8 @@ fun RenameBookmarkDialog(
     Dialog(onDismissRequest = { setShowDialog(false) }) {
         Surface(
             color = MaterialTheme.colorScheme.secondaryContainer,
-            shape = RectangleShape
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier.fillMaxWidth(0.88f)
         ) {
             Column(
                 modifier = Modifier.padding(20.dp)

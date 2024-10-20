@@ -58,7 +58,7 @@ fun BookmarksDialog(
             shape = RoundedCornerShape(8.dp)
         ) {
             Column(
-                modifier = Modifier.height(400.dp)
+                modifier = Modifier.height(600.dp)
             ) {
                 TabRow(
                     selectedTabIndex = selectedTabIndex,
