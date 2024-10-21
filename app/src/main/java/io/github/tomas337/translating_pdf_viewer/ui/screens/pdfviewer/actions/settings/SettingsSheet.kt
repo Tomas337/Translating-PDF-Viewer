@@ -17,7 +17,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
@@ -33,10 +32,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.tomas337.translating_pdf_viewer.R
 import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.detectTap
-import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.PreferencesViewModel
 
 @Composable
 fun SettingsSheet(
@@ -53,6 +50,7 @@ fun SettingsSheet(
     updatePagePadding: (Float) -> Unit,
     updatePageSpacing: (Float) -> Unit,
     updateParagraphSpacing: (Float) -> Unit,
+    resetToDefaults: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val fontSize = 16.sp
@@ -162,6 +160,10 @@ fun SettingsSheet(
                 updatePreference = updateParagraphSpacing,
                 units = "dp"
             )
+            ResetButton(
+                resetToDefaults = resetToDefaults
+            )
+            Spacer(modifier = Modifier.size(20.dp))
         }
     }
 }

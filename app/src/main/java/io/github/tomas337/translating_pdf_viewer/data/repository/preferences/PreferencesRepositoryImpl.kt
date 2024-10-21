@@ -89,4 +89,14 @@ class PreferencesRepositoryImpl(context: Context) : PreferencesRepository {
             preferences[PARAGRAPH_SPACING_KEY] ?: DEFAULT_PARAGRAPH_SPACING
         }
     }
+
+    override suspend fun resetToDefaults() {
+        dataStore.edit { preferences ->
+            preferences[FONT_SIZE_SCALE_KEY] = DEFAULT_FONT_SIZE_SCALE
+            preferences[PAGE_PADDING_KEY] = DEFAULT_PAGE_PADDING
+            preferences[LINE_SPACING_KEY] = DEFAULT_LINE_SPACING
+            preferences[PAGE_SPACING_KEY] = DEFAULT_PAGE_SPACING
+            preferences[PARAGRAPH_SPACING_KEY] = DEFAULT_PARAGRAPH_SPACING
+        }
+    }
 }

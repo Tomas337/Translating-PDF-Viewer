@@ -103,6 +103,7 @@ fun PdfViewerScreen(
                 updatePagePadding = { preferencesViewModel.updatePagePadding(it.toInt()) },
                 updatePageSpacing = { preferencesViewModel.updatePageSpacing(it.toInt()) },
                 updateParagraphSpacing = { preferencesViewModel.updateParagraphSpacing(it.toInt()) },
+                resetToDefaults = { preferencesViewModel.resetToDefaults() }
             )
         }
         if (isBookmarkDialogVisible) {

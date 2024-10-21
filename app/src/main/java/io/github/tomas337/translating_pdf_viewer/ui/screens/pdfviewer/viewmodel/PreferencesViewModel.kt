@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import io.github.tomas337.translating_pdf_viewer.di.MyApp
@@ -15,6 +16,7 @@ import io.github.tomas337.translating_pdf_viewer.domain.usecase.preferences.GetL
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.preferences.GetPagePaddingUseCase
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.preferences.GetPageSpacingUseCase
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.preferences.GetParagraphSpacingUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.preferences.ResetToDefaultsUseCase
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.preferences.UpdateFontSizeScaleUseCase
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.preferences.UpdateLineSpacingUseCase
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.preferences.UpdatePagePaddingUseCase
@@ -34,7 +36,8 @@ class PreferencesViewModel(
     private val updateLineSpacingUseCase: UpdateLineSpacingUseCase,
     private val updatePagePaddingUseCase: UpdatePagePaddingUseCase,
     private val updatePageSpacingUseCase: UpdatePageSpacingUseCase,
-    private val updateParagraphSpacingUseCase: UpdateParagraphSpacingUseCase
+    private val updateParagraphSpacingUseCase: UpdateParagraphSpacingUseCase,
+    private val resetToDefaultsUseCase: ResetToDefaultsUseCase
 ) : ViewModel() {
 
     private val _settingsSheetVisibility = MutableLiveData(false)
@@ -116,6 +119,12 @@ class PreferencesViewModel(
         _settingsSheetVisibility.postValue(isVisible)
     }
 
+    fun resetToDefaults() {
+        viewModelScope.launch {
+            resetToDefaultsUseCase()
+        }
+    }
+
     companion object {
         val Factory : ViewModelProvider.Factory = viewModelFactory {
             initializer {
@@ -130,7 +139,8 @@ class PreferencesViewModel(
                     UpdateLineSpacingUseCase(preferencesRepository),
                     UpdatePagePaddingUseCase(preferencesRepository),
                     UpdatePageSpacingUseCase(preferencesRepository),
-                    UpdateParagraphSpacingUseCase(preferencesRepository)
+                    UpdateParagraphSpacingUseCase(preferencesRepository),
+                    ResetToDefaultsUseCase(preferencesRepository)
                 )
             }
         }

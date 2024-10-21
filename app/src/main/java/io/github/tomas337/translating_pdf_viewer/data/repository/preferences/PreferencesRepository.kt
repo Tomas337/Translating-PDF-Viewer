@@ -13,4 +13,5 @@ interface PreferencesRepository {
      fun readPageSpacing(): Flow<Int>
      suspend fun saveParagraphSpacing(paragraphSpacing: Int)
      fun readParagraphSpacing(): Flow<Int>
+     suspend fun resetToDefaults()
 }
