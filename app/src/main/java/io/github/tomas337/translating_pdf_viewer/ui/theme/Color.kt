@@ -2,12 +2,14 @@ package io.github.tomas337.translating_pdf_viewer.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Dark scheme
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
-
-// Light scheme
+val DarkGray = Color(0xFF404040)
+val DarkerSalmon = Color(0xFFBF4B23)
+val DarkSurface = Color(0xFF1E1E1E)
+val MidToneGray = Color(0xFF3B3B3B)
+val ErrorRed = Color(0xFFD50000)
+val DarkerRed = Color(0xFF930000)
+val White = Color(0xFFFFFFFF)
+val Black = Color(0xFF000000)
 val Persimmon = Color(0xFFEB5E28)
 val Ivory = Color(0xFFFFFCF2)
 val Charcoal = Color(0xFF252422)

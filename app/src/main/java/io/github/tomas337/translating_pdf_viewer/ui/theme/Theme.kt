@@ -6,10 +6,43 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+val DarkColorScheme = darkColorScheme(
+    primary = Persimmon,
+    onPrimary = Ivory,
+    primaryContainer = DarkerSalmon,
+    onPrimaryContainer = Charcoal,
+    inversePrimary = DodgerBlue,
+    secondary = Charcoal,
+    onSecondary = White,
+    secondaryContainer = DarkGray,
+    onSecondaryContainer = Ivory,
+    tertiary = Silver,
+    onTertiary = Charcoal,
+    tertiaryContainer = DarkGray,
+    onTertiaryContainer = White,
+    background = DarkSurface,
+    onBackground = White,
+    surface = DarkSurface,
+    onSurface = White,
+    surfaceVariant = MidToneGray,
+    onSurfaceVariant = White,
+    surfaceTint = DarkerSalmon,
+    inverseSurface = Ivory,
+    inverseOnSurface = Charcoal,
+    error = ErrorRed,
+    onError = White,
+    errorContainer = DarkerRed,
+    onErrorContainer = White,
+    outline = Silver,
+    outlineVariant = DarkGray,
+    scrim = Black,
+    surfaceBright = DarkSurface,
+    surfaceContainer = MidToneGray,
+    surfaceContainerHigh = DarkGray,
+    surfaceContainerHighest = MidToneGray,
+    surfaceContainerLow = DarkSurface,
+    surfaceContainerLowest = DarkSurface,
+    surfaceDim = MidToneGray
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -49,7 +82,6 @@ private val LightColorScheme = lightColorScheme(
     surfaceContainerLow = Ivory,
     surfaceContainerLowest = Ivory,
     surfaceDim = Bone
-
 )
 
 @Composable
