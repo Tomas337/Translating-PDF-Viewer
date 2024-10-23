@@ -13,19 +13,43 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = Persimmon,
+    onPrimary = Ivory,
+    primaryContainer = Salmon,
+    onPrimaryContainer = Charcoal,
+    inversePrimary = DodgerBlue,
+    secondary = DarkLiver,
+    onSecondary = Ivory,
+    secondaryContainer = Silver,
+    onSecondaryContainer = Charcoal,
+    tertiary = Charcoal,
+    onTertiary = Ivory,
+    tertiaryContainer = Gainsboro,
+    onTertiaryContainer = Charcoal,
+    background = Ivory,
+    onBackground = Charcoal,
+    surface = Ivory,
+    onSurface = Charcoal,
+    surfaceVariant = Bone,
+    onSurfaceVariant = Charcoal,
+    surfaceTint = Salmon,
+    inverseSurface = Charcoal,
+    inverseOnSurface = Ivory,
+    error = FireOpal,
+    onError = Ivory,
+    errorContainer = Salmon,
+    onErrorContainer = Charcoal,
+    outline = DarkLiver,
+    outlineVariant = Silver,
+    scrim = Charcoal,
+    surfaceBright = Ivory,
+    surfaceContainer = Ivory,
+    surfaceContainerHigh = Bone,
+    surfaceContainerHighest = Bone,
+    surfaceContainerLow = Ivory,
+    surfaceContainerLowest = Ivory,
+    surfaceDim = Bone
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
 )
 
 @Composable
