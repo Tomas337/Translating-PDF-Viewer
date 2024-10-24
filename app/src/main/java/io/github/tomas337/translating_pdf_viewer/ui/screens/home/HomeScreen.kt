@@ -80,8 +80,8 @@ fun HomeScreen(
                 onClick = {
                     getPdfUri.launch(chooser)
                 },
-                containerColor = MaterialTheme.colorScheme.secondary,
-                contentColor = MaterialTheme.colorScheme.onSecondary
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
                 Icon(Icons.Filled.Add, "add")
             }

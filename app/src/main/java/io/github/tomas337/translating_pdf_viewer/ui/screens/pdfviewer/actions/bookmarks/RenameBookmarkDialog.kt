@@ -36,7 +36,6 @@ fun RenameBookmarkDialog(
 
     Dialog(onDismissRequest = { setShowDialog(false) }) {
         Surface(
-            color = MaterialTheme.colorScheme.secondaryContainer,
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier.fillMaxWidth(0.88f)
         ) {

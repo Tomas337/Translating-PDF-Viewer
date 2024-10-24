@@ -77,7 +77,7 @@ fun SettingsSheet(
                     detectTap { focusManager.clearFocus() }
                 }
             }
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
 
         // Handle bar
@@ -86,7 +86,7 @@ fun SettingsSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(dragBarHeight)
-                .background(MaterialTheme.colorScheme.secondary)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
                 .pointerInput(Unit) {
                     var curY = sheetHeight * maxHeight
 
@@ -114,7 +114,7 @@ fun SettingsSheet(
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.baseline_drag_handle_48),
                 contentDescription = "Drag handle",
-                tint = MaterialTheme.colorScheme.onSecondary
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 

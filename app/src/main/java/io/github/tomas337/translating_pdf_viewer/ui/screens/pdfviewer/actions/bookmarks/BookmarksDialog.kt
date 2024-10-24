@@ -54,7 +54,6 @@ fun BookmarksDialog(
 
     Dialog(onDismissRequest = { setBookmarksVisibility(false) }) {
         Surface(
-            color = MaterialTheme.colorScheme.secondaryContainer,
             shape = RoundedCornerShape(8.dp)
         ) {
             Column(
@@ -63,7 +62,6 @@ fun BookmarksDialog(
                 TabRow(
                     selectedTabIndex = selectedTabIndex,
                     divider = {},
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     indicator = { tabPositions ->
                         if (selectedTabIndex < tabPositions.size) {
                             TabRowDefaults.SecondaryIndicator(

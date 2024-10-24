@@ -39,7 +39,6 @@ fun UpdateNameDialog(
 
     Dialog(onDismissRequest = { setShowDialog(false) }) {
         Surface(
-            color = MaterialTheme.colorScheme.secondaryContainer,
             shape = RoundedCornerShape(8.dp)
         ) {
             Column(

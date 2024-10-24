@@ -34,7 +34,6 @@ fun ResetButton(
     if (showConfirmationDialog) {
         Dialog(onDismissRequest = { showConfirmationDialog = false }) {
             Surface(
-                color = MaterialTheme.colorScheme.secondaryContainer,
                 shape = RoundedCornerShape(8.dp)
             ) {
                 Column(
@@ -72,8 +71,7 @@ fun ResetButton(
             .height(50.dp)
             .padding(horizontal = 30.dp)
             .background(
-                // TODO set color to MaterialTheme.colorScheme after creating better color theme
-                color = Color(0xFFD10000),
+                color = MaterialTheme.colorScheme.errorContainer,
                 shape = RoundedCornerShape(16.dp)
             )
             .clickable {
@@ -82,7 +80,7 @@ fun ResetButton(
     ) {
         Text(
             text = "Reset to default settings",
-            color = Color.White
+            color = MaterialTheme.colorScheme.onErrorContainer
         )
     }
 }

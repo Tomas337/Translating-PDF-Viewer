@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,7 +36,7 @@ fun BookmarksBottomBar(
         modifier = Modifier
             .fillMaxWidth()
             .height(height)
-            .background(MaterialTheme.colorScheme.secondary)
+            .background(MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Column(
             verticalArrangement = Arrangement.Center,
@@ -53,15 +54,15 @@ fun BookmarksBottomBar(
             Icon(
                 imageVector = Icons.Filled.Delete,
                 contentDescription = "Delete bookmark",
-                tint = MaterialTheme.colorScheme.onSecondary
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
                 text = "Delete",
-                color = MaterialTheme.colorScheme.onSecondary
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         if (selected.size == 1) {
-            VerticalDivider()
+            VerticalDivider(color = MaterialTheme.colorScheme.onSurfaceVariant)
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -75,11 +76,11 @@ fun BookmarksBottomBar(
                 Icon(
                     imageVector = Icons.Filled.Edit,
                     contentDescription = "Rename bookmark",
-                    tint = MaterialTheme.colorScheme.onSecondary
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     text = "Rename",
-                    color = MaterialTheme.colorScheme.onSecondary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }

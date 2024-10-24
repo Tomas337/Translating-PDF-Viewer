@@ -32,14 +32,14 @@ fun BookmarkPageButton(
 ) {
 
     Column {
-        HorizontalDivider(color = MaterialTheme.colorScheme.inversePrimary)
+        HorizontalDivider()
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(rowHeight)
-                .background(color = MaterialTheme.colorScheme.primaryContainer)
+                .background(color = MaterialTheme.colorScheme.surfaceVariant)
                 .clickable {
                     if (isCurrentPageBookmarked) {
                         removeBookmark(curPage)
@@ -53,26 +53,26 @@ fun BookmarkPageButton(
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.outline_bookmark_remove_24),
                     contentDescription = "Remove bookmark",
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     text = "Remove current page from bookmarks",
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             } else {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.outline_bookmark_add_24),
                     contentDescription = "Add bookmark",
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     text = "Add current page to bookmarks",
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
-        HorizontalDivider(color = MaterialTheme.colorScheme.inversePrimary)
+        HorizontalDivider()
     }
 }
