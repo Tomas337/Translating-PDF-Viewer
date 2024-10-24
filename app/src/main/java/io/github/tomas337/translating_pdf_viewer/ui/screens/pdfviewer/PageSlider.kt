@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -111,7 +112,7 @@ fun PageSlider(
                         bottomStart = (height.value / 2).dp
                     )
                 )
-                .background(color = Color.Black),
+                .background(color = MaterialTheme.colorScheme.secondary),
         contentAlignment = Alignment.Center,
         ) {
             if (isActive) {
@@ -125,7 +126,7 @@ fun PageSlider(
 
                     Text(
                         text ="$paddedCurPage / $pageCount",
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onSecondary,
                         textAlign = TextAlign.Center,
                     )
                     Spacer(modifier = Modifier.width(width))
@@ -134,7 +135,7 @@ fun PageSlider(
                 Text(
                     text = "${curPage + 1}",
                     modifier = Modifier.width(width),
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onSecondary,
                     textAlign = TextAlign.Center,
                 )
             }
