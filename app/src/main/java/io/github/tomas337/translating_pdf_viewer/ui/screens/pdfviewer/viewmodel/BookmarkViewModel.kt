@@ -1,7 +1,5 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -13,6 +11,8 @@ import io.github.tomas337.translating_pdf_viewer.domain.usecase.bookmarks.AddBoo
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.bookmarks.DeleteBookmarkUseCase
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.bookmarks.GetAllBookmarksUseCase
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.bookmarks.UpdateBookmarkTextUseCase
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class BookmarkViewModel(
@@ -23,41 +23,41 @@ class BookmarkViewModel(
     private val deleteBookmarkUseCase: DeleteBookmarkUseCase
 ) : ViewModel() {
 
-    private val _bookmarksVisibility = MutableLiveData(false)
-    val bookmarksVisibility: LiveData<Boolean> = _bookmarksVisibility
+    private val _bookmarksVisibility = MutableStateFlow(false)
+    val bookmarksVisibility: StateFlow<Boolean> = _bookmarksVisibility
 
-    private val _bookmarks = MutableLiveData<List<BookmarkModel>>()
-    val bookmarks: LiveData<List<BookmarkModel>> = _bookmarks
+    private val _bookmarks = MutableStateFlow<List<BookmarkModel>>(emptyList())
+    val bookmarks: StateFlow<List<BookmarkModel>> = _bookmarks
 
     init {
         viewModelScope.launch {
-            _bookmarks.postValue(getAllBookmarksUseCase(fileId))
+            _bookmarks.value = getAllBookmarksUseCase(fileId)
         }
     }
 
     fun addBookmark(pageIndex: Int, text: String = "Bookmark") {
         viewModelScope.launch {
             addBookmarkUseCase(fileId, pageIndex, text)
-            _bookmarks.postValue(getAllBookmarksUseCase(fileId))
+            _bookmarks.value = getAllBookmarksUseCase(fileId)
         }
     }
 
     fun updateBookmarkText(pageIndex: Int, text: String) {
         viewModelScope.launch {
             updateBookmarkTextUseCase(fileId, pageIndex, text)
-            _bookmarks.postValue(getAllBookmarksUseCase(fileId))
+            _bookmarks.value = getAllBookmarksUseCase(fileId)
         }
     }
 
     fun deleteBookmark(pageIndex: Int) {
         viewModelScope.launch {
             deleteBookmarkUseCase(fileId, pageIndex)
-            _bookmarks.postValue(getAllBookmarksUseCase(fileId))
+            _bookmarks.value = getAllBookmarksUseCase(fileId)
         }
     }
 
     fun setBookmarksVisibility(isVisible: Boolean) {
-        _bookmarksVisibility.postValue(isVisible)
+        _bookmarksVisibility.value = isVisible
     }
 
     companion object {

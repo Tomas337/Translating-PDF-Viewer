@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,7 +35,7 @@ fun PdfViewerScreen(
     preferencesViewModel: PreferencesViewModel = viewModel(factory = PreferencesViewModel.Factory),
     bookmarkViewModel: BookmarkViewModel = viewModel(factory = BookmarkViewModel.provideFactory(fileId)),
 ) {
-    val fileInfo: FileModel by contentViewModel.fileInfo.observeAsState(FileModel())
+    val fileInfo: FileModel by contentViewModel.fileInfo.collectAsState()
     val fontSizeScale by preferencesViewModel.fontSizeScale.collectAsState()
     val lineSpacing by preferencesViewModel.lineSpacing.collectAsState()
     val pagePadding by preferencesViewModel.pagePadding.collectAsState()
@@ -69,7 +68,7 @@ fun PdfViewerScreen(
 
         val maxWidth = boxWithConstraintsScope.constraints.maxWidth
 
-        val isSettingsSheetVisible by preferencesViewModel.settingsSheetVisibility.observeAsState(false)
+        val isSettingsSheetVisible by preferencesViewModel.settingsSheetVisibility.collectAsState()
         val isKeyboardVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
         val focusManager = LocalFocusManager.current
 
@@ -82,8 +81,8 @@ fun PdfViewerScreen(
                 }
             }
 
-        val bookmarks by bookmarkViewModel.bookmarks.observeAsState(emptyList())
-        val isBookmarkDialogVisible by bookmarkViewModel.bookmarksVisibility.observeAsState(false)
+        val bookmarks by bookmarkViewModel.bookmarks.collectAsState()
+        val isBookmarkDialogVisible by bookmarkViewModel.bookmarksVisibility.collectAsState()
 
         BackHandler(enabled = !isToolbarVisible) {
             isToolbarVisible = true

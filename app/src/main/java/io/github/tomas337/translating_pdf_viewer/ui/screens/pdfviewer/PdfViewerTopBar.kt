@@ -30,7 +30,6 @@ fun PdfViewerTopBar(
     setSettingsSheetVisibility: (Boolean) -> Unit,
     setBookmarksVisibility: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    preferencesViewModel: PreferencesViewModel = viewModel(factory = PreferencesViewModel.Factory),
 ) {
     TopAppBar(
         modifier = modifier,

@@ -1,7 +1,5 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -9,14 +7,14 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import io.github.tomas337.translating_pdf_viewer.di.MyApp
 import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
-import io.github.tomas337.translating_pdf_viewer.domain.usecase.bookmarks.AddBookmarkUseCase
-import io.github.tomas337.translating_pdf_viewer.domain.usecase.bookmarks.DeleteBookmarkUseCase
-import io.github.tomas337.translating_pdf_viewer.domain.usecase.bookmarks.GetAllBookmarksUseCase
-import io.github.tomas337.translating_pdf_viewer.domain.usecase.bookmarks.UpdateBookmarkTextUseCase
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.content.GetFileInfoUseCase
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.content.GetPageContentUseCase
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.content.UpdateCurrentPageUseCase
 import io.github.tomas337.translating_pdf_viewer.utils.PageContent
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 class ContentViewModel(
@@ -26,12 +24,12 @@ class ContentViewModel(
     private val getPageContentUseCase: GetPageContentUseCase,
 ) : ViewModel() {
 
-    private val _fileInfo = MutableLiveData<FileModel>()
-    val fileInfo: LiveData<FileModel> = _fileInfo
+    private val _fileInfo = MutableStateFlow(FileModel())
+    val fileInfo: StateFlow<FileModel> = _fileInfo
 
     init {
         viewModelScope.launch {
-            _fileInfo.postValue(getFileInfoUseCase(fileId))
+            _fileInfo.value = getFileInfoUseCase(fileId)
         }
     }
 
@@ -41,12 +39,8 @@ class ContentViewModel(
         }
     }
 
-    fun getPageContent(pageIndex: Int): LiveData<List<List<PageContent>>> {
-        val result = MutableLiveData<List<List<PageContent>>>()
-        viewModelScope.launch {
-            result.postValue(getPageContentUseCase(pageIndex, fileId))
-        }
-        return result
+    fun getPageContent(pageIndex: Int): Flow<List<List<PageContent>>> = flow {
+        emit(getPageContentUseCase(pageIndex, fileId))
     }
 
     companion object {

@@ -2,12 +2,9 @@ package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import io.github.tomas337.translating_pdf_viewer.di.MyApp
@@ -40,8 +37,8 @@ class PreferencesViewModel(
     private val resetToDefaultsUseCase: ResetToDefaultsUseCase
 ) : ViewModel() {
 
-    private val _settingsSheetVisibility = MutableLiveData(false)
-    val settingsSheetVisibility: LiveData<Boolean> = _settingsSheetVisibility
+    private val _settingsSheetVisibility = MutableStateFlow(false)
+    val settingsSheetVisibility: StateFlow<Boolean> = _settingsSheetVisibility
 
     private val _fontSizeScale = MutableStateFlow(-1f)
     private val _lineSpacing = MutableStateFlow(-1)
@@ -116,7 +113,7 @@ class PreferencesViewModel(
     }
 
     fun setSettingsSheetVisibility(isVisible: Boolean) {
-        _settingsSheetVisibility.postValue(isVisible)
+        _settingsSheetVisibility.value = isVisible
     }
 
     fun resetToDefaults() {

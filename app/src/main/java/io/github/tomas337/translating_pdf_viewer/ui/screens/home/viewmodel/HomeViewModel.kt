@@ -3,8 +3,6 @@ package io.github.tomas337.translating_pdf_viewer.ui.screens.home.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import android.net.Uri
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
@@ -16,6 +14,10 @@ import io.github.tomas337.translating_pdf_viewer.domain.usecase.content.DeleteFi
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.content.GetAllFileInfoUseCase
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.content.GetThumbnailPathUseCase
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.content.UpdateNameUseCase
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -26,40 +28,36 @@ class HomeViewModel(
     private val getThumbnailPathUseCase: GetThumbnailPathUseCase,
 ) : ViewModel() {
 
-    private val _allFileInfo = MutableLiveData<List<FileModel>>()
+    private val _allFileInfo = MutableStateFlow<List<FileModel>>(emptyList())
+    val allFileInfo: StateFlow<List<FileModel>> = _allFileInfo
+
     init {
         viewModelScope.launch {
-            _allFileInfo.postValue(getAllFileInfoUseCase())
+            _allFileInfo.value = getAllFileInfoUseCase()
         }
     }
-    val allFileInfo: LiveData<List<FileModel>> = _allFileInfo
 
     fun addFile(context: Context, uri: Uri) =
         viewModelScope.launch {
             addFileUseCase(context, uri)
-            _allFileInfo.postValue(getAllFileInfoUseCase())
+            _allFileInfo.value = getAllFileInfoUseCase()
         }
 
     fun deleteFile(context: Context, id: Int) =
         viewModelScope.launch {
             deleteFileUseCase(context, id)
-            _allFileInfo.postValue(getAllFileInfoUseCase())
+            _allFileInfo.value = getAllFileInfoUseCase()
         }
 
     fun updateName(name: String, id: Int) {
         viewModelScope.launch {
             updateNameUseCase(name, id)
-            _allFileInfo.postValue(getAllFileInfoUseCase())
+            _allFileInfo.value = getAllFileInfoUseCase()
         }
     }
 
-    fun getThumbnailPath(id: Int): LiveData<String> {
-        val result = MutableLiveData<String>()
-        viewModelScope.launch {
-            val thumbnailPath = getThumbnailPathUseCase(id)
-            result.postValue(thumbnailPath)
-        }
-        return result
+    fun getThumbnailPath(id: Int): Flow<String> = flow {
+        emit(getThumbnailPathUseCase(id))
     }
 
     companion object {

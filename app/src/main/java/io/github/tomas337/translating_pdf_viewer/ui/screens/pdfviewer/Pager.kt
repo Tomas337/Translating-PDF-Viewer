@@ -18,8 +18,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -35,15 +35,15 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
-import androidx.lifecycle.LiveData
 import io.github.tomas337.translating_pdf_viewer.utils.PageContent
 import io.github.tomas337.translating_pdf_viewer.utils.TextStyle
+import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Pager(
     pagerState: PagerState,
-    getPageContent: (Int) -> LiveData<List<List<PageContent>>>,
+    getPageContent: (Int) -> Flow<List<List<PageContent>>>,
     intToTextStyleMap: Map<Int, TextStyle>,
     switchToolbarVisibility: () -> Boolean,
     maxWidth: Int,
@@ -65,7 +65,7 @@ fun Pager(
         pageSpacing = pageSpacing,
         userScrollEnabled = isScrollable
     ) { pageIndex ->
-        val pageContent: List<List<PageContent>> by getPageContent(pageIndex).observeAsState(emptyList())
+        val pageContent: List<List<PageContent>> by getPageContent(pageIndex).collectAsState(emptyList())
         val lazyColumnState = rememberLazyListState()
 
         LazyColumn(
