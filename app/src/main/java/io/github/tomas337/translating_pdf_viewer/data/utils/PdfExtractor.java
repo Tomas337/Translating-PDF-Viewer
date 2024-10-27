@@ -48,7 +48,12 @@ public class PdfExtractor {
         path = Paths.get(context.getFilesDir().getAbsolutePath(), folderName);
     }
 
-    public Document extractAndSaveDocument() throws IOException {
+    protected interface ExtractionListener {
+        void onPageProcessed(int currentPage);
+        void onDocumentExtracted(Document document);
+    }
+
+    protected void extractDocument(ExtractionListener listener) throws IOException {
         try (InputStream inputStream = context.getContentResolver().openInputStream(uri);
              PDDocument pdfDocument = PDDocument.load(inputStream,
                      MemoryUsageSetting.setupTempFileOnly())
@@ -65,6 +70,7 @@ public class PdfExtractor {
                 Page pageObject = extractor.getPageObject(page);
                 String filepath = savePage(pageObject, i);
                 pagePaths.add(filepath);
+                listener.onPageProcessed(i);
             }
 
             HashMap<Integer, TextStyle> intToTextStyleMap = extractor.getIntToTextStyleMap();
@@ -77,13 +83,14 @@ public class PdfExtractor {
             Bitmap thumbnail = pdfRenderer.renderImageWithDPI(0, 300);
             String thumbnailPath = saveThumbnail(thumbnail);
 
-            return new Document(
+            Document document = new Document(
                     title,
                     numberOfPages,
                     intToTextStyleMap,
                     pagePaths,
                     thumbnailPath
             );
+            listener.onDocumentExtracted(document);
         }
     }
 
