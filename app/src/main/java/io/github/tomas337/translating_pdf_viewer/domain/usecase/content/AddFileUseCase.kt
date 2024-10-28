@@ -25,6 +25,8 @@ class AddFileUseCase(
     private val totalTasks = MutableStateFlow(1)
 
     fun getProgress(): Flow<Float> {
+        latestTaskDone.value = 0
+        totalTasks.value = 1
         return combine(latestTaskDone, totalTasks) { latestTaskDone, totalTasks ->
             latestTaskDone.toFloat() / totalTasks
         }
@@ -41,7 +43,6 @@ class AddFileUseCase(
                         totalTasks.value = event.pageCount * 2 + 1
                     } else if (event is ExtractionEvent.PageProcessed) {
                         latestTaskDone.value = event.pageIndex + 1
-                        Log.d("latestTaskDone", latestTaskDone.value.toString())
                     }
                 }
                 .first { it is ExtractionEvent.DocumentExtracted }
@@ -71,7 +72,5 @@ class AddFileUseCase(
             pdfExtractor.deleteDirs()
             Log.e("file extraction failed", e.stackTraceToString())
         }
-        latestTaskDone.value = 0
-        totalTasks.value = 1
     }
 }
