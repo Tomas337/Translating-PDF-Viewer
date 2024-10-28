@@ -49,6 +49,7 @@ public class PdfExtractor {
     }
 
     protected interface ExtractionListener {
+        void onPageCount(int pageCount);
         void onPageProcessed(int currentPage);
         void onDocumentExtracted(Document document);
     }
@@ -63,6 +64,7 @@ public class PdfExtractor {
             int dpi = context.getResources().getDisplayMetrics().densityDpi;
             Extractor extractor = new Extractor(dpi, path);
             int numberOfPages = pdfDocument.getNumberOfPages();
+            listener.onPageCount(numberOfPages);
             List<String> pagePaths = new ArrayList<>();
 
             for (int i = 0; i < numberOfPages; i++) {

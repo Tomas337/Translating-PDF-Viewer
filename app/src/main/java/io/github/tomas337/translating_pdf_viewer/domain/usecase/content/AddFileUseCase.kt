@@ -10,10 +10,10 @@ import io.github.tomas337.translating_pdf_viewer.data.repository.page.PageReposi
 import io.github.tomas337.translating_pdf_viewer.data.utils.ExtractionEvent
 import io.github.tomas337.translating_pdf_viewer.data.utils.PdfExtractor
 import io.github.tomas337.translating_pdf_viewer.data.utils.extractDocumentWithProgress
-import io.github.tomas337.translating_pdf_viewer.utils.Document
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.onEach
 import java.io.IOException
 
@@ -21,7 +21,14 @@ class AddFileUseCase(
     private val fileInfoRepository: FileInfoRepository,
     private val pageRepository: PageRepository
 ) {
-    val latestProcessedPage = MutableStateFlow(0)
+    private val latestTaskDone = MutableStateFlow(0)
+    private val totalTasks = MutableStateFlow(1)
+
+    fun getProgress(): Flow<Float> {
+        return combine(latestTaskDone, totalTasks) { latestTaskDone, totalTasks ->
+            latestTaskDone.toFloat() / totalTasks
+        }
+    }
 
     suspend operator fun invoke(context: Context, uri: Uri) {
         val fileId = fileInfoRepository.getLastInsertedFileId() + 1
@@ -29,9 +36,12 @@ class AddFileUseCase(
         try {
             val document = pdfExtractor.extractDocumentWithProgress()
                 .onEach { event ->
-                    if (event is ExtractionEvent.PageProcessed) {
-                        Log.d("PageProcessed", event.pageIndex.toString())
-                        latestProcessedPage.value = event.pageIndex
+                    if (event is ExtractionEvent.PageCount) {
+                        // Extract and insert pages and insert file info
+                        totalTasks.value = event.pageCount * 2 + 1
+                    } else if (event is ExtractionEvent.PageProcessed) {
+                        latestTaskDone.value = event.pageIndex + 1
+                        Log.d("latestTaskDone", latestTaskDone.value.toString())
                     }
                 }
                 .first { it is ExtractionEvent.DocumentExtracted }
@@ -46,6 +56,7 @@ class AddFileUseCase(
                     thumbnailPath = document.pathOfThumbnail
                 )
             )
+            latestTaskDone.value += 1
 
             for ((i, pagePath) in document.pagePaths.withIndex()) {
                 pageRepository.insertPage(
@@ -54,10 +65,13 @@ class AddFileUseCase(
                         pagePath = pagePath,
                     pageIndex = i,
                 ))
+                latestTaskDone.value += 1
             }
         } catch (e: IOException) {
             pdfExtractor.deleteDirs()
             Log.e("file extraction failed", e.stackTraceToString())
         }
+        latestTaskDone.value = 0
+        totalTasks.value = 1
     }
 }

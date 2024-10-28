@@ -31,6 +31,9 @@ class HomeViewModel(
     private val _allFileInfo = MutableStateFlow<List<FileModel>>(emptyList())
     val allFileInfo: StateFlow<List<FileModel>> = _allFileInfo
 
+    private val _addFileProgress = MutableStateFlow(0f)
+    val addFileProgress: StateFlow<Float> = _addFileProgress
+
     init {
         viewModelScope.launch {
             _allFileInfo.value = getAllFileInfoUseCase()
@@ -39,8 +42,15 @@ class HomeViewModel(
 
     fun addFile(context: Context, uri: Uri) =
         viewModelScope.launch {
-            addFileUseCase(context, uri)
-            _allFileInfo.value = getAllFileInfoUseCase()
+            launch {
+                addFileUseCase.getProgress().collect {
+                    _addFileProgress.value = it
+                }
+            }
+            launch {
+                addFileUseCase(context, uri)
+                _allFileInfo.value = getAllFileInfoUseCase()
+            }
         }
 
     fun deleteFile(context: Context, id: Int) =

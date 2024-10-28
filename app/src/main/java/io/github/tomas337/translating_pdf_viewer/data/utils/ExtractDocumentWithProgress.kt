@@ -8,9 +8,14 @@ import kotlinx.coroutines.flow.callbackFlow
 
 fun PdfExtractor.extractDocumentWithProgress(): Flow<ExtractionEvent> = callbackFlow {
     val listener = object : ExtractionListener {
+        override fun onPageCount(pageCount: Int) {
+            trySend(ExtractionEvent.PageCount(pageCount))
+        }
+
         override fun onPageProcessed(currentPage: Int) {
             trySend(ExtractionEvent.PageProcessed(currentPage))
         }
+
         override fun onDocumentExtracted(document: Document) {
             trySend(ExtractionEvent.DocumentExtracted(document))
         }

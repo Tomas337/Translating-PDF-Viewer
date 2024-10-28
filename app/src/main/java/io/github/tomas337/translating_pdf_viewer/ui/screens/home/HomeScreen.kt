@@ -2,6 +2,7 @@ package io.github.tomas337.translating_pdf_viewer.ui.screens.home
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -57,6 +59,11 @@ fun HomeScreen(
                 homeViewModel.addFile(context, uri)
             }
         }
+    }
+
+    val addFileProgress by homeViewModel.addFileProgress.collectAsState()
+    LaunchedEffect(addFileProgress) {
+        Log.d("progress", addFileProgress.toString())
     }
 
     Scaffold(
