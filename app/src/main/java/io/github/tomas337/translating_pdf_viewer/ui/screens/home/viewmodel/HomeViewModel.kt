@@ -47,10 +47,8 @@ class HomeViewModel(
                     _addFileProgress.value = it
                 }
             }
-            launch {
-                addFileUseCase(context, uri)
-                _allFileInfo.value = getAllFileInfoUseCase()
-            }
+            addFileUseCase(context, uri)
+            _allFileInfo.value = getAllFileInfoUseCase()
         }
 
     fun deleteFile(context: Context, id: Int) =
