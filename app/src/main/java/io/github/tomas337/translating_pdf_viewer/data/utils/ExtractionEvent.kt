@@ -1,9 +1,18 @@
 package io.github.tomas337.translating_pdf_viewer.data.utils
 
-import io.github.tomas337.translating_pdf_viewer.utils.Document
+import io.github.tomas337.translating_pdf_viewer.utils.TextStyle
 
 sealed class ExtractionEvent {
-    data class PageCount(val pageCount: Int) : ExtractionEvent()
-    data class PageProcessed(val pageIndex: Int) : ExtractionEvent()
-    data class DocumentExtracted(val document: Document) : ExtractionEvent()
+    data class FileInfo(
+        val title: String,
+        val pageCount: Int,
+        val thumbnailPath: String
+    ) : ExtractionEvent()
+
+    data class PageProcessed(
+        val pageIndex: Int,
+        val pagePath: String
+    ) : ExtractionEvent()
+
+    data class DocumentExtracted(val intToTextStyleMap: HashMap<Int, TextStyle>) : ExtractionEvent()
 }

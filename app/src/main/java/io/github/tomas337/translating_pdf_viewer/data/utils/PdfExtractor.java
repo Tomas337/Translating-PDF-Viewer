@@ -49,9 +49,9 @@ public class PdfExtractor {
     }
 
     protected interface ExtractionListener {
-        void onPageCount(int pageCount);
-        void onPageProcessed(int currentPage);
-        void onDocumentExtracted(Document document);
+        void onFileInfo(String title, int pageCount, String thumbnailPath);
+        void onPageProcessed(int currentPage, String pagePath);
+        void onDocumentExtracted(HashMap<Integer, TextStyle> intToTextStyleMap);
     }
 
     protected void extractDocument(ExtractionListener listener) throws IOException {
@@ -61,21 +61,8 @@ public class PdfExtractor {
         ) {
             Files.createDirectories(path);
 
-            int dpi = context.getResources().getDisplayMetrics().densityDpi;
-            Extractor extractor = new Extractor(dpi, path);
             int numberOfPages = pdfDocument.getNumberOfPages();
-            listener.onPageCount(numberOfPages);
-            List<String> pagePaths = new ArrayList<>();
 
-            for (int i = 0; i < numberOfPages; i++) {
-                PDPage page = pdfDocument.getPage(i);
-                Page pageObject = extractor.getPageObject(page);
-                String filepath = savePage(pageObject, i);
-                pagePaths.add(filepath);
-                listener.onPageProcessed(i);
-            }
-
-            HashMap<Integer, TextStyle> intToTextStyleMap = extractor.getIntToTextStyleMap();
             String title = pdfDocument.getDocumentInformation().getTitle();
             if (title == null) {
                 title = "No title";
@@ -85,14 +72,20 @@ public class PdfExtractor {
             Bitmap thumbnail = pdfRenderer.renderImageWithDPI(0, 300);
             String thumbnailPath = saveThumbnail(thumbnail);
 
-            Document document = new Document(
-                    title,
-                    numberOfPages,
-                    intToTextStyleMap,
-                    pagePaths,
-                    thumbnailPath
-            );
-            listener.onDocumentExtracted(document);
+            listener.onFileInfo(title, numberOfPages, thumbnailPath);
+
+            int dpi = context.getResources().getDisplayMetrics().densityDpi;
+            Extractor extractor = new Extractor(dpi, path);
+
+            for (int i = 0; i < numberOfPages; i++) {
+                PDPage page = pdfDocument.getPage(i);
+                Page pageObject = extractor.getPageObject(page);
+                String filepath = savePage(pageObject, i);
+                listener.onPageProcessed(i, filepath);
+            }
+
+            HashMap<Integer, TextStyle> intToTextStyleMap = extractor.getIntToTextStyleMap();
+            listener.onDocumentExtracted(intToTextStyleMap);
         }
     }
 

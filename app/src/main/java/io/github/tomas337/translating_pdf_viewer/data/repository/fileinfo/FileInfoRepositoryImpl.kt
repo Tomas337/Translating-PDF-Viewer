@@ -4,6 +4,7 @@ import io.github.tomas337.translating_pdf_viewer.data.local.fileinfo.FileInfoDao
 import io.github.tomas337.translating_pdf_viewer.data.mapper.toFileInfoDto
 import io.github.tomas337.translating_pdf_viewer.data.mapper.toFileInfoDtoList
 import io.github.tomas337.translating_pdf_viewer.data.mapper.toFileInfoEntity
+import io.github.tomas337.translating_pdf_viewer.utils.TextStyle
 
 class FileInfoRepositoryImpl(
     private val fileInfoDao: FileInfoDao,
@@ -35,6 +36,13 @@ class FileInfoRepositoryImpl(
 
     override suspend fun updateCurrentPage(pageIndex: Int, id: Int) {
         fileInfoDao.updateCurrentPage(pageIndex, id)
+    }
+
+    override suspend fun updateIntToTextStyleMap(
+        intToTextStyleMap: HashMap<Int, TextStyle>,
+        id: Int
+    ) {
+        fileInfoDao.updateIntToTextStyleMap(intToTextStyleMap, id)
     }
 
     override suspend fun deleteFile(id: Int) {

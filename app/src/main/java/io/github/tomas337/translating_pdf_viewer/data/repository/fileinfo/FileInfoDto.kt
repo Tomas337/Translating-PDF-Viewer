@@ -7,6 +7,6 @@ data class FileInfoDto(
     val name: String,
     val pageCount: Int,
     val curPage: Int = 0,
-    val intToTextStyleMap: HashMap<Int, TextStyle>,
+    val intToTextStyleMap: HashMap<Int, TextStyle> = hashMapOf(),
     val thumbnailPath: String
 )

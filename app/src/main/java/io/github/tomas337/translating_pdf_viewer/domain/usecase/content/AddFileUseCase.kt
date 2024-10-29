@@ -21,13 +21,13 @@ class AddFileUseCase(
     private val fileInfoRepository: FileInfoRepository,
     private val pageRepository: PageRepository
 ) {
-    private val latestTaskDone = MutableStateFlow(0)
-    private val totalTasks = MutableStateFlow(1)
+    private val pagesProcessed = MutableStateFlow(0)
+    private val pageCount = MutableStateFlow(1)
 
     fun getProgress(): Flow<Float> {
-        latestTaskDone.value = 0
-        totalTasks.value = 1
-        return combine(latestTaskDone, totalTasks) { latestTaskDone, totalTasks ->
+        pagesProcessed.value = 0
+        pageCount.value = 1
+        return combine(pagesProcessed, pageCount) { latestTaskDone, totalTasks ->
             latestTaskDone.toFloat() / totalTasks
         }
     }
@@ -36,38 +36,36 @@ class AddFileUseCase(
         val fileId = fileInfoRepository.getLastInsertedFileId() + 1
         val pdfExtractor = PdfExtractor(context, uri, fileId)
         try {
-            val document = pdfExtractor.extractDocumentWithProgress()
+            pdfExtractor.extractDocumentWithProgress()
                 .onEach { event ->
-                    if (event is ExtractionEvent.PageCount) {
-                        // Extract and insert pages and insert file info
-                        totalTasks.value = event.pageCount * 2 + 1
+                    if (event is ExtractionEvent.FileInfo) {
+                        pageCount.value = event.pageCount
+                        fileInfoRepository.insertFileInfo(
+                            FileInfoDto(
+                                id = fileId,
+                                name = event.title,
+                                pageCount = event.pageCount,
+                                thumbnailPath = event.thumbnailPath
+                            )
+                        )
                     } else if (event is ExtractionEvent.PageProcessed) {
-                        latestTaskDone.value = event.pageIndex + 1
+                        pageRepository.insertPage(
+                            PageDto(
+                                fileId = fileId,
+                                pagePath = event.pagePath,
+                                pageIndex = event.pageIndex,
+                            ))
+                        pagesProcessed.value += 1
                     }
                 }
                 .first { it is ExtractionEvent.DocumentExtracted }
-                .let { (it as ExtractionEvent.DocumentExtracted).document }
-
-            fileInfoRepository.insertFileInfo(
-                FileInfoDto(
-                    id = fileId,
-                    name = document.name,
-                    pageCount = document.pageCount,
-                    intToTextStyleMap = document.intToTextStyleMap,
-                    thumbnailPath = document.pathOfThumbnail
-                )
-            )
-            latestTaskDone.value += 1
-
-            for ((i, pagePath) in document.pagePaths.withIndex()) {
-                pageRepository.insertPage(
-                    PageDto(
-                        fileId = fileId,
-                        pagePath = pagePath,
-                    pageIndex = i,
-                ))
-                latestTaskDone.value += 1
-            }
+                .let {
+                    val event = it as ExtractionEvent.DocumentExtracted
+                    fileInfoRepository.updateIntToTextStyleMap(
+                        id = fileId,
+                        intToTextStyleMap = event.intToTextStyleMap
+                    )
+                }
         } catch (e: IOException) {
             pdfExtractor.deleteDirs()
             Log.e("file extraction failed", e.stackTraceToString())
