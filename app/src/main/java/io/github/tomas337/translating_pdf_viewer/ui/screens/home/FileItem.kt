@@ -37,12 +37,9 @@ import io.github.tomas337.translating_pdf_viewer.ui.screens.home.viewmodel.HomeV
 fun FileItem(
     fileInfo: FileModel,
     navController: NavController,
-    homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
 ) {
     val textSize = 20.sp
     val padding = 10.dp
-
-    val thumbnailPath: String? by homeViewModel.getThumbnailPath(fileInfo.id).collectAsState(null)
 
     var isContextMenuVisible by rememberSaveable { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
@@ -71,7 +68,7 @@ fun FileItem(
                 .padding(padding)
         ) {
             AsyncImage(
-                model = thumbnailPath,
+                model = fileInfo.thumbnailPath,
                 contentDescription = "Thumbnail",
                 modifier = Modifier.size(boxWithConstraintsScope.maxWidth * 0.2f)
             )

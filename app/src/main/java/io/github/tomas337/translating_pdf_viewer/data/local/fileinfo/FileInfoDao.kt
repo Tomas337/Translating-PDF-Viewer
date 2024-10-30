@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import io.github.tomas337.translating_pdf_viewer.utils.TextStyle
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FileInfoDao {
@@ -12,13 +13,10 @@ interface FileInfoDao {
     suspend fun getFileInfo(id: Int): FileInfoEntity
 
     @Query("SELECT * FROM file_info")
-    suspend fun getAllFileInfo(): List<FileInfoEntity>
+    fun getAllFileInfo(): Flow<List<FileInfoEntity>>
 
     @Query("SELECT MAX(id) FROM file_info")
     suspend fun getLastInsertedFileId(): Int
-
-    @Query("SELECT thumbnail_path FROM file_info WHERE id == :id")
-    suspend fun getThumbnailPath(id: Int): String
 
     @Insert
     suspend fun insertFile(fileEntity: FileInfoEntity)

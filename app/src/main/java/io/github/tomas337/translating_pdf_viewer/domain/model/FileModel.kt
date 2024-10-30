@@ -8,5 +8,5 @@ data class FileModel(
     val pageCount: Int = 0,
     val curPage: Int = 0,
     val intToTextStyleMap: HashMap<Int, TextStyle> = hashMapOf(),
-    val thumbnailPath: String = ""
+    val thumbnailPath: String? = null
 )

@@ -12,12 +12,9 @@ import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.content.AddFileUseCase
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.content.DeleteFileUseCase
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.content.GetAllFileInfoUseCase
-import io.github.tomas337.translating_pdf_viewer.domain.usecase.content.GetThumbnailPathUseCase
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.content.UpdateNameUseCase
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -25,7 +22,6 @@ class HomeViewModel(
     private val deleteFileUseCase: DeleteFileUseCase,
     private val updateNameUseCase: UpdateNameUseCase,
     private val getAllFileInfoUseCase: GetAllFileInfoUseCase,
-    private val getThumbnailPathUseCase: GetThumbnailPathUseCase,
 ) : ViewModel() {
 
     private val _allFileInfo = MutableStateFlow<List<FileModel>>(emptyList())
@@ -36,7 +32,9 @@ class HomeViewModel(
 
     init {
         viewModelScope.launch {
-            _allFileInfo.value = getAllFileInfoUseCase()
+            getAllFileInfoUseCase().collect {
+                _allFileInfo.value = it
+            }
         }
     }
 
@@ -48,24 +46,17 @@ class HomeViewModel(
                 }
             }
             addFileUseCase(context, uri)
-            _allFileInfo.value = getAllFileInfoUseCase()
         }
 
     fun deleteFile(context: Context, id: Int) =
         viewModelScope.launch {
             deleteFileUseCase(context, id)
-            _allFileInfo.value = getAllFileInfoUseCase()
         }
 
     fun updateName(name: String, id: Int) {
         viewModelScope.launch {
             updateNameUseCase(name, id)
-            _allFileInfo.value = getAllFileInfoUseCase()
         }
-    }
-
-    fun getThumbnailPath(id: Int): Flow<String> = flow {
-        emit(getThumbnailPathUseCase(id))
     }
 
     companion object {
@@ -78,7 +69,6 @@ class HomeViewModel(
                     DeleteFileUseCase(fileInfoRepository),
                     UpdateNameUseCase(fileInfoRepository),
                     GetAllFileInfoUseCase(fileInfoRepository),
-                    GetThumbnailPathUseCase(fileInfoRepository),
                 )
             }
         }
