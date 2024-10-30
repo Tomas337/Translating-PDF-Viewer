@@ -68,6 +68,7 @@ class AddFileUseCase(
                 }
         } catch (e: IOException) {
             pdfExtractor.deleteDirs()
+            fileInfoRepository.deleteFile(fileId)
             Log.e("file extraction failed", e.stackTraceToString())
         }
     }
