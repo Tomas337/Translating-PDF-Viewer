@@ -1,5 +1,6 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -10,11 +11,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,15 +31,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
 import io.github.tomas337.translating_pdf_viewer.ui.main.navigation.NavRoute
+import io.github.tomas337.translating_pdf_viewer.ui.screens.home.viewmodel.HomeViewModel
 
 @Composable
 fun FileItem(
     fileInfo: FileModel,
     navController: NavController,
+    homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
 ) {
     val isProcessed by remember(fileInfo.intToTextStyleMap) {
         derivedStateOf { fileInfo.intToTextStyleMap.isNotEmpty() }
@@ -83,11 +90,14 @@ fun FileItem(
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 2
             )
+
+            val widthModifier = Modifier.width(48.dp)
             if (isProcessed) {
                 IconButton(
                     onClick = {
                         isContextMenuVisible = true
-                    }
+                    },
+                    modifier = widthModifier
                 ) {
                     Icon(
                         imageVector = Icons.Default.MoreVert,
@@ -103,10 +113,11 @@ fun FileItem(
                     )
                 }
             } else {
-                IconButton(
-                    enabled = false,
-                    onClick = {},
-                    content = {}
+                val progress by homeViewModel.addFileProgress.collectAsState()
+                CircularProgressIndicator(
+                    progress = { progress },
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                    modifier = widthModifier
                 )
             }
         }
