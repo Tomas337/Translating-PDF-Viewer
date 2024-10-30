@@ -14,7 +14,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,18 +25,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
 import io.github.tomas337.translating_pdf_viewer.ui.main.navigation.NavRoute
-import io.github.tomas337.translating_pdf_viewer.ui.screens.home.viewmodel.HomeViewModel
 
 @Composable
 fun FileItem(
     fileInfo: FileModel,
     navController: NavController,
 ) {
+    val isProcessed by remember { mutableStateOf(fileInfo.intToTextStyleMap.isNotEmpty()) }
+
     val textSize = 20.sp
     val padding = 10.dp
 
@@ -54,7 +53,7 @@ fun FileItem(
 
     BoxWithConstraints(
         modifier = Modifier
-            .clickable {
+            .clickable(enabled = isProcessed) {
                 navController.navigate(NavRoute.PdfViewer.createRoute(fileInfo.id))
             }
     ) {
@@ -80,22 +79,30 @@ fun FileItem(
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 2
             )
-            IconButton(
-                onClick = {
-                    isContextMenuVisible = true
+            if (isProcessed) {
+                IconButton(
+                    onClick = {
+                        isContextMenuVisible = true
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = "Edit file info"
+                    )
+                    ContextMenu(
+                        fileInfo.id,
+                        padding,
+                        isContextMenuVisible,
+                        { isContextMenuVisible = it },
+                        { showDialog = it },
+                        boxWithConstraintsScope
+                    )
                 }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.MoreVert,
-                    contentDescription = "Edit file info"
-                )
-                ContextMenu(
-                    fileInfo.id,
-                    padding,
-                    isContextMenuVisible,
-                    { isContextMenuVisible = it },
-                    { showDialog = it },
-                    boxWithConstraintsScope
+            } else {
+                IconButton(
+                    enabled = false,
+                    onClick = {},
+                    content = {}
                 )
             }
         }
