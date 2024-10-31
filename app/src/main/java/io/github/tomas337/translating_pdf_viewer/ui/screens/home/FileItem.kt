@@ -17,7 +17,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -27,6 +26,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -80,7 +83,10 @@ fun FileItem(
             AsyncImage(
                 model = fileInfo.thumbnailPath,
                 contentDescription = "Thumbnail",
-                modifier = Modifier.size(boxWithConstraintsScope.maxWidth * 0.2f)
+                modifier = Modifier.size(boxWithConstraintsScope.maxWidth * 0.2f),
+                colorFilter = if (!isProcessed) {
+                    ColorFilter.tint(MaterialTheme.colorScheme.surfaceVariant, BlendMode.Saturation)
+                } else null
             )
             Text(
                 text = fileInfo.name,
@@ -88,6 +94,11 @@ fun FileItem(
                 fontSize = textSize,
                 textAlign = TextAlign.Center,
                 overflow = TextOverflow.Ellipsis,
+                color = if (isProcessed) {
+                    MaterialTheme.colorScheme.onSurface
+                } else {
+                    MaterialTheme.colorScheme.surfaceVariant
+                },
                 maxLines = 2
             )
 
@@ -116,6 +127,7 @@ fun FileItem(
                 val progress by homeViewModel.addFileProgress.collectAsState()
                 CircularProgressIndicator(
                     progress = { progress },
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     trackColor = MaterialTheme.colorScheme.surfaceVariant,
                     modifier = widthModifier
                 )
