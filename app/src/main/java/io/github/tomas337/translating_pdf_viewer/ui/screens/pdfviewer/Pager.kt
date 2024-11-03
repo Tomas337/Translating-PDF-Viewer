@@ -1,7 +1,6 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
 import android.widget.Toast
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -39,7 +38,6 @@ import io.github.tomas337.translating_pdf_viewer.utils.PageContent
 import io.github.tomas337.translating_pdf_viewer.utils.TextStyle
 import kotlinx.coroutines.flow.Flow
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Pager(
     pagerState: PagerState,

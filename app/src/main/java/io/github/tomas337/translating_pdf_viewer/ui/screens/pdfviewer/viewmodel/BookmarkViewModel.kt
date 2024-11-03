@@ -31,28 +31,27 @@ class BookmarkViewModel(
 
     init {
         viewModelScope.launch {
-            _bookmarks.value = getAllBookmarksUseCase(fileId)
+            getAllBookmarksUseCase(fileId).collect {
+                _bookmarks.value = it
+            }
         }
     }
 
     fun addBookmark(pageIndex: Int, text: String = "Bookmark") {
         viewModelScope.launch {
             addBookmarkUseCase(fileId, pageIndex, text)
-            _bookmarks.value = getAllBookmarksUseCase(fileId)
         }
     }
 
     fun updateBookmarkText(pageIndex: Int, text: String) {
         viewModelScope.launch {
             updateBookmarkTextUseCase(fileId, pageIndex, text)
-            _bookmarks.value = getAllBookmarksUseCase(fileId)
         }
     }
 
     fun deleteBookmark(pageIndex: Int) {
         viewModelScope.launch {
             deleteBookmarkUseCase(fileId, pageIndex)
-            _bookmarks.value = getAllBookmarksUseCase(fileId)
         }
     }
 
