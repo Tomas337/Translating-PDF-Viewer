@@ -61,7 +61,7 @@ fun Pager(
         modifier = modifier
             .fillMaxSize(),
         state = pagerState,
-        beyondBoundsPageCount = 1,
+        beyondViewportPageCount = 1,
         pageSpacing = pageSpacing,
         userScrollEnabled = isScrollable
     ) { pageIndex ->
