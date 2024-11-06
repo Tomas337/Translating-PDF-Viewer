@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Translating-PDF-Viewer"
-include(":app", ":pdfbox-android:library")
+include(":app", ":PdfBox-Android:library")
