@@ -1,5 +1,7 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.home
 
+import io.github.tomas337.translating_pdf_viewer.di.MyApp
+import io.github.tomas337.translating_pdf_viewer.di.MyTestApp
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 

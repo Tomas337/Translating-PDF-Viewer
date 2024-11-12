@@ -16,7 +16,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "io.github.tomas337.translating_pdf_viewer.TestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -71,6 +71,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    androidTestImplementation(libs.testng)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.gson)
@@ -80,5 +81,6 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     androidTestImplementation(libs.junit.jupiter.api)
     androidTestImplementation(libs.androidx.ui.test.android)
+    androidTestImplementation(libs.androidx.runner)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
