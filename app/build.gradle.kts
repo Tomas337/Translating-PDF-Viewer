@@ -82,5 +82,7 @@ dependencies {
     androidTestImplementation(libs.junit.jupiter.api)
     androidTestImplementation(libs.androidx.ui.test.android)
     androidTestImplementation(libs.androidx.runner)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.rules)
     debugImplementation(libs.androidx.ui.test.manifest)
 }

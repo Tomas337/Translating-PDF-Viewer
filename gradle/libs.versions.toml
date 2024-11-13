@@ -2,6 +2,7 @@
 agp = "8.5.1"
 coilCompose = "2.7.0"
 datastorePreferences = "1.1.1"
+espressoCore = "3.6.1"
 gson = "2.10.1"
 junitJupiterApi = "5.11.2"
 junitJupiterEngine = "5.11.2"
@@ -15,6 +16,7 @@ lifecycleViewmodelCompose = "2.8.4"
 roomCompiler = "2.6.1"
 roomKtx = "2.6.1"
 roomRuntime = "2.6.1"
+rules = "1.6.1"
 uiTestManifest = "1.7.5"
 testng = "6.9.6"
 runner = "1.6.2"
@@ -22,10 +24,12 @@ runner = "1.6.2"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomCompiler" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
+androidx-rules = { module = "androidx.test:rules", version.ref = "rules" }
 androidx-ui-test-android = { module = "androidx.compose.ui:ui-test-android", version.ref = "uiTestManifest" }
 androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "uiTestManifest" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
