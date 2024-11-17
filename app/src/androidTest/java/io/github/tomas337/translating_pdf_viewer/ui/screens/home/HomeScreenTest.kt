@@ -80,7 +80,7 @@ class HomeScreenTest {
     @Test
     fun clickFab_addItemToList() {
 
-        // Setup intent result when an intent is sent to the specified package.
+        // Setup the intent result for when an intent is sent to the specified package.
         val stubbedIntent = Intent()
         stubbedIntent.data = testPdfUri
         val stubbedResult = Instrumentation.ActivityResult(Activity.RESULT_OK, stubbedIntent)
