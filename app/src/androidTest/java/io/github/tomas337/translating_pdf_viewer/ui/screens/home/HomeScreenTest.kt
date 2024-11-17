@@ -1,37 +1,122 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.home
 
-import io.github.tomas337.translating_pdf_viewer.di.MyApp
-import org.junit.jupiter.api.Test
+import android.app.Activity
+import android.app.Instrumentation
+import android.content.ContentValues
+import android.content.Intent
+import android.net.Uri
+import android.os.Environment
+import android.provider.MediaStore
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.Intents.intending
+import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
+import androidx.test.espresso.matcher.ViewMatchers.withTagValue
+import androidx.test.ext.junit.rules.ActivityScenarioRule
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import io.github.tomas337.translating_pdf_viewer.ui.main.MainActivity
+import junit.framework.TestCase.fail
+import org.hamcrest.Matchers.equalTo
+import org.junit.After
+import org.junit.Before
+import org.junit.BeforeClass
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
 
+
+@RunWith(AndroidJUnit4::class)
 class HomeScreenTest {
+
+    @get:Rule
+    val activityRule = ActivityScenarioRule(MainActivity::class.java)
+
+    @Before
+    fun init() {
+        Intents.init()
+    }
+
+    @After
+    fun teardown() {
+        Intents.release()
+    }
+
+    companion object {
+
+        lateinit var testPdfUri: Uri
+        private const val FILE_NAME = "test.pdf"
+
+        @JvmStatic
+        @BeforeClass
+        fun copyTestPdfFileToExternalStorage() {
+            val context = InstrumentationRegistry.getInstrumentation().context
+            val assetManager = context.assets
+
+            val values = ContentValues()
+
+            values.put(MediaStore.MediaColumns.DISPLAY_NAME, FILE_NAME)
+            values.put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
+            values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+
+            testPdfUri = context.contentResolver
+                .insert(MediaStore.Files.getContentUri("external"), values)!!
+
+            assetManager.open(FILE_NAME).use { `in` ->
+                context.contentResolver.openOutputStream(testPdfUri).use { out ->
+                    val buffer = ByteArray(1024)
+                    var read: Int
+                    while ((`in`.read(buffer).also { read = it }) != -1) {
+                        out!!.write(buffer, 0, read)
+                    }
+                }
+            }
+        }
+    }
 
     @Test
     fun clickFab_addItemToList() {
-        // TODO: implement
+
+        // TODO replace espresso intents with composable equivalent
+        // Setup intent result when an intent is sent to the specified package.
+        val stubbedIntent = Intent()
+        stubbedIntent.data = testPdfUri
+        val stubbedResult = Instrumentation.ActivityResult(Activity.RESULT_OK, stubbedIntent)
+
+        intending(toPackage("com.android.content")).respondWith(stubbedResult)
+
+        // TODO: don't use espresso, since it is meant for view base UIs, use Compose instead
+        // if item name contains + will result in unexpected behavior
+        onView(withTagValue(equalTo("Add file"))).perform(click())
+
+
+        fail("Unimplemented")
     }
 
     @Test
     fun item_showsProgressBar_thenShowVertMenu() {
-        // TODO: implement
+        fail("Unimplemented")
     }
 
     @Test
     fun clickItem_navigateToPdfViewerScreen() {
-        // TODO: implement
+        fail("Unimplemented")
     }
 
     @Test
     fun clickVertMenu_showContextMenu() {
-        // TODO: implement
+        fail("Unimplemented")
     }
 
     @Test
     fun delete_deleteItemFromList() {
-        // TODO: implement
+        fail("Unimplemented")
     }
 
     @Test
     fun renameDialog_saveAndCancel() {
-        // TODO: implement
+        fail("Unimplemented")
     }
+
 }
