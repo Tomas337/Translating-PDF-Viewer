@@ -7,18 +7,17 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
+import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.performClick
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intending
 import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
-import androidx.test.espresso.matcher.ViewMatchers.withTagValue
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import io.github.tomas337.translating_pdf_viewer.ui.main.MainActivity
 import junit.framework.TestCase.fail
-import org.hamcrest.Matchers.equalTo
 import org.junit.After
 import org.junit.Before
 import org.junit.BeforeClass
@@ -32,6 +31,9 @@ class HomeScreenTest {
 
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
+
+    @get:Rule
+    val composeTestRule = createComposeRule()
 
     @Before
     fun init() {
@@ -78,18 +80,13 @@ class HomeScreenTest {
     @Test
     fun clickFab_addItemToList() {
 
-        // TODO replace espresso intents with composable equivalent
         // Setup intent result when an intent is sent to the specified package.
         val stubbedIntent = Intent()
         stubbedIntent.data = testPdfUri
         val stubbedResult = Instrumentation.ActivityResult(Activity.RESULT_OK, stubbedIntent)
-
         intending(toPackage("com.android.content")).respondWith(stubbedResult)
 
-        // TODO: don't use espresso, since it is meant for view base UIs, use Compose instead
-        // if item name contains + will result in unexpected behavior
-        onView(withTagValue(equalTo("Add file"))).perform(click())
-
+        composeTestRule.onNodeWithContentDescription("Add file button").performClick()
 
         fail("Unimplemented")
     }
