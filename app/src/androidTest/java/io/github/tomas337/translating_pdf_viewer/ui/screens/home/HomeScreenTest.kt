@@ -7,8 +7,11 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
+import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.assertHasNoClickAction
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intending
@@ -88,7 +91,19 @@ class HomeScreenTest {
 
         composeTestRule.onNodeWithContentDescription("Add file button").performClick()
 
-        fail("Unimplemented")
+        // TODO fix no Activity that calls setContent exception
+        // 1) confirm that an item was added
+        composeTestRule.onNodeWithContentDescription("File: test").assertExists()
+
+        // 2) confirm that the item is being processed
+        // There will be a collision if there are more items with the same content description
+        composeTestRule.onNodeWithContentDescription("File: test").assertHasNoClickAction()
+        composeTestRule.onNodeWithContentDescription("File extraction progress bar").assertExists()
+        // TODO assert color change of text and thumbnail
+
+        // TODO somehow wait till the item is extracted
+        // 3) confirm that the item is extracted
+//        composeTestRule.onNodeWithContentDescription("File: test").assertHasClickAction()
     }
 
     @Test

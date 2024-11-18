@@ -15,6 +15,7 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "pr
 class PreferencesRepositoryImpl(context: Context) : PreferencesRepository {
 
     private companion object {
+        // TODO: add word spacing setting
         const val DEFAULT_FONT_SIZE_SCALE = 1.5f
         const val DEFAULT_PAGE_PADDING = 25
         const val DEFAULT_LINE_SPACING = 4

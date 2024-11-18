@@ -27,6 +27,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -67,6 +69,7 @@ fun FileItem(
             .clickable(enabled = isProcessed) {
                 navController.navigate(NavRoute.PdfViewer.createRoute(fileInfo.id))
             }
+            .semantics { contentDescription = "File: ${fileInfo.name}" }
     ) {
         val boxWithConstraintsScope = this
 
@@ -126,7 +129,9 @@ fun FileItem(
                     progress = { progress },
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                    modifier = widthModifier
+                    modifier = widthModifier.semantics {
+                        contentDescription = "File extraction progress bar"
+                    }
                 )
             }
         }
