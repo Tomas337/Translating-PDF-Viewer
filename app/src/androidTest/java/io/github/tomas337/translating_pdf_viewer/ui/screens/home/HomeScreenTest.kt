@@ -7,11 +7,11 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
-import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.hasText
+import android.util.Log
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
+import androidx.core.net.toFile
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intending
 import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
@@ -78,11 +78,11 @@ class HomeScreenTest {
         @JvmStatic
         @AfterClass
         fun deleteTestPdfFileFromExternalStorage() {
-            // TODO: implement
+            val context = InstrumentationRegistry.getInstrumentation().context
+            context.contentResolver.delete(testPdfUri, null, null)
         }
     }
 
-    @OptIn(ExperimentalTestApi::class)
     @Test
     fun clickFab_addItemToList() {
 
