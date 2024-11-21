@@ -7,14 +7,12 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
-import androidx.core.net.toFile
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intending
-import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
+import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import io.github.tomas337.translating_pdf_viewer.ui.main.MainActivity
@@ -86,12 +84,11 @@ class HomeScreenTest {
     @Test
     fun clickFab_addItemToList() {
 
-        // TODO: the result doesn't get stubbed, the app actually opens file selection
         // Setup the intent result for when an intent is sent to the specified package.
         val stubbedIntent = Intent()
         stubbedIntent.data = testPdfUri
         val stubbedResult = Instrumentation.ActivityResult(Activity.RESULT_OK, stubbedIntent)
-        intending(toPackage("com.android.content")).respondWith(stubbedResult)
+        intending(IntentMatchers.hasAction(Intent.ACTION_CHOOSER)).respondWith(stubbedResult)
 
         composeTestRule.onNodeWithContentDescription("Add file button").performClick()
 
