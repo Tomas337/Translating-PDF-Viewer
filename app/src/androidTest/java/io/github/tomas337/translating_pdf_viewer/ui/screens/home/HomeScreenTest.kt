@@ -7,6 +7,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
+import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
@@ -81,6 +83,7 @@ class HomeScreenTest {
         }
     }
 
+    @OptIn(ExperimentalTestApi::class)
     @Test
     fun clickFab_addItemToList() {
 
@@ -93,7 +96,8 @@ class HomeScreenTest {
         composeTestRule.onNodeWithContentDescription("Add file button").performClick()
 
 //        // 1) confirm that an item was added
-//        composeTestRule.onNodeWithContentDescription("File: test").assertExists()
+        composeTestRule.waitUntilExactlyOneExists(hasContentDescription("File: test"), 5000L)
+
 //
 //        // 2) confirm that the item is being processed
 //        // There will be a collision if there are more items with the same content description
