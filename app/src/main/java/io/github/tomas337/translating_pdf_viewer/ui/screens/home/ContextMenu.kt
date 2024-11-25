@@ -85,7 +85,7 @@ fun ContextMenu(
             ) {
                 Icon(
                     imageVector = Icons.Filled.Delete,
-                    contentDescription = "Thrash icon",
+                    contentDescription = "Trash icon",
                     tint = MaterialTheme.colorScheme.error
                 )
                 Spacer(modifier = Modifier.width(padding))
