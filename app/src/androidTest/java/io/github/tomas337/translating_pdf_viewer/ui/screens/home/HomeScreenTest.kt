@@ -13,9 +13,11 @@ import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intending
 import androidx.test.espresso.intent.matcher.IntentMatchers
@@ -87,15 +89,24 @@ class HomeScreenTest {
         }
     }
 
-    @OptIn(ExperimentalTestApi::class)
-    @Test
-    fun clickFab_addItemToList() {
-
+    @Before
+    fun addFileItem() {
         // Setup the intent result for when an intent is sent to the specified package.
         val stubbedIntent = Intent()
         stubbedIntent.data = testPdfUri
         val stubbedResult = Instrumentation.ActivityResult(Activity.RESULT_OK, stubbedIntent)
         intending(IntentMatchers.hasAction(Intent.ACTION_CHOOSER)).respondWith(stubbedResult)
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun processFileItem() {
+
+        // Setup the intent result for when an intent is sent to the specified package.
+//        val stubbedIntent = Intent()
+//        stubbedIntent.data = testPdfUri
+//        val stubbedResult = Instrumentation.ActivityResult(Activity.RESULT_OK, stubbedIntent)
+//        intending(IntentMatchers.hasAction(Intent.ACTION_CHOOSER)).respondWith(stubbedResult)
 
         composeTestRule.onNodeWithContentDescription("Add file button").performClick()
 
@@ -117,28 +128,33 @@ class HomeScreenTest {
     }
 
     @Test
-    fun item_showsProgressBar_thenShowVertMenu() {
-        fail("Unimplemented")
-    }
-
-    @Test
     fun clickItem_navigateToPdfViewerScreen() {
         fail("Unimplemented")
     }
 
+    @OptIn(ExperimentalTestApi::class)
     @Test
-    fun clickVertMenu_showContextMenu() {
-        fail("Unimplemented")
-    }
+    fun rename_delete_fileItem() {
+        // TODO add an already processed file to db for tests that don't test processing
+        composeTestRule.onNodeWithContentDescription("Add file button").performClick()
+        composeTestRule.waitUntilExactlyOneExists(hasContentDescription("Edit file info"), 5000L)
+        composeTestRule.onNodeWithContentDescription("Edit file info").performClick()
 
-    @Test
-    fun delete_deleteItemFromList() {
-        fail("Unimplemented")
-    }
+        // 1) confirm that the buttons are displayed
+        composeTestRule.onNodeWithText("Edit name").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Edit icon").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Delete").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Trash icon").assertIsDisplayed()
 
-    @Test
-    fun renameDialog_saveAndCancel() {
-        fail("Unimplemented")
-    }
+        // 2) rename dialog behaviour
+        composeTestRule.onNodeWithContentDescription("Edit icon").performClick()
+        composeTestRule.onNodeWithContentDescription("Rename bookmark dialog").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Item name text field").performTextInput("New name")
+        composeTestRule.onNodeWithText("CANCEL").performClick()
+        composeTestRule.onNodeWithText("New name").assertDoesNotExist()
 
+        // 3) delete feature
+//        composeTestRule.onNodeWithContentDescription("Trash icon").performClick()
+//        composeTestRule.waitUntilDoesNotExist(hasContentDescription("File: test"), 5000L)
+    }
 }

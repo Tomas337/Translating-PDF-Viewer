@@ -20,6 +20,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 
@@ -37,7 +39,9 @@ fun RenameBookmarkDialog(
     Dialog(onDismissRequest = { setShowDialog(false) }) {
         Surface(
             shape = RoundedCornerShape(8.dp),
-            modifier = Modifier.fillMaxWidth(0.88f)
+            modifier = Modifier
+                .fillMaxWidth(0.88f)
+                .semantics { contentDescription = "Rename bookmark dialog" }
         ) {
             Column(
                 modifier = Modifier.padding(20.dp)
@@ -48,6 +52,7 @@ fun RenameBookmarkDialog(
                     shape = RectangleShape,
                     value = txtField,
                     onValueChange = { txtField = it },
+                    modifier = Modifier.semantics { contentDescription = "Item name text field" }
                 )
                 Spacer(modifier = Modifier.height(spacerHeight))
                 Row(
