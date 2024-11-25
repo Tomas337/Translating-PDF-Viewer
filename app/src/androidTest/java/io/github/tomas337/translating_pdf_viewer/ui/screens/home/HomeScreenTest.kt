@@ -8,12 +8,13 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertHasNoClickAction
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intending
@@ -100,18 +101,19 @@ class HomeScreenTest {
 
         // 1) confirm that an item was added
         composeTestRule.waitUntilExactlyOneExists(hasContentDescription("File: test"), 5000L)
+        composeTestRule.onNodeWithContentDescription("Thumbnail").assertIsDisplayed()
+        composeTestRule.onNodeWithText("test").assertIsDisplayed()
 
         // 2) confirm that the item is being processed
-        // There will be a collision if there are more items with the same content description
         composeTestRule.onNodeWithContentDescription("File: test").assertIsNotEnabled()
-        composeTestRule.onNodeWithContentDescription("File extraction progress bar").assertExists()
-        // TODO assert color change of text and thumbnail
+        composeTestRule.onNodeWithContentDescription("File extraction progress bar").assertIsDisplayed()
 
         // 3) confirm that the item is extracted
         composeTestRule.waitUntilDoesNotExist(hasContentDescription(
             "File extraction progress bar"
         ))
         composeTestRule.onNodeWithContentDescription("File: test").assertIsEnabled()
+        composeTestRule.onNodeWithContentDescription("Edit file info").assertIsDisplayed()
     }
 
     @Test
