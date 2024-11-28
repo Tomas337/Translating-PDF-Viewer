@@ -12,6 +12,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -19,6 +20,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTextReplacement
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intending
 import androidx.test.espresso.intent.matcher.IntentMatchers
@@ -149,15 +151,15 @@ class HomeScreenTest {
 
         // 2) rename dialog behaviour
         composeTestRule.onNodeWithContentDescription("Edit icon").performClick()
-        composeTestRule.waitUntilExactlyOneExists(hasContentDescription("Item name text field"), 10000L)
         composeTestRule.onNodeWithContentDescription("Item name text field").performTextInput("New name")
         composeTestRule.onNodeWithText("CANCEL").performClick()
         composeTestRule.onNodeWithText("New name").assertDoesNotExist()
-//
-//        composeTestRule.onNodeWithContentDescription("Edit icon").performClick()
-//        composeTestRule.onNodeWithContentDescription("Item name text field").performTextInput("New name")
-//        composeTestRule.onNodeWithText("SAVE").performClick()
-//        composeTestRule.onNodeWithText("New name").assertExists()
+
+        composeTestRule.onNodeWithContentDescription("Edit file info").performClick()
+        composeTestRule.onNodeWithContentDescription("Edit icon").performClick()
+        composeTestRule.onNodeWithContentDescription("Item name text field").performTextReplacement("New name")
+        composeTestRule.onNodeWithText("SAVE").performClick()
+        composeTestRule.onNodeWithText("New name").assertExists()
 
 
         // 3) delete feature
