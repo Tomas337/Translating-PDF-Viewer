@@ -1,7 +1,6 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.pager.rememberPagerState
@@ -26,7 +25,6 @@ import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.
 import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.ContentViewModel
 import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.PreferencesViewModel
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PdfViewerScreen(
     navController: NavController,

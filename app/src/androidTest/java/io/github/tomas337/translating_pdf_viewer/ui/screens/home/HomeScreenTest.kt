@@ -12,12 +12,9 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasContentDescription
-import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
@@ -27,7 +24,6 @@ import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import io.github.tomas337.translating_pdf_viewer.ui.main.MainActivity
-import junit.framework.TestCase.fail
 import org.junit.After
 import org.junit.AfterClass
 import org.junit.Before
@@ -104,13 +100,6 @@ class HomeScreenTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun processFileItem() {
-
-        // Setup the intent result for when an intent is sent to the specified package.
-//        val stubbedIntent = Intent()
-//        stubbedIntent.data = testPdfUri
-//        val stubbedResult = Instrumentation.ActivityResult(Activity.RESULT_OK, stubbedIntent)
-//        intending(IntentMatchers.hasAction(Intent.ACTION_CHOOSER)).respondWith(stubbedResult)
-
         composeTestRule.onNodeWithContentDescription("Add file button").performClick()
 
         // 1) confirm that an item was added
@@ -130,9 +119,13 @@ class HomeScreenTest {
         composeTestRule.onNodeWithContentDescription("Edit file info").assertIsDisplayed()
     }
 
+    @OptIn(ExperimentalTestApi::class)
     @Test
     fun clickItem_navigateToPdfViewerScreen() {
-        fail("Unimplemented")
+        composeTestRule.onNodeWithContentDescription("Add file button").performClick()
+        composeTestRule.waitUntilExactlyOneExists(hasContentDescription("Edit file info"))
+        composeTestRule.onNodeWithContentDescription("File: test").performClick()
+        composeTestRule.onNodeWithContentDescription("Return to home screen").assertIsDisplayed()
     }
 
     @OptIn(ExperimentalTestApi::class)
@@ -149,8 +142,14 @@ class HomeScreenTest {
         composeTestRule.onNodeWithText("Delete").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Trash icon").assertIsDisplayed()
 
-        // 2) rename dialog behaviour
+        // 2) confirm that the dialog is displayed
         composeTestRule.onNodeWithContentDescription("Edit icon").performClick()
+        composeTestRule.onNodeWithText("Update file name").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Item name text field").assertIsDisplayed()
+        composeTestRule.onNodeWithText("CANCEL").assertExists()
+        composeTestRule.onNodeWithText("SAVE").assertExists()
+
+        // 3) rename dialog behaviour
         composeTestRule.onNodeWithContentDescription("Item name text field").performTextInput("New name")
         composeTestRule.onNodeWithText("CANCEL").performClick()
         composeTestRule.onNodeWithText("New name").assertDoesNotExist()
@@ -161,7 +160,7 @@ class HomeScreenTest {
         composeTestRule.onNodeWithText("SAVE").performClick()
         composeTestRule.onNodeWithText("New name").assertExists()
 
-        // 3) delete behaviour
+        // 4) delete behaviour
         composeTestRule.onNodeWithContentDescription("Edit file info").performClick()
         composeTestRule.onNodeWithContentDescription("Trash icon").performClick()
         composeTestRule.onNodeWithContentDescription("File: test").assertDoesNotExist()
