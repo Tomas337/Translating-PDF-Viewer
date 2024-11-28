@@ -140,7 +140,7 @@ class HomeScreenTest {
     fun rename_delete_fileItem() {
         // TODO add an already processed file to db for tests that don't test processing
         composeTestRule.onNodeWithContentDescription("Add file button").performClick()
-        composeTestRule.waitUntilExactlyOneExists(hasContentDescription("Edit file info"), 5000L)
+        composeTestRule.waitUntilExactlyOneExists(hasContentDescription("Edit file info"))
         composeTestRule.onNodeWithContentDescription("Edit file info").performClick()
 
         // 1) confirm that the buttons are displayed
@@ -161,9 +161,9 @@ class HomeScreenTest {
         composeTestRule.onNodeWithText("SAVE").performClick()
         composeTestRule.onNodeWithText("New name").assertExists()
 
-
-        // 3) delete feature
-//        composeTestRule.onNodeWithContentDescription("Trash icon").performClick()
-//        composeTestRule.waitUntilDoesNotExist(hasContentDescription("File: test"), 5000L)
+        // 3) delete behaviour
+        composeTestRule.onNodeWithContentDescription("Edit file info").performClick()
+        composeTestRule.onNodeWithContentDescription("Trash icon").performClick()
+        composeTestRule.onNodeWithContentDescription("File: test").assertDoesNotExist()
     }
 }
