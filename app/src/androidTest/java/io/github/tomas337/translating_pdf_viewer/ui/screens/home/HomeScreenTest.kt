@@ -13,9 +13,10 @@ import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.espresso.intent.Intents
@@ -148,10 +149,16 @@ class HomeScreenTest {
 
         // 2) rename dialog behaviour
         composeTestRule.onNodeWithContentDescription("Edit icon").performClick()
-        composeTestRule.onNodeWithContentDescription("Rename bookmark dialog").assertIsDisplayed()
+        composeTestRule.waitUntilExactlyOneExists(hasContentDescription("Item name text field"), 10000L)
         composeTestRule.onNodeWithContentDescription("Item name text field").performTextInput("New name")
         composeTestRule.onNodeWithText("CANCEL").performClick()
         composeTestRule.onNodeWithText("New name").assertDoesNotExist()
+//
+//        composeTestRule.onNodeWithContentDescription("Edit icon").performClick()
+//        composeTestRule.onNodeWithContentDescription("Item name text field").performTextInput("New name")
+//        composeTestRule.onNodeWithText("SAVE").performClick()
+//        composeTestRule.onNodeWithText("New name").assertExists()
+
 
         // 3) delete feature
 //        composeTestRule.onNodeWithContentDescription("Trash icon").performClick()
