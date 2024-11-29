@@ -7,12 +7,15 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -23,7 +26,9 @@ import androidx.test.espresso.intent.Intents.intending
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import io.github.tomas337.translating_pdf_viewer.di.MyApp
 import io.github.tomas337.translating_pdf_viewer.ui.main.MainActivity
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.AfterClass
 import org.junit.Before
@@ -38,16 +43,6 @@ class HomeScreenTest {
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
-
-    @Before
-    fun init() {
-        Intents.init()
-    }
-
-    @After
-    fun teardown() {
-        Intents.release()
-    }
 
     companion object {
 
@@ -90,18 +85,32 @@ class HomeScreenTest {
 
     @Before
     fun addFileItem() {
-        // Setup the intent result for when an intent is sent to the specified package.
+        Intents.init()
         val stubbedIntent = Intent()
         stubbedIntent.data = testPdfUri
         val stubbedResult = Instrumentation.ActivityResult(Activity.RESULT_OK, stubbedIntent)
         intending(IntentMatchers.hasAction(Intent.ACTION_CHOOSER)).respondWith(stubbedResult)
+        composeTestRule.onNodeWithContentDescription("Add file button").performClick()
+    }
+
+    @After
+    fun teardown() {
+        Intents.release()
+    }
+
+    // TODO: fix tests being flaky
+    @After
+    fun deletePreviousFileItem() {
+        runBlocking {
+            MyApp.db.fileInfoDao().run {
+                deleteFile(getLastInsertedFileId())
+            }
+        }
     }
 
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun processFileItem() {
-        composeTestRule.onNodeWithContentDescription("Add file button").performClick()
-
         // 1) confirm that an item was added
         composeTestRule.waitUntilExactlyOneExists(hasContentDescription("File: test"), 5000L)
         composeTestRule.onNodeWithContentDescription("Thumbnail").assertIsDisplayed()
@@ -122,8 +131,7 @@ class HomeScreenTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun clickItem_navigateToPdfViewerScreen() {
-        composeTestRule.onNodeWithContentDescription("Add file button").performClick()
-        composeTestRule.waitUntilExactlyOneExists(hasContentDescription("Edit file info"))
+        composeTestRule.waitUntilExactlyOneExists(hasContentDescription("Edit file info"), 5000L)
         composeTestRule.onNodeWithContentDescription("File: test").performClick()
         composeTestRule.onNodeWithContentDescription("Return to home screen").assertIsDisplayed()
     }
@@ -131,9 +139,7 @@ class HomeScreenTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun rename_delete_fileItem() {
-        // TODO add an already processed file to db for tests that don't test processing
-        composeTestRule.onNodeWithContentDescription("Add file button").performClick()
-        composeTestRule.waitUntilExactlyOneExists(hasContentDescription("Edit file info"))
+        composeTestRule.waitUntilExactlyOneExists(hasContentDescription("Edit file info"), 5000L)
         composeTestRule.onNodeWithContentDescription("Edit file info").performClick()
 
         // 1) confirm that the buttons are displayed

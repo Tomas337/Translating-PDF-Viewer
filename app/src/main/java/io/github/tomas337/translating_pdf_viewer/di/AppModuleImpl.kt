@@ -12,10 +12,10 @@ import io.github.tomas337.translating_pdf_viewer.data.repository.preferences.Pre
 import io.github.tomas337.translating_pdf_viewer.data.repository.preferences.PreferencesRepositoryImpl
 
 class AppModuleImpl(
-    private val appContext: Context
+    private val appContext: Context,
+    db: FileDatabase
 ) : AppModule {
 
-    private val db = FileDatabase.getFileDatabase(appContext)
     private val fileInfoDao = db.fileInfoDao()
     private val pageDao = db.pageDao()
     private val bookmarkDao = db.bookmarksDao()
