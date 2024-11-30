@@ -1,3 +1,5 @@
+package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
+
 import android.app.Activity
 import android.app.Instrumentation
 import android.content.ContentValues
