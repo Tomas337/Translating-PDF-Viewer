@@ -7,15 +7,10 @@ import android.os.Environment
 import android.provider.MediaStore
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTextInput
-import androidx.compose.ui.test.performTextReplacement
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intending
 import androidx.test.espresso.intent.matcher.IntentMatchers
@@ -78,14 +73,18 @@ class PdfViewerScreenTest {
         }
     }
 
+    @OptIn(ExperimentalTestApi::class)
     @Before
-    fun addFileItem() {
+    fun setScreen() {
         Intents.init()
         val stubbedIntent = Intent()
         stubbedIntent.data = testPdfUri
         val stubbedResult = Instrumentation.ActivityResult(Activity.RESULT_OK, stubbedIntent)
         intending(IntentMatchers.hasAction(Intent.ACTION_CHOOSER)).respondWith(stubbedResult)
         composeTestRule.onNodeWithContentDescription("Add file button").performClick()
+        composeTestRule.waitUntilExactlyOneExists(hasContentDescription("Edit file info"), 5000L)
+        composeTestRule.onNodeWithContentDescription("File: test").performClick()
+        composeTestRule.onNodeWithContentDescription("Return to home screen").assertIsDisplayed()
     }
 
     @After
