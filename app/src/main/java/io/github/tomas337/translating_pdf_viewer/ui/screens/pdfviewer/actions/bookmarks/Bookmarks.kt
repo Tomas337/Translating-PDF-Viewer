@@ -12,6 +12,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.github.tomas337.translating_pdf_viewer.domain.model.BookmarkModel
 
@@ -51,7 +53,9 @@ fun Bookmarks(
             rowHeight = rowHeight
         )
         LazyColumn(
-            modifier = Modifier.weight(5f)
+            modifier = Modifier
+                .weight(5f)
+                .semantics { contentDescription = "Bookmark list" }
         ) {
             itemsIndexed(bookmarks) { index, bookmark ->
                 var checked by remember { mutableStateOf(false) }

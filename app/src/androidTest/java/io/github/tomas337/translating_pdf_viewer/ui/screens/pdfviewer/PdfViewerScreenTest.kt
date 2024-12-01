@@ -8,10 +8,19 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.filter
+import androidx.compose.ui.test.filterToOne
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onChild
+import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intending
@@ -119,7 +128,45 @@ class PdfViewerScreenTest {
     }
 
     @Test
-    fun bookmarksBehaviour() {
+    fun bookmarks_add_remove() {
+        composeTestRule.onNodeWithContentDescription("Bookmarks").performClick()
+
+        composeTestRule.onNodeWithContentDescription("Bookmark add/remove button").assertHasClickAction()
+        composeTestRule.onNodeWithText("Add current page to bookmarks").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Bookmark list")
+            .onChildren()
+            .filterToOne(hasText("Bookmark").and(hasText("1")))
+            .assertDoesNotExist()
+
+        composeTestRule.onNodeWithContentDescription("Bookmark add/remove button").performClick()
+        composeTestRule.onNodeWithText("Remove current page from bookmarks").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Bookmark list")
+            .onChildren()
+            .filterToOne(hasText("Bookmark").and(hasText("1")))
+            .assertIsDisplayed()
+
+        composeTestRule.onNodeWithContentDescription("Bookmark add/remove button").performClick()
+        composeTestRule.onNodeWithText("Add current page to bookmarks").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Bookmark list")
+            .onChildren()
+            .filterToOne(hasText("Bookmark").and(hasText("1")))
+            .assertDoesNotExist()
+    }
+
+    @Test
+    fun bookmarks_goTo() {
+        fail("unimplemented")
+    }
+
+    @Test
+    fun bookmarks_select_rename_delete() {
+        fail("unimplemented")
+    }
+
+    @Test
+    fun bookmarks_contents() {
+//        composeTestRule.onNodeWithContentDescription("Bookmarks").performClick()
+//        composeTestRule.onNodeWithText("Contents").assertDoesNotExist()
         fail("unimplemented")
     }
 

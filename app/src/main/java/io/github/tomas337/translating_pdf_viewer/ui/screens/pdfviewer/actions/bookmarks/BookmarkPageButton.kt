@@ -17,6 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -31,7 +33,17 @@ fun BookmarkPageButton(
     rowHeight: Dp
 ) {
 
-    Column {
+    Column(
+        modifier = Modifier
+            .clickable {
+                if (isCurrentPageBookmarked) {
+                    removeBookmark(curPage)
+                } else {
+                    addBookmark(curPage)
+                }
+            }
+            .semantics { contentDescription = "Bookmark add/remove button" }
+    ) {
         HorizontalDivider()
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -40,13 +52,6 @@ fun BookmarkPageButton(
                 .fillMaxWidth()
                 .height(rowHeight)
                 .background(color = MaterialTheme.colorScheme.surfaceVariant)
-                .clickable {
-                    if (isCurrentPageBookmarked) {
-                        removeBookmark(curPage)
-                    } else {
-                        addBookmark(curPage)
-                    }
-                }
                 .padding(horizontal = 25.dp)
         ) {
             if (isCurrentPageBookmarked) {
