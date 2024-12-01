@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.progressSemantics
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -111,7 +112,12 @@ fun PageSlider(
                         bottomStart = (height.value / 2).dp
                     )
                 )
-                .background(color = MaterialTheme.colorScheme.secondary),
+                .background(color = MaterialTheme.colorScheme.secondary)
+                .progressSemantics(
+                    value = curPage.toFloat(),
+                    valueRange = 0f..(pageCount - 1).toFloat(),
+                    steps = pageCount
+                ),
         contentAlignment = Alignment.Center,
         ) {
             if (isActive) {
