@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.progressSemantics
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.CircularProgressIndicator
@@ -129,9 +130,11 @@ fun FileItem(
                     progress = { progress },
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                    modifier = widthModifier.semantics {
-                        contentDescription = "File extraction progress bar"
-                    }
+                    modifier = widthModifier
+                        .semantics {
+                            contentDescription = "File extraction progress bar"
+                        }
+                        .progressSemantics(progress)
                 )
             }
         }
