@@ -17,11 +17,15 @@ import androidx.compose.ui.test.filterToOne
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onChild
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTextReplacement
+import androidx.compose.ui.test.performTouchInput
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intending
 import androidx.test.espresso.intent.matcher.IntentMatchers
@@ -95,6 +99,8 @@ class PdfViewerScreenTest {
         composeTestRule.onNodeWithContentDescription("Add file button").performClick()
         composeTestRule.waitUntilExactlyOneExists(hasContentDescription("Edit file info"), 5000L)
         composeTestRule.onNodeWithContentDescription("File: test").performClick()
+        composeTestRule.waitUntilExactlyOneExists(hasContentDescription("Return to home screen"), 5000L)
+        // TODO fix: the screen doesn't get displayed consistently
         composeTestRule.onNodeWithContentDescription("Return to home screen").assertIsDisplayed()
     }
 
@@ -113,15 +119,15 @@ class PdfViewerScreenTest {
     }
 
     // TODO: don't test content displaying yet since it may change
-    @Test
-    fun pageSliderBehaviour() {
-        fail("unimplemented")
-    }
-
-    @Test
-    fun scrollBehaviour() {
-        fail("unimplemented")
-    }
+//    @Test
+//    fun pageSliderBehaviour() {
+//        fail("unimplemented")
+//    }
+//
+//    @Test
+//    fun scrollBehaviour() {
+//        fail("unimplemented")
+//    }
 
     @Test
     fun settingsBehaviour() {
@@ -161,7 +167,45 @@ class PdfViewerScreenTest {
 
     @Test
     fun bookmarks_select_rename_delete() {
-        fail("unimplemented")
+        composeTestRule.onNodeWithContentDescription("Bookmarks").performClick()
+
+        composeTestRule.onNodeWithContentDescription("Bookmark add/remove button").performClick()
+        composeTestRule.onNodeWithContentDescription("Bookmark list")
+            .onChildren()
+            .filterToOne(hasText("Bookmark").and(hasText("1")))
+            .performTouchInput { longClick() }
+
+        composeTestRule.onNodeWithContentDescription("Checked circle").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Delete bookmark").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Rename bookmark").assertIsDisplayed()
+
+        composeTestRule.onNodeWithContentDescription("Checked circle").performClick()
+        composeTestRule.onNodeWithContentDescription("Unchecked circle").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Delete bookmark").assertIsNotDisplayed()
+        composeTestRule.onNodeWithContentDescription("Rename bookmark").assertIsNotDisplayed()
+
+        composeTestRule.onNodeWithContentDescription("Unchecked circle").performClick()
+        composeTestRule.onNodeWithContentDescription("Checked circle").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Delete bookmark").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Rename bookmark").assertIsDisplayed()
+
+        composeTestRule.onNodeWithText("Renamed bookmark").assertDoesNotExist()
+        composeTestRule.onNodeWithContentDescription("Rename bookmark").performClick()
+        composeTestRule.onNodeWithContentDescription("Bookmark name text field").performTextReplacement("Renamed bookmark")
+        composeTestRule.onNodeWithText("CANCEL").performClick()
+        composeTestRule.onNodeWithText("Renamed bookmark").assertDoesNotExist()
+        composeTestRule.onNodeWithContentDescription("Rename bookmark").performClick()
+        composeTestRule.onNodeWithContentDescription("Bookmark name text field").performTextReplacement("Renamed bookmark")
+        composeTestRule.onNodeWithText("SAVE").performClick()
+        composeTestRule.onNodeWithText("Renamed bookmark").assertExists()
+
+        composeTestRule.onNodeWithContentDescription("Delete bookmark").performClick()
+        composeTestRule.onNodeWithText("Renamed bookmark").assertDoesNotExist()
+        // TODO: check that when the current page bookmark is removed using "Delete bookmark" add/remove button state changes
+
+        // TODO: add tests where there are multiple bookmarks in the list,
+        //  check that the correct one is checked, that you can check multiple,
+        //  that bookmark can be renamed only if one is checked, etc.
     }
 
     @Test

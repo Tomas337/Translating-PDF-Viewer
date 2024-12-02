@@ -73,16 +73,21 @@ fun BookmarkItem(
             .padding(horizontal = 20.dp)
     ) {
         if (inSelectionMode) {
-            Icon(
-                painter = painterResource(
-                    id = if (checked) {
-                        R.drawable.round_check_circle_outline_24
-                    } else {
-                        R.drawable.round_radio_button_unchecked_24
-                    }
-                ),
-                contentDescription = "Check circle"
-            )
+            if (checked) {
+                Icon(
+                    painter = painterResource(
+                        id = R.drawable.round_check_circle_outline_24
+                    ),
+                    contentDescription = "Checked circle"
+                )
+            } else {
+                Icon(
+                    painter = painterResource(
+                        id = R.drawable.round_radio_button_unchecked_24
+                    ),
+                    contentDescription = "Unchecked circle"
+                )
+            }
         }
         Column {
             if (index != 0) {

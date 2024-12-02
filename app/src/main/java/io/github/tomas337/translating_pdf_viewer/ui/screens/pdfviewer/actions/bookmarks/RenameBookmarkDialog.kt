@@ -52,7 +52,7 @@ fun RenameBookmarkDialog(
                     shape = RectangleShape,
                     value = txtField,
                     onValueChange = { txtField = it },
-                    modifier = Modifier.semantics { contentDescription = "Item name text field" }
+                    modifier = Modifier.semantics { contentDescription = "Bookmark name text field" }
                 )
                 Spacer(modifier = Modifier.height(spacerHeight))
                 Row(
