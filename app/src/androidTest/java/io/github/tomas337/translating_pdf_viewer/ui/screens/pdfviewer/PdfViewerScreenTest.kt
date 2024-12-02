@@ -112,6 +112,7 @@ class PdfViewerScreenTest {
         }
     }
 
+    // TODO: don't test content displaying yet since it may change
     @Test
     fun pageSliderBehaviour() {
         fail("unimplemented")

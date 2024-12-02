@@ -116,6 +116,9 @@ fun PdfViewerScreen(
                 }
             )
         }
+        // TODO: add option for a continuous column of pages instead of individual pages
+        // TODO: add option for showing pages in their original, unchanged form
+        // TODO: add option to not extract all pages at once, but dynamically on the go
         Pager(
             pagerState = pagerState,
             getPageContent = { contentViewModel.getPageContent(it) },
