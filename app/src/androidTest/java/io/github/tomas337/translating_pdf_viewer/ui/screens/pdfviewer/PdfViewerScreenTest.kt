@@ -43,6 +43,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
+// Tests are flaky when my laptop isn't connected to power
 @RunWith(AndroidJUnit4::class)
 class PdfViewerScreenTest {
 
@@ -99,8 +100,6 @@ class PdfViewerScreenTest {
         composeTestRule.onNodeWithContentDescription("Add file button").performClick()
         composeTestRule.waitUntilExactlyOneExists(hasContentDescription("Edit file info"), 5000L)
         composeTestRule.onNodeWithContentDescription("File: test").performClick()
-        composeTestRule.waitUntilExactlyOneExists(hasContentDescription("Return to home screen"), 5000L)
-        // TODO fix: the screen doesn't get displayed consistently
         composeTestRule.onNodeWithContentDescription("Return to home screen").assertIsDisplayed()
     }
 
