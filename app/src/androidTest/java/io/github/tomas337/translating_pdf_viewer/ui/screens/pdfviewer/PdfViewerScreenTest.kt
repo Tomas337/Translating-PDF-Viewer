@@ -1,37 +1,24 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
-import android.app.Activity
-import android.app.Instrumentation
-import android.content.ContentValues
-import android.content.Intent
-import android.net.Uri
-import android.os.Environment
-import android.provider.MediaStore
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotDisplayed
-import androidx.compose.ui.test.filter
 import androidx.compose.ui.test.filterToOne
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.longClick
-import androidx.compose.ui.test.onChild
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performTouchInput
 import androidx.test.espresso.intent.Intents
-import androidx.test.espresso.intent.Intents.intending
-import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import io.github.tomas337.translating_pdf_viewer.TestUtils
+import io.github.tomas337.translating_pdf_viewer.data.local.bookmarks.BookmarkEntity
 import io.github.tomas337.translating_pdf_viewer.di.MyApp
 import io.github.tomas337.translating_pdf_viewer.ui.main.MainActivity
 import junit.framework.TestCase.fail
@@ -128,8 +115,30 @@ class PdfViewerScreenTest {
         fail("unimplemented")
     }
 
+    // TODO: extract each feature, eg. bookmarks, into it's own test suite
+    private suspend fun fillDbWithBookmarks() {
+        for (i in 0..5) {
+            val fileId = MyApp.db.fileInfoDao().run {
+                getLastInsertedFileId()
+            }
+            MyApp.db.bookmarksDao().run {
+                addBookmark(
+                    BookmarkEntity(
+                        fileId = fileId,
+                        pageIndex = i,
+                        text = "Bookmark $i"
+                    )
+                )
+            }
+        }
+    }
+
     @Test
     fun bookmarks_select_rename_delete() {
+        runBlocking {
+            // TODO fix: causes test to fail, because it isn't built to handle multiple bookmarks
+            fillDbWithBookmarks()
+        }
         composeTestRule.onNodeWithContentDescription("Bookmarks").performClick()
 
         // TODO: prefill the db with bookmarks to isolate tests from the button
@@ -139,6 +148,7 @@ class PdfViewerScreenTest {
             .filterToOne(hasText("Bookmark").and(hasText("1")))
             .performTouchInput { longClick() }
 
+        // TODO: refactor code using "robots"
         composeTestRule.onNodeWithContentDescription("Checked circle").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Delete bookmark").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Rename bookmark").assertIsDisplayed()

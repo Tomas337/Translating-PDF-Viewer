@@ -1,12 +1,5 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.home
 
-import android.app.Activity
-import android.app.Instrumentation
-import android.content.ContentValues
-import android.content.Intent
-import android.net.Uri
-import android.os.Environment
-import android.provider.MediaStore
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
@@ -19,14 +12,9 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import androidx.test.espresso.intent.Intents
-import androidx.test.espresso.intent.Intents.intending
-import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import io.github.tomas337.translating_pdf_viewer.TestUtils
-import io.github.tomas337.translating_pdf_viewer.di.MyApp
 import io.github.tomas337.translating_pdf_viewer.ui.main.MainActivity
-import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.AfterClass
 import org.junit.Before
