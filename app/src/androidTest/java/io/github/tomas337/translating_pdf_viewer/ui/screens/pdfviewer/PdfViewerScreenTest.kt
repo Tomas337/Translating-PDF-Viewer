@@ -31,6 +31,7 @@ import androidx.test.espresso.intent.Intents.intending
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import io.github.tomas337.translating_pdf_viewer.TestUtils
 import io.github.tomas337.translating_pdf_viewer.di.MyApp
 import io.github.tomas337.translating_pdf_viewer.ui.main.MainActivity
 import junit.framework.TestCase.fail
@@ -51,52 +52,23 @@ class PdfViewerScreenTest {
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     companion object {
-
-        lateinit var testPdfUri: Uri
-        private const val FILE_NAME = "test.pdf"
-
         @JvmStatic
         @BeforeClass
-        fun copyTestPdfFileToExternalStorage() {
-            val context = InstrumentationRegistry.getInstrumentation().context
-            val assetManager = context.assets
-
-            val values = ContentValues()
-
-            values.put(MediaStore.MediaColumns.DISPLAY_NAME, FILE_NAME)
-            values.put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
-            values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
-
-            testPdfUri = context.contentResolver
-                .insert(MediaStore.Files.getContentUri("external"), values)!!
-
-            assetManager.open(FILE_NAME).use { `in` ->
-                context.contentResolver.openOutputStream(testPdfUri).use { out ->
-                    val buffer = ByteArray(1024)
-                    var read: Int
-                    while ((`in`.read(buffer).also { read = it }) != -1) {
-                        out!!.write(buffer, 0, read)
-                    }
-                }
-            }
+        fun setup() {
+            TestUtils.copyTestPdfFileToExternalStorage()
         }
 
         @JvmStatic
         @AfterClass
-        fun deleteTestPdfFileFromExternalStorage() {
-            val context = InstrumentationRegistry.getInstrumentation().context
-            context.contentResolver.delete(testPdfUri, null, null)
+        fun afterClassCleanup() {
+            TestUtils.deleteTestPdfFileFromExternalStorage()
         }
     }
 
     @OptIn(ExperimentalTestApi::class)
     @Before
     fun setScreen() {
-        Intents.init()
-        val stubbedIntent = Intent()
-        stubbedIntent.data = testPdfUri
-        val stubbedResult = Instrumentation.ActivityResult(Activity.RESULT_OK, stubbedIntent)
-        intending(IntentMatchers.hasAction(Intent.ACTION_CHOOSER)).respondWith(stubbedResult)
+        TestUtils.initIntent()
         composeTestRule.onNodeWithContentDescription("Add file button").performClick()
         composeTestRule.waitUntilExactlyOneExists(hasContentDescription("Edit file info"), 5000L)
         composeTestRule.onNodeWithContentDescription("File: test").performClick()
@@ -104,17 +76,9 @@ class PdfViewerScreenTest {
     }
 
     @After
-    fun teardown() {
+    fun afterTestCleanup() {
         Intents.release()
-    }
-
-    @After
-    fun deletePreviousFileItem() {
-        runBlocking {
-            MyApp.db.fileInfoDao().run {
-                deleteFile(getLastInsertedFileId())
-            }
-        }
+        TestUtils.deletePreviousFileItem()
     }
 
     // TODO: don't test content displaying yet since it may change
@@ -134,7 +98,7 @@ class PdfViewerScreenTest {
     }
 
     @Test
-    fun bookmarks_add_remove() {
+    fun bookmarks_addAndRemoveButton() {
         composeTestRule.onNodeWithContentDescription("Bookmarks").performClick()
 
         composeTestRule.onNodeWithContentDescription("Bookmark add/remove button").assertHasClickAction()
@@ -168,6 +132,7 @@ class PdfViewerScreenTest {
     fun bookmarks_select_rename_delete() {
         composeTestRule.onNodeWithContentDescription("Bookmarks").performClick()
 
+        // TODO: prefill the db with bookmarks to isolate tests from the button
         composeTestRule.onNodeWithContentDescription("Bookmark add/remove button").performClick()
         composeTestRule.onNodeWithContentDescription("Bookmark list")
             .onChildren()
@@ -200,7 +165,9 @@ class PdfViewerScreenTest {
 
         composeTestRule.onNodeWithContentDescription("Delete bookmark").performClick()
         composeTestRule.onNodeWithText("Renamed bookmark").assertDoesNotExist()
-        // TODO: check that when the current page bookmark is removed using "Delete bookmark" add/remove button state changes
+
+        //  Check that when the current page bookmark is removed using "Delete bookmark" add/remove button state changes
+        composeTestRule.onNodeWithText("Add current page to bookmarks").assertIsDisplayed()
 
         // TODO: add tests where there are multiple bookmarks in the list,
         //  check that the correct one is checked, that you can check multiple,

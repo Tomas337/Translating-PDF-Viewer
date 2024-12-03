@@ -23,6 +23,7 @@ import androidx.test.espresso.intent.Intents.intending
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import io.github.tomas337.translating_pdf_viewer.TestUtils
 import io.github.tomas337.translating_pdf_viewer.di.MyApp
 import io.github.tomas337.translating_pdf_viewer.ui.main.MainActivity
 import kotlinx.coroutines.runBlocking
@@ -42,66 +43,29 @@ class HomeScreenTest {
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     companion object {
-
-        lateinit var testPdfUri: Uri
-        private const val FILE_NAME = "test.pdf"
-
         @JvmStatic
         @BeforeClass
-        fun copyTestPdfFileToExternalStorage() {
-            val context = InstrumentationRegistry.getInstrumentation().context
-            val assetManager = context.assets
-
-            val values = ContentValues()
-
-            values.put(MediaStore.MediaColumns.DISPLAY_NAME, FILE_NAME)
-            values.put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
-            values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
-
-            testPdfUri = context.contentResolver
-                .insert(MediaStore.Files.getContentUri("external"), values)!!
-
-            assetManager.open(FILE_NAME).use { `in` ->
-                context.contentResolver.openOutputStream(testPdfUri).use { out ->
-                    val buffer = ByteArray(1024)
-                    var read: Int
-                    while ((`in`.read(buffer).also { read = it }) != -1) {
-                        out!!.write(buffer, 0, read)
-                    }
-                }
-            }
+        fun setup() {
+            TestUtils.copyTestPdfFileToExternalStorage()
         }
 
         @JvmStatic
         @AfterClass
-        fun deleteTestPdfFileFromExternalStorage() {
-            val context = InstrumentationRegistry.getInstrumentation().context
-            context.contentResolver.delete(testPdfUri, null, null)
+        fun afterClassCleanup() {
+            TestUtils.deleteTestPdfFileFromExternalStorage()
         }
     }
 
     @Before
     fun addFileItem() {
-        Intents.init()
-        val stubbedIntent = Intent()
-        stubbedIntent.data = testPdfUri
-        val stubbedResult = Instrumentation.ActivityResult(Activity.RESULT_OK, stubbedIntent)
-        intending(IntentMatchers.hasAction(Intent.ACTION_CHOOSER)).respondWith(stubbedResult)
+        TestUtils.initIntent()
         composeTestRule.onNodeWithContentDescription("Add file button").performClick()
     }
 
     @After
-    fun teardown() {
+    fun afterTestCleanup() {
         Intents.release()
-    }
-
-    @After
-    fun deletePreviousFileItem() {
-        runBlocking {
-            MyApp.db.fileInfoDao().run {
-                deleteFile(getLastInsertedFileId())
-            }
-        }
+        TestUtils.deletePreviousFileItem()
     }
 
     @OptIn(ExperimentalTestApi::class)
