@@ -52,4 +52,18 @@ class SettingsTest {
         Intents.release()
         TestUtils.deletePreviousFileItem()
     }
+
+    // TODO: settings test
+    // After clicking Settings in the top bar a sheet should appear,
+    // that can be enlarged by dragging drag handle up
+    // and disappears when dragged to the bottom of the screen.
+    // The sheet disappears when clicked on visible displayed content.
+    // The sheet is scrollable and the content is also scrollable.
+    // Clicking a button changes the displayed content instantly.
+    // You can input number into text field.
+    // Test keyboard focus management.
+    // Cancelling keyboard doesn't change the value
+    // Text fields have a format.
+    // Reset button.
+
 }

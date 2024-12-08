@@ -245,6 +245,9 @@ class BookmarksTest {
 
         composeTestRule.onNodeWithText("Renamed bookmark").assertExists()
         composeTestRule.onNodeWithText("Bookmark 4").assertIsDisplayed()
+
+        // Changing tabs should turn off selection mode
+        fail("unimplemented")
     }
 
     @Test
