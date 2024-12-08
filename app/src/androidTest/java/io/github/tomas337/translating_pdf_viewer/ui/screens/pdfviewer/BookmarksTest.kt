@@ -1,20 +1,29 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
+import android.util.Log
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.assertAll
+import androidx.compose.ui.test.assertContentDescriptionContains
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.filterToOne
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.longClick
+import androidx.compose.ui.test.onAllNodesWithContentDescription
+import androidx.compose.ui.test.onAncestors
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onParent
+import androidx.compose.ui.test.onSibling
+import androidx.compose.ui.test.onSiblings
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.printToLog
 import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.tomas337.translating_pdf_viewer.TestUtils
@@ -124,55 +133,114 @@ class BookmarksTest {
         composeTestRule.onNodeWithContentDescription("Page 1").assertIsDisplayed()
     }
 
+    private fun checkCirclesAndBottomBarInSelectionMode(n: Int, checked: Set<Int>) {
+        if (checked.size == 1) {
+            composeTestRule.onNodeWithContentDescription("Delete bookmark").assertIsDisplayed()
+            composeTestRule.onNodeWithContentDescription("Rename bookmark").assertIsDisplayed()
+        } else {
+            composeTestRule.onNodeWithContentDescription("Delete bookmark").assertIsDisplayed()
+            composeTestRule.onNodeWithContentDescription("Rename bookmark").assertDoesNotExist()
+        }
+        for (i in 1..n) {
+            if (i in checked) {
+                composeTestRule.onNodeWithText("Bookmark $i")
+                    .assertContentDescriptionContains("Checked circle")
+                    .assertIsDisplayed()
+            } else {
+                composeTestRule.onNodeWithText("Bookmark $i")
+                    .assertContentDescriptionContains("Unchecked circle")
+                    .assertIsDisplayed()
+            }
+        }
+    }
+
+    private fun checkExistenceOfBookmarks(n: Int, exist: Set<Int>) {
+        for (i in 1..n) {
+            if (i in exist) {
+                composeTestRule.onNodeWithText("Bookmark $i").assertIsDisplayed()
+            } else {
+                composeTestRule.onNodeWithText("Bookmark $i").assertDoesNotExist()
+            }
+        }
+    }
+
+    @OptIn(ExperimentalTestApi::class)
     @Test
-    fun bookmarks_select_rename_delete() {
+    fun bookmarks_select_delete_rename() {
+        val bookmarkCount = 5
         runBlocking {
-            // TODO fix: causes test to fail, because it isn't built to handle multiple bookmarks
-            fillDbWithBookmarks(2)
+            fillDbWithBookmarks(bookmarkCount)
         }
         composeTestRule.onNodeWithContentDescription("Bookmarks").performClick()
 
-        // TODO: prefill the db with bookmarks to isolate tests from the button
-        composeTestRule.onNodeWithContentDescription("Bookmark add/remove button").performClick()
-        composeTestRule.onNodeWithContentDescription("Bookmark list")
-            .onChildren()
-            .filterToOne(hasText("Bookmark").and(hasText("1")))
+        // Selection mode turned off by press back and selection state is reset
+        composeTestRule.onNodeWithText("Bookmark 2")
             .performTouchInput { longClick() }
+        checkCirclesAndBottomBarInSelectionMode(bookmarkCount, setOf(2))
 
-        // TODO: refactor code using "robots"
-        composeTestRule.onNodeWithContentDescription("Checked circle").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Delete bookmark").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Rename bookmark").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Bookmark 1").performClick()
+        checkCirclesAndBottomBarInSelectionMode(bookmarkCount, setOf(1, 2))
 
-        composeTestRule.onNodeWithContentDescription("Checked circle").performClick()
-        composeTestRule.onNodeWithContentDescription("Unchecked circle").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Delete bookmark").assertIsNotDisplayed()
-        composeTestRule.onNodeWithContentDescription("Rename bookmark").assertIsNotDisplayed()
+        composeTestRule.onNodeWithText("Bookmark 3").performClick()
+        checkCirclesAndBottomBarInSelectionMode(bookmarkCount, setOf(1, 2, 3))
 
-        composeTestRule.onNodeWithContentDescription("Unchecked circle").performClick()
-        composeTestRule.onNodeWithContentDescription("Checked circle").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Delete bookmark").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Rename bookmark").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Bookmark 4").performClick()
+        checkCirclesAndBottomBarInSelectionMode(bookmarkCount, setOf(1, 2, 3, 4))
 
-        composeTestRule.onNodeWithText("Renamed bookmark").assertDoesNotExist()
-        composeTestRule.onNodeWithContentDescription("Rename bookmark").performClick()
-        composeTestRule.onNodeWithContentDescription("Bookmark name text field").performTextReplacement("Renamed bookmark")
-        composeTestRule.onNodeWithText("CANCEL").performClick()
-        composeTestRule.onNodeWithText("Renamed bookmark").assertDoesNotExist()
-        composeTestRule.onNodeWithContentDescription("Rename bookmark").performClick()
-        composeTestRule.onNodeWithContentDescription("Bookmark name text field").performTextReplacement("Renamed bookmark")
-        composeTestRule.onNodeWithText("SAVE").performClick()
-        composeTestRule.onNodeWithText("Renamed bookmark").assertExists()
-
-        composeTestRule.onNodeWithContentDescription("Delete bookmark").performClick()
-        composeTestRule.onNodeWithText("Renamed bookmark").assertDoesNotExist()
-
-        //  Check that when the current page bookmark is removed using "Delete bookmark" add/remove button state changes
-        composeTestRule.onNodeWithText("Add current page to bookmarks").assertIsDisplayed()
-
-        // TODO: add tests where there are multiple bookmarks in the list,
-        //  check that the correct one is checked, that you can check multiple,
-        //  that bookmark can be renamed only if one is checked, etc.
+        composeTestRule.onNodeWithText("Bookmark 5").performClick()
+        checkCirclesAndBottomBarInSelectionMode(bookmarkCount, setOf(1, 2, 3, 4, 5))
+//
+//        composeTestRule.activityRule.scenario.onActivity { activity ->
+//            activity.onBackPressedDispatcher.onBackPressed()
+//        }
+//        composeTestRule.onNodeWithContentDescription("Delete bookmark").assertDoesNotExist()
+//        composeTestRule.onNodeWithContentDescription("Rename bookmark").assertDoesNotExist()
+//        composeTestRule.onAllNodesWithContentDescription("Unchecked circle").assertCountEquals(0)
+//        composeTestRule.onAllNodesWithContentDescription("Checked circle").assertCountEquals(0)
+//
+//        composeTestRule.onNodeWithText("Bookmark 2")
+//            .performTouchInput { longClick() }
+//        composeTestRule.onNodeWithText("Bookmark 1").performClick()
+//        composeTestRule.onNodeWithText("Bookmark 3").performClick()
+//        composeTestRule.onNodeWithText("Bookmark 4").performClick()
+//        composeTestRule.onNodeWithText("Bookmark 5").performClick()
+//
+//        composeTestRule.onNodeWithText("Bookmark 1").performClick()
+//        checkCirclesAndBottomBarInSelectionMode(bookmarkCount, setOf(2, 3, 4, 5))
+//        composeTestRule.onNodeWithText("Bookmark 2").performClick()
+//        checkCirclesAndBottomBarInSelectionMode(bookmarkCount, setOf(3, 4, 5))
+//        composeTestRule.onNodeWithText("Bookmark 3").performClick()
+//        checkCirclesAndBottomBarInSelectionMode(bookmarkCount, setOf(4, 5))
+//        composeTestRule.onNodeWithText("Bookmark 4").performClick()
+//        checkCirclesAndBottomBarInSelectionMode(bookmarkCount, setOf(5))
+//        composeTestRule.onNodeWithText("Bookmark 5").performClick()
+//        checkCirclesAndBottomBarInSelectionMode(bookmarkCount, emptySet())
+//
+//        // Delete
+//        composeTestRule.onNodeWithText("Bookmark 1").performClick()
+//        composeTestRule.onNodeWithText("Bookmark 2").performClick()
+//        composeTestRule.onNodeWithText("Bookmark 3").performClick()
+//        composeTestRule.onNodeWithContentDescription("Delete bookmark").performClick()
+//        checkExistenceOfBookmarks(bookmarkCount, setOf(4, 5))
+//
+//        // Rename
+//        composeTestRule.onNodeWithText("Bookmark 5")
+//            .performTouchInput { longClick() }
+//        checkCirclesAndBottomBarInSelectionMode(bookmarkCount, setOf(5))
+//
+//        composeTestRule.onNodeWithText("Renamed bookmark").assertDoesNotExist()
+//        composeTestRule.onNodeWithContentDescription("Rename bookmark").performClick()
+//        composeTestRule.onNodeWithContentDescription("Bookmark name text field")
+//            .performTextReplacement("Renamed bookmark")
+//        composeTestRule.onNodeWithText("CANCEL").performClick()
+//        composeTestRule.onNodeWithText("Renamed bookmark").assertDoesNotExist()
+//        composeTestRule.onNodeWithContentDescription("Rename bookmark").performClick()
+//        composeTestRule.onNodeWithContentDescription("Bookmark name text field")
+//            .performTextReplacement("Renamed bookmark")
+//        composeTestRule.onNodeWithText("SAVE").performClick()
+//
+//        composeTestRule.onNodeWithText("Renamed bookmark").assertExists()
+//        composeTestRule.onNodeWithText("Bookmark 4").assertIsDisplayed()
     }
 
     @Test
