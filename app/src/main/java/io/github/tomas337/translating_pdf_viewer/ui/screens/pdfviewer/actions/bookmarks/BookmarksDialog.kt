@@ -59,6 +59,7 @@ fun BookmarksDialog(
             Column(
                 modifier = Modifier.height(600.dp)
             ) {
+                // TODO: changing tabs should turn off bookmarks selection mode
                 TabRow(
                     selectedTabIndex = selectedTabIndex,
                     divider = {},

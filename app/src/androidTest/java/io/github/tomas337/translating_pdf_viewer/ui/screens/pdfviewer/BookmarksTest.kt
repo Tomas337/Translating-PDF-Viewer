@@ -5,6 +5,7 @@ import androidx.compose.ui.test.assertContentDescriptionContains
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.filterToOne
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
@@ -160,13 +161,15 @@ class BookmarksTest {
         }
         composeTestRule.onNodeWithContentDescription("Bookmarks").performClick()
 
-
         // Select and unselect
         composeTestRule.onNodeWithText("Bookmark 1")
             .performTouchInput { longClick() }
             .assertContentDescriptionContains("Checked circle")
         composeTestRule.onNodeWithContentDescription("Delete bookmark").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Rename bookmark").assertIsDisplayed()
+
+        composeTestRule.onNodeWithContentDescription("Bookmark add/remove button")
+            .assertIsNotEnabled()  // Button shouldn't be enabled when in selection mode
 
         selectCircle("Bookmark 2", false)
         composeTestRule.onNodeWithContentDescription("Delete bookmark").assertIsDisplayed()

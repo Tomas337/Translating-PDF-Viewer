@@ -30,12 +30,15 @@ fun BookmarkPageButton(
     isCurrentPageBookmarked: Boolean,
     addBookmark: (Int) -> Unit,
     removeBookmark: (Int) -> Unit,
-    rowHeight: Dp
+    rowHeight: Dp,
+    enabled: Boolean
 ) {
 
     Column(
         modifier = Modifier
-            .clickable {
+            .clickable(
+                enabled = enabled
+            ) {
                 if (isCurrentPageBookmarked) {
                     removeBookmark(curPage)
                 } else {

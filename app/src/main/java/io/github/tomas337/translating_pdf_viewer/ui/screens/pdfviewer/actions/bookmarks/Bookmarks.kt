@@ -50,7 +50,8 @@ fun Bookmarks(
             isCurrentPageBookmarked = isCurrentPageBookmarked,
             addBookmark = addBookmark,
             removeBookmark = removeBookmark,
-            rowHeight = rowHeight
+            rowHeight = rowHeight,
+            enabled = !inSelectionMode
         )
         LazyColumn(
             modifier = Modifier
