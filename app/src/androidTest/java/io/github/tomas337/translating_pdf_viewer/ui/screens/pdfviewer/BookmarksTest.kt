@@ -31,9 +31,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-// Tests are flaky when my laptop isn't connected to power
 @RunWith(AndroidJUnit4::class)
-class PdfViewerScreenTest {
+class BookmarksTest {
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
@@ -66,22 +65,6 @@ class PdfViewerScreenTest {
     fun afterTestCleanup() {
         Intents.release()
         TestUtils.deletePreviousFileItem()
-    }
-
-    // TODO: don't test content displaying yet since it may change
-//    @Test
-//    fun pageSliderBehaviour() {
-//        fail("unimplemented")
-//    }
-//
-//    @Test
-//    fun scrollBehaviour() {
-//        fail("unimplemented")
-//    }
-
-    @Test
-    fun settingsBehaviour() {
-        fail("unimplemented")
     }
 
     @Test
@@ -188,11 +171,6 @@ class PdfViewerScreenTest {
     fun bookmarks_contents() {
 //        composeTestRule.onNodeWithContentDescription("Bookmarks").performClick()
 //        composeTestRule.onNodeWithText("Contents").assertDoesNotExist()
-        fail("unimplemented")
-    }
-
-    @Test
-    fun searchBehaviour() {
         fail("unimplemented")
     }
 }
