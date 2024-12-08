@@ -10,11 +10,13 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.tomas337.translating_pdf_viewer.TestUtils
 import io.github.tomas337.translating_pdf_viewer.ui.main.MainActivity
+import junit.framework.TestCase.fail
 import org.junit.After
 import org.junit.AfterClass
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Rule
+import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
@@ -52,4 +54,10 @@ class ContentTest {
         Intents.release()
         TestUtils.deletePreviousFileItem()
     }
+
+    @Test
+    fun rememberCurrentPage() {
+        fail("unimplemented")
+    }
+
 }

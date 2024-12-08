@@ -67,6 +67,23 @@ class BookmarksTest {
         TestUtils.deletePreviousFileItem()
     }
 
+    private suspend fun fillDbWithBookmarks(n: Int) {
+        for (i in 1..n) {
+            val fileId = MyApp.db.fileInfoDao().run {
+                getLastInsertedFileId()
+            }
+            MyApp.db.bookmarksDao().run {
+                addBookmark(
+                    BookmarkEntity(
+                        fileId = fileId,
+                        pageIndex = i,
+                        text = "Bookmark $i"
+                    )
+                )
+            }
+        }
+    }
+
     @Test
     fun bookmarks_addAndRemoveButton() {
         composeTestRule.onNodeWithContentDescription("Bookmarks").performClick()
@@ -95,32 +112,23 @@ class BookmarksTest {
 
     @Test
     fun bookmarks_goTo() {
-        fail("unimplemented")
-    }
-
-    // TODO: extract each feature, eg. bookmarks, into it's own test suite
-    private suspend fun fillDbWithBookmarks() {
-        for (i in 0..5) {
-            val fileId = MyApp.db.fileInfoDao().run {
-                getLastInsertedFileId()
-            }
-            MyApp.db.bookmarksDao().run {
-                addBookmark(
-                    BookmarkEntity(
-                        fileId = fileId,
-                        pageIndex = i,
-                        text = "Bookmark $i"
-                    )
-                )
-            }
+        runBlocking {
+            fillDbWithBookmarks(1)
         }
+        composeTestRule.onNodeWithContentDescription("Page 0").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Bookmarks").performClick()
+        composeTestRule.onNodeWithContentDescription("Bookmark list")
+            .onChildren()
+            .filterToOne(hasText("Bookmark 1"))
+            .performClick()
+        composeTestRule.onNodeWithContentDescription("Page 1").assertIsDisplayed()
     }
 
     @Test
     fun bookmarks_select_rename_delete() {
         runBlocking {
             // TODO fix: causes test to fail, because it isn't built to handle multiple bookmarks
-            fillDbWithBookmarks()
+            fillDbWithBookmarks(2)
         }
         composeTestRule.onNodeWithContentDescription("Bookmarks").performClick()
 
@@ -169,8 +177,6 @@ class BookmarksTest {
 
     @Test
     fun bookmarks_contents() {
-//        composeTestRule.onNodeWithContentDescription("Bookmarks").performClick()
-//        composeTestRule.onNodeWithText("Contents").assertDoesNotExist()
         fail("unimplemented")
     }
 }
