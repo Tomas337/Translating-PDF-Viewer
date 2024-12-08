@@ -1,9 +1,6 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
-import android.util.Log
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertAll
 import androidx.compose.ui.test.assertContentDescriptionContains
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertHasClickAction
@@ -11,25 +8,16 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.filterToOne
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onAllNodesWithContentDescription
-import androidx.compose.ui.test.onAncestors
-import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onParent
-import androidx.compose.ui.test.onRoot
-import androidx.compose.ui.test.onSibling
-import androidx.compose.ui.test.onSiblings
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.printToLog
-import androidx.compose.ui.test.swipe
-import androidx.compose.ui.test.swipeLeft
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.tomas337.translating_pdf_viewer.TestUtils
@@ -172,25 +160,23 @@ class BookmarksTest {
         }
         composeTestRule.onNodeWithContentDescription("Bookmarks").performClick()
 
-        // Select
-        composeTestRule.onNodeWithText("Bookmark 2")
+
+        // Select and unselect
+        composeTestRule.onNodeWithText("Bookmark 1")
             .performTouchInput { longClick() }
             .assertContentDescriptionContains("Checked circle")
         composeTestRule.onNodeWithContentDescription("Delete bookmark").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Rename bookmark").assertIsDisplayed()
 
-        selectCircle("Bookmark 1", false)
+        selectCircle("Bookmark 2", false)
         composeTestRule.onNodeWithContentDescription("Delete bookmark").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Rename bookmark").assertDoesNotExist()
-
         selectCircle("Bookmark 3", false)
         composeTestRule.onNodeWithContentDescription("Delete bookmark").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Rename bookmark").assertDoesNotExist()
-
         selectCircle("Bookmark 4", false)
         composeTestRule.onNodeWithContentDescription("Delete bookmark").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Rename bookmark").assertDoesNotExist()
-
         selectCircle("Bookmark 5", false)
         composeTestRule.onNodeWithContentDescription("Delete bookmark").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Rename bookmark").assertDoesNotExist()
@@ -198,29 +184,45 @@ class BookmarksTest {
         selectCircle("Bookmark 1", true)
         composeTestRule.onNodeWithContentDescription("Delete bookmark").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Rename bookmark").assertDoesNotExist()
-
         selectCircle("Bookmark 2", true)
         composeTestRule.onNodeWithContentDescription("Delete bookmark").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Rename bookmark").assertDoesNotExist()
-
         selectCircle("Bookmark 3", true)
         composeTestRule.onNodeWithContentDescription("Delete bookmark").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Rename bookmark").assertDoesNotExist()
-
         selectCircle("Bookmark 4", true)
         composeTestRule.onNodeWithContentDescription("Delete bookmark").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Rename bookmark").assertIsDisplayed()
-
         selectCircle("Bookmark 5", true)
         composeTestRule.onNodeWithContentDescription("Delete bookmark").assertDoesNotExist()
         composeTestRule.onNodeWithContentDescription("Rename bookmark").assertDoesNotExist()
 
-        // Delete
+
+        // Selection mode state should reset when turned off and on
         composeTestRule.onNodeWithText("Bookmark 1").performClick()
         composeTestRule.onNodeWithText("Bookmark 2").performClick()
         composeTestRule.onNodeWithText("Bookmark 3").performClick()
+        composeTestRule.onNodeWithText("Bookmark 4").performClick()
+        composeTestRule.onNodeWithText("Bookmark 5").performClick()
+
+        Espresso.pressBack()
+        composeTestRule.onNodeWithContentDescription("Delete bookmark").assertDoesNotExist()
+        composeTestRule.onNodeWithContentDescription("Rename bookmark").assertDoesNotExist()
+        composeTestRule.onAllNodesWithContentDescription("Unchecked circle").assertCountEquals(0)
+        composeTestRule.onAllNodesWithContentDescription("Checked circle").assertCountEquals(0)
+
+        composeTestRule.onNodeWithText("Bookmark 2")
+            .performTouchInput { longClick() }
+        composeTestRule.onAllNodesWithContentDescription("Checked circle").assertCountEquals(1)
+        composeTestRule.onAllNodesWithContentDescription("Unchecked circle").assertCountEquals(4)
+
+
+        // Delete
+        composeTestRule.onNodeWithText("Bookmark 1").performClick()
+        composeTestRule.onNodeWithText("Bookmark 3").performClick()
         composeTestRule.onNodeWithContentDescription("Delete bookmark").performClick()
         checkExistenceOfBookmarks(bookmarkCount, setOf(4, 5))
+
 
         // Rename
         composeTestRule.onNodeWithText("Bookmark 5")
