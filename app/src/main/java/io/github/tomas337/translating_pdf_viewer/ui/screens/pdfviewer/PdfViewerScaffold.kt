@@ -20,6 +20,8 @@ import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.navigation.NavController
 import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.actions.bookmarks.BookmarksDialog
 import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.actions.settings.SettingsSheet
@@ -55,6 +57,7 @@ fun PdfViewerScaffold(
                                 detectTap(PointerEventPass.Initial) { focusManager.clearFocus() }
                             }
                         }
+                        .semantics { contentDescription = "PdfViewer screen top bar" }
                 )
             }
         }

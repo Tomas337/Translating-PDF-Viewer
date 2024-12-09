@@ -29,6 +29,8 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -78,6 +80,7 @@ fun SettingsSheet(
                 }
             }
             .background(MaterialTheme.colorScheme.surface)
+            .semantics { contentDescription = "Settings sheet" }
     ) {
 
         // Handle bar
@@ -110,6 +113,7 @@ fun SettingsSheet(
                         }
                     )
                 }
+                .semantics { contentDescription = "Handle bar" }
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.baseline_drag_handle_48),
