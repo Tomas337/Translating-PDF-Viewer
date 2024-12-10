@@ -2,12 +2,15 @@ package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsToggleable
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
@@ -114,8 +117,38 @@ class SettingsTest {
     }
 
     @Test
-    fun scrollBehaviour() {
+    fun bothContentAndSheetScrollable() {
+        // assert that scroll on root changes the scroll state of each
+        composeTestRule.onNodeWithContentDescription("Page 0").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Page 1").assertIsNotDisplayed()
+        composeTestRule.onRoot().performTouchInput {
+            swipeUp(startY = centerY, endY = top)
+            advanceEventTime(1000)
+        }
+        composeTestRule.onNodeWithContentDescription("Page 0").assertIsNotDisplayed()
+        composeTestRule.onNodeWithContentDescription("Page 1").assertIsDisplayed()
 
+        val sheetCenter = composeTestRule.onNodeWithContentDescription("Settings sheet")
+            .fetchSemanticsNode()
+            .boundsInWindow
+            .center
+
+        composeTestRule.onNodeWithContentDescription("Reset to default settings button")
+            .assertIsNotDisplayed()
+        composeTestRule.onRoot().performTouchInput {
+            down(sheetCenter)
+            moveBy(Offset(0f, y = -20000f), 0)
+            advanceEventTime(1000)
+            up()
+        }
+        composeTestRule.onNodeWithContentDescription("Reset to default settings button")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun hideSheetByTap() {
+        composeTestRule.onNodeWithContentDescription("Page 0").performClick()
+        composeTestRule.onNodeWithContentDescription("Settings sheet").assertIsNotDisplayed()
     }
 
 }
