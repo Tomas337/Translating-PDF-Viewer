@@ -31,6 +31,8 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.SemanticsPropertyKey
+import androidx.compose.ui.semantics.SemanticsPropertyReceiver
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
@@ -39,6 +41,21 @@ import androidx.compose.ui.unit.times
 import io.github.tomas337.translating_pdf_viewer.utils.PageContent
 import io.github.tomas337.translating_pdf_viewer.utils.TextStyle
 import kotlinx.coroutines.flow.Flow
+
+val FontSizeScaleKey = SemanticsPropertyKey<Float>("FontSizeScale")
+var SemanticsPropertyReceiver.fontSizeScale by FontSizeScaleKey
+
+val LineSpacingKey = SemanticsPropertyKey<Int>("LineSpacing")
+var SemanticsPropertyReceiver.lineSpacing by LineSpacingKey
+
+val PagePaddingKey = SemanticsPropertyKey<Float>("PagePadding")
+var SemanticsPropertyReceiver.pagePadding by PagePaddingKey
+
+val PageSpacingKey = SemanticsPropertyKey<Float>("PageSpacing")
+var SemanticsPropertyReceiver.pageSpacing by PageSpacingKey
+
+val ParagraphSpacingKey = SemanticsPropertyKey<Float>("ParagraphSpacing")
+var SemanticsPropertyReceiver.paragraphSpacing by ParagraphSpacingKey
 
 @Composable
 fun Pager(
@@ -93,7 +110,14 @@ fun Pager(
                         }
                     )
                 }
-                .semantics { contentDescription = "Page $pageIndex" },
+                .semantics {
+                    contentDescription = "Page $pageIndex"
+                    this.fontSizeScale = fontSizeScale
+                    this.lineSpacing = lineSpacing
+                    this.pagePadding = pagePadding.value
+                    this.pageSpacing = pageSpacing.value
+                    this.paragraphSpacing = paragraphSpacing.value
+                },
         ) {
             item {
                 Spacer(modifier = Modifier.height(pagePadding))

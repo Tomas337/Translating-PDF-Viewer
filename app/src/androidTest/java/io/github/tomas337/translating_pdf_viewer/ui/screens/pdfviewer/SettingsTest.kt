@@ -1,24 +1,40 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.SemanticsPropertyKey
+import androidx.compose.ui.semantics.SemanticsPropertyReceiver
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
-import androidx.compose.ui.test.assertIsToggleable
+import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.filterToOne
 import androidx.compose.ui.test.hasContentDescription
-import androidx.compose.ui.test.hasScrollAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAncestors
+import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onParent
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.onSiblings
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.printToLog
 import androidx.compose.ui.test.swipeUp
 import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.tomas337.translating_pdf_viewer.TestUtils
+import io.github.tomas337.translating_pdf_viewer.di.MyApp
 import io.github.tomas337.translating_pdf_viewer.ui.main.MainActivity
-import okhttp3.internal.wait
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.AfterClass
 import org.junit.Before
@@ -66,14 +82,13 @@ class SettingsTest {
     }
 
     // TODO: settings test
-    // After clicking Settings in the top bar a sheet should appear,
-    // that can be enlarged by dragging drag handle up
-    // and disappears when dragged to the bottom of the screen.
-    // The sheet disappears when clicked on visible displayed content.
-    // The sheet is scrollable and the content is also scrollable.
     // Clicking a button changes the displayed content instantly.
     // You can input number into text field.
     // Test keyboard focus management.
+
+    // When keyboard is displayed, click should hide it, unless it is on another text field,
+    // in that case change focus to that text field.
+
     // Cancelling keyboard doesn't change the value
     // Text fields have a format.
     // Reset button.
@@ -149,6 +164,45 @@ class SettingsTest {
     fun hideSheetByTap() {
         composeTestRule.onNodeWithContentDescription("Page 0").performClick()
         composeTestRule.onNodeWithContentDescription("Settings sheet").assertIsNotDisplayed()
+    }
+
+    @Test
+    fun incrementButtons() {
+        // the number in text field (and in preferences storage) changes
+        // and the content get recomposed with the new settings
+//
+//        // store the initial text field value and check it matches the one in content
+//        var initialValue: Float
+//        runBlocking {
+//            MyApp.appModule.preferencesRepository.readFontSizeScale().first {
+//                initialValue = it
+//                return@first true
+//            }
+//        }
+//
+//        // assert text field value matches repository values
+//        composeTestRule.onNodeWithText("font size scale").assertTextEquals(initialValue.toString())
+//
+//        composeTestRule.onNodeWithContentDescription("font size scale row")
+//            .onChildren()
+//            .filterToOne(hasText("-"))
+//
+//        var newValue: Float
+//        runBlocking {
+//            MyApp.appModule.preferencesRepository.readFontSizeScale().first {
+//                newValue = it
+//                return@first true
+//            }
+//        }
+        // ?????
+
+        // assert that the value in text field matches the one content is displayed with, and the content is recomposed after each update
+        composeTestRule.onNodeWithContentDescription("Page 0")
+            .assert(SemanticsMatcher.expectValue(FontSizeScaleKey, 1.5f))
+            .assert(SemanticsMatcher.expectValue(LineSpacingKey, 4))
+            .assert(SemanticsMatcher.expectValue(PagePaddingKey, 25f))
+            .assert(SemanticsMatcher.expectValue(PageSpacingKey, 30f))
+            .assert(SemanticsMatcher.expectValue(ParagraphSpacingKey, 10f))
     }
 
 }
