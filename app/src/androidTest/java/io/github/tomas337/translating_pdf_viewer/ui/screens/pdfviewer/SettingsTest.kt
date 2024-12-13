@@ -221,6 +221,7 @@ class SettingsTest {
     }
     @Test
     fun incrementButtons() {
+        // Test that incrementation and decrementation work.
         assertPagerStateAndSettingsTextFieldsMatch(
             fontSizeScale = 1.5f,
             lineSpacing = 4,
@@ -244,7 +245,16 @@ class SettingsTest {
             pageSpacing = 30f,
             paragraphSpacing = 10f,
         )
-        // TODO FIX: if a value hits -1 pdf viewer screen won't be displayed
+
+        // Test that the values stop at the minimum value (0)
+        adjustAllValues(Adjustment.DECREMENT, 31)
+        assertPagerStateAndSettingsTextFieldsMatch(
+            fontSizeScale = 0f,
+            lineSpacing = 0,
+            pagePadding = 0f,
+            pageSpacing = 0f,
+            paragraphSpacing = 0f,
+        )
     }
 
 }

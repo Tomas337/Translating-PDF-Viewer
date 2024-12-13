@@ -49,6 +49,8 @@ fun SettingsItem(
     step: Float = 1f,
     precision: Int = 0,
     units: String? = null,
+    minValue: Float = 0f,
+    maxValue: Float = Float.POSITIVE_INFINITY
 ) {
     var isError by remember { mutableStateOf(false) }
     var textFieldValue by remember { mutableStateOf("%.${precision}f".format(curValue)) }
@@ -77,7 +79,13 @@ fun SettingsItem(
                 .background(MaterialTheme.colorScheme.primary)
                 .let {
                     if (!isKeyboardVisible) {
-                        it.clickable(onClick = { updatePreference(curValue - step) })
+                        it.clickable(onClick = {
+                            if (curValue - step >= minValue) {
+                                updatePreference(curValue - step)
+                            } else {
+                                updatePreference(minValue)
+                            }
+                        })
                     } else {
                         it
                     }
@@ -143,7 +151,13 @@ fun SettingsItem(
                 .background(MaterialTheme.colorScheme.primary)
                 .let {
                     if (!isKeyboardVisible) {
-                        it.clickable(onClick = { updatePreference(curValue + step) })
+                        it.clickable(onClick = {
+                            if (curValue + step <= maxValue) {
+                                updatePreference(curValue + step)
+                            } else {
+                                updatePreference(maxValue)
+                            }
+                        })
                     } else {
                         it
                     }
