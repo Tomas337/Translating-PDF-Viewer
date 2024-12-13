@@ -24,6 +24,7 @@ import androidx.compose.ui.test.onParent
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.onSiblings
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.printToLog
 import androidx.compose.ui.test.swipeUp
@@ -211,6 +212,7 @@ class SettingsTest {
         for (i in 0 until n) {
             for (row in rows) {
                 composeTestRule.onNodeWithContentDescription(row)
+                    .performScrollTo()
                     .onChildren()
                     .filterToOne(hasText(buttonText))
                     .performClick()
@@ -219,35 +221,6 @@ class SettingsTest {
     }
     @Test
     fun incrementButtons() {
-        // the number in text field (and in preferences storage) changes
-        // and the content get recomposed with the new settings
-//
-//        // store the initial text field value and check it matches the one in content
-//        var initialValue: Float
-//        runBlocking {
-//            MyApp.appModule.preferencesRepository.readFontSizeScale().first {
-//                initialValue = it
-//                return@first true
-//            }
-//        }
-//
-//        // assert text field value matches repository values
-//        composeTestRule.onNodeWithText("font size scale").assertTextEquals(initialValue.toString())
-//
-//        composeTestRule.onNodeWithContentDescription("font size scale row")
-//            .onChildren()
-//            .filterToOne(hasText("-"))
-//
-//        var newValue: Float
-//        runBlocking {
-//            MyApp.appModule.preferencesRepository.readFontSizeScale().first {
-//                newValue = it
-//                return@first true
-//            }
-//        }
-        // ?????
-
-        // assert that the value in text field matches the one content is displayed with, and the content is recomposed after each update
         assertPagerStateAndSettingsTextFieldsMatch(
             fontSizeScale = 1.5f,
             lineSpacing = 4,
