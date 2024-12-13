@@ -92,7 +92,6 @@ class SettingsTest {
     // in that case change focus to that text field.
 
     // Cancelling keyboard doesn't change the value
-    // Text fields have a format.
     // Reset button.
 
     @Test
@@ -218,6 +217,7 @@ class SettingsTest {
             }
         }
     }
+
     @Test
     fun adjustmentButtons() {
         // Test that incrementation and decrementation work.
@@ -256,4 +256,50 @@ class SettingsTest {
         )
     }
 
+    @Test
+    fun resetButton() {
+        assertPagerStateAndSettingsTextFieldsMatch(
+            fontSizeScale = 1.5f,
+            lineSpacing = 4,
+            pagePadding = 25f,
+            pageSpacing = 30f,
+            paragraphSpacing = 10f,
+        )
+        adjustAllValues(Adjustment.INCREMENT)
+        assertPagerStateAndSettingsTextFieldsMatch(
+            fontSizeScale = 1.6f,
+            lineSpacing = 5,
+            pagePadding = 26f,
+            pageSpacing = 31f,
+            paragraphSpacing = 11f,
+        )
+
+        composeTestRule.onNodeWithContentDescription("Reset to default settings button")
+            .performScrollTo()
+            .performClick()
+        composeTestRule.onNodeWithText("CANCEL").performClick()
+        assertPagerStateAndSettingsTextFieldsMatch(
+            fontSizeScale = 1.6f,
+            lineSpacing = 5,
+            pagePadding = 26f,
+            pageSpacing = 31f,
+            paragraphSpacing = 11f,
+        )
+
+        composeTestRule.onNodeWithContentDescription("Reset to default settings button")
+            .performClick()
+        composeTestRule.onNodeWithText("RESET").performClick()
+        assertPagerStateAndSettingsTextFieldsMatch(
+            fontSizeScale = 1.5f,
+            lineSpacing = 4,
+            pagePadding = 25f,
+            pageSpacing = 30f,
+            paragraphSpacing = 10f,
+        )
+    }
+
+    @Test
+    fun keyboardBehaviour() {
+
+    }
 }
