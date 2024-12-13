@@ -10,6 +10,7 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.filterToOne
 import androidx.compose.ui.test.hasContentDescription
@@ -26,6 +27,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.printToLog
 import androidx.compose.ui.test.swipeUp
+import androidx.compose.ui.unit.Dp
 import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.tomas337.translating_pdf_viewer.TestUtils
@@ -166,6 +168,55 @@ class SettingsTest {
         composeTestRule.onNodeWithContentDescription("Settings sheet").assertIsNotDisplayed()
     }
 
+    private fun assertPagerStateAndSettingsTextFieldsMatch(
+        fontSizeScale: Float,
+        lineSpacing: Int,
+        pagePadding: Float,
+        pageSpacing: Float,
+        paragraphSpacing: Float,
+    ) {
+        composeTestRule.onNodeWithContentDescription("Page 0")
+            .assert(SemanticsMatcher.expectValue(FontSizeScaleKey, fontSizeScale))
+            .assert(SemanticsMatcher.expectValue(LineSpacingKey, lineSpacing))
+            .assert(SemanticsMatcher.expectValue(PagePaddingKey, pagePadding))
+            .assert(SemanticsMatcher.expectValue(PageSpacingKey, pageSpacing))
+            .assert(SemanticsMatcher.expectValue(ParagraphSpacingKey, paragraphSpacing))
+        composeTestRule.onNodeWithText("font size scale")
+            .assertTextContains("%.1f".format(fontSizeScale))
+        composeTestRule.onNodeWithText("line spacing")
+            .assertTextContains("$lineSpacing")
+        composeTestRule.onNodeWithText("page padding")
+            .assertTextContains("%.0f".format(pagePadding))
+        composeTestRule.onNodeWithText("page spacing")
+            .assertTextContains("%.0f".format(pageSpacing))
+        composeTestRule.onNodeWithText("paragraph spacing")
+            .assertTextContains("%.0f".format(paragraphSpacing))
+    }
+
+    private enum class Adjustment {
+        INCREMENT,
+        DECREMENT
+    }
+
+    private fun adjustAllValues(adjustment: Adjustment, n: Int = 1) {
+        val buttonText = if (adjustment == Adjustment.INCREMENT) "+" else "-"
+        val rows = listOf(
+            "font size scale row",
+            "line spacing row",
+            "page padding row",
+            "page spacing row",
+            "paragraph spacing row"
+        )
+
+        for (i in 0 until n) {
+            for (row in rows) {
+                composeTestRule.onNodeWithContentDescription(row)
+                    .onChildren()
+                    .filterToOne(hasText(buttonText))
+                    .performClick()
+            }
+        }
+    }
     @Test
     fun incrementButtons() {
         // the number in text field (and in preferences storage) changes
@@ -197,12 +248,30 @@ class SettingsTest {
         // ?????
 
         // assert that the value in text field matches the one content is displayed with, and the content is recomposed after each update
-        composeTestRule.onNodeWithContentDescription("Page 0")
-            .assert(SemanticsMatcher.expectValue(FontSizeScaleKey, 1.5f))
-            .assert(SemanticsMatcher.expectValue(LineSpacingKey, 4))
-            .assert(SemanticsMatcher.expectValue(PagePaddingKey, 25f))
-            .assert(SemanticsMatcher.expectValue(PageSpacingKey, 30f))
-            .assert(SemanticsMatcher.expectValue(ParagraphSpacingKey, 10f))
+        assertPagerStateAndSettingsTextFieldsMatch(
+            fontSizeScale = 1.5f,
+            lineSpacing = 4,
+            pagePadding = 25f,
+            pageSpacing = 30f,
+            paragraphSpacing = 10f,
+        )
+        adjustAllValues(Adjustment.INCREMENT)
+        assertPagerStateAndSettingsTextFieldsMatch(
+            fontSizeScale = 1.6f,
+            lineSpacing = 5,
+            pagePadding = 26f,
+            pageSpacing = 31f,
+            paragraphSpacing = 11f,
+        )
+        adjustAllValues(Adjustment.DECREMENT)
+        assertPagerStateAndSettingsTextFieldsMatch(
+            fontSizeScale = 1.5f,
+            lineSpacing = 4,
+            pagePadding = 25f,
+            pageSpacing = 30f,
+            paragraphSpacing = 10f,
+        )
+        // TODO FIX: if a value hits -1 pdf viewer screen won't be displayed
     }
 
 }
