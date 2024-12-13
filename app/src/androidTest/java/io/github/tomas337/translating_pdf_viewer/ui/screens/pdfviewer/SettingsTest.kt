@@ -85,7 +85,6 @@ class SettingsTest {
     }
 
     // TODO: settings test
-    // Clicking a button changes the displayed content instantly.
     // You can input number into text field.
     // Test keyboard focus management.
 
@@ -220,7 +219,7 @@ class SettingsTest {
         }
     }
     @Test
-    fun incrementButtons() {
+    fun adjustmentButtons() {
         // Test that incrementation and decrementation work.
         assertPagerStateAndSettingsTextFieldsMatch(
             fontSizeScale = 1.5f,
