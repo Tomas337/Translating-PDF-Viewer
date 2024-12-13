@@ -1,43 +1,41 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.semantics.SemanticsPropertyKey
-import androidx.compose.ui.semantics.SemanticsPropertyReceiver
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertAll
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.assertTextContains
-import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.filter
 import androidx.compose.ui.test.filterToOne
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isEditable
+import androidx.compose.ui.test.isFocused
+import androidx.compose.ui.test.isNotFocused
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onAncestors
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onParent
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.onSiblings
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.printToLog
 import androidx.compose.ui.test.swipeUp
-import androidx.compose.ui.unit.Dp
 import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.tomas337.translating_pdf_viewer.TestUtils
-import io.github.tomas337.translating_pdf_viewer.di.MyApp
 import io.github.tomas337.translating_pdf_viewer.ui.main.MainActivity
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.AfterClass
 import org.junit.Before
@@ -83,16 +81,6 @@ class SettingsTest {
         Intents.release()
         TestUtils.deletePreviousFileItem()
     }
-
-    // TODO: settings test
-    // You can input number into text field.
-    // Test keyboard focus management.
-
-    // When keyboard is displayed, click should hide it, unless it is on another text field,
-    // in that case change focus to that text field.
-
-    // Cancelling keyboard doesn't change the value
-    // Reset button.
 
     @Test
     fun sheet_expand_hide() {
@@ -298,8 +286,71 @@ class SettingsTest {
         )
     }
 
+
+    // TODO: settings test
+    // You can input number into text field and a format is required.
+    // Test keyboard focus management.
+
+    // When keyboard is displayed, click should hide it, unless it is on another text field,
+    // in that case change focus to that text field.
+
+    // Cancelling keyboard doesn't change the value
+    // Reset button.
     @Test
     fun keyboardBehaviour() {
+        // Test that clicking on another text field changes the focus to it.
+        composeTestRule.onNodeWithText("font size scale")
+            .assertIsNotFocused()
+            .performClick()
+            .assertIsFocused()
+        composeTestRule.onNodeWithText("line spacing")
+            .assertIsNotFocused()
+            .performClick()
+            .assertIsFocused()
+        composeTestRule.onNodeWithText("font size scale")
+            .assertIsNotFocused()
+
+        // Test that clicking on anything else hides the keyboard.
+        composeTestRule.onNodeWithContentDescription("Page 0").performClick()
+        composeTestRule.onAllNodes(isFocused()).assertCountEquals(0)
+
+        composeTestRule.onNodeWithText("font size scale")
+            .performClick()
+            .assertIsFocused()
+        composeTestRule.onNodeWithContentDescription("font size scale row")
+            .performScrollTo()
+            .onChildren()
+            .filterToOne(hasText("-"))
+            .performClick()
+        composeTestRule.onAllNodes(isFocused()).assertCountEquals(0)
+
+        composeTestRule.onNodeWithText("font size scale")
+            .performClick()
+            .assertIsFocused()
+        composeTestRule.onNodeWithContentDescription("font size scale row")
+            .performScrollTo()
+            .onChildren()
+            .filterToOne(hasText("+"))
+            .performClick()
+        composeTestRule.onAllNodes(isFocused()).assertCountEquals(0)
+
+        composeTestRule.onNodeWithText("font size scale")
+            .performClick()
+            .assertIsFocused()
+        composeTestRule.onNodeWithContentDescription("Handle bar")
+            .performClick()
+        composeTestRule.onAllNodes(isFocused()).assertCountEquals(0)
+
+        // TODO: currently click on PageSlider and top bar doesn't clear focus - decide what to do with that
+
+        // Test that you can input a value
+        // TODO: don't forget to test cancelling the input
+
+        // Test that an error message shows up when an incorrect format is entered.
+        composeTestRule.onNodeWithText("font size scale")
+            .performClick()
+        composeTestRule.onNodeWithText("font size scale")
+            .performTextReplacement("")
 
     }
 }
