@@ -1,36 +1,30 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
-import androidx.compose.ui.test.assertAll
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.assertTextContains
-import androidx.compose.ui.test.filter
 import androidx.compose.ui.test.filterToOne
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.isEditable
 import androidx.compose.ui.test.isFocused
-import androidx.compose.ui.test.isNotFocused
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
-import androidx.compose.ui.test.onSiblings
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.printToLog
 import androidx.compose.ui.test.swipeUp
 import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -310,15 +304,17 @@ class SettingsTest {
         composeTestRule.onNodeWithText("font size scale")
             .assertIsNotFocused()
 
+
         // Test that clicking on anything else hides the keyboard.
         // Content
+        composeTestRule.onAllNodes(isFocused()).assertCountEquals(1)
         composeTestRule.onNodeWithContentDescription("Page 0").performClick()
         composeTestRule.onAllNodes(isFocused()).assertCountEquals(0)
 
         // Buttons
         composeTestRule.onNodeWithText("font size scale")
             .performClick()
-            .assertIsFocused()
+        composeTestRule.onAllNodes(isFocused()).assertCountEquals(1)
         composeTestRule.onNodeWithContentDescription("font size scale row")
             .performScrollTo()
             .onChildren()
@@ -328,7 +324,7 @@ class SettingsTest {
 
         composeTestRule.onNodeWithText("font size scale")
             .performClick()
-            .assertIsFocused()
+        composeTestRule.onAllNodes(isFocused()).assertCountEquals(1)
         composeTestRule.onNodeWithContentDescription("font size scale row")
             .performScrollTo()
             .onChildren()
@@ -339,7 +335,7 @@ class SettingsTest {
         // Handle bar
         composeTestRule.onNodeWithText("font size scale")
             .performClick()
-            .assertIsFocused()
+        composeTestRule.onAllNodes(isFocused()).assertCountEquals(1)
         composeTestRule.onNodeWithContentDescription("Handle bar")
             .performClick()
         composeTestRule.onAllNodes(isFocused()).assertCountEquals(0)
@@ -347,19 +343,29 @@ class SettingsTest {
         // Top bar
         composeTestRule.onNodeWithText("font size scale")
             .performClick()
-            .assertIsFocused()
+        composeTestRule.onAllNodes(isFocused()).assertCountEquals(1)
         composeTestRule.onNodeWithContentDescription("PdfViewer screen top bar")
             .performClick()
         composeTestRule.onAllNodes(isFocused()).assertCountEquals(0)
 
-        // Test that you can input a value
-        // TODO: don't forget to test cancelling the input
 
-        // Test that an error message shows up when an incorrect format is entered.
+        // Test that you can input a value
         composeTestRule.onNodeWithText("font size scale")
             .performClick()
+            .performTextReplacement("1.6")
+        composeTestRule.onNodeWithContentDescription("Page 0").performClick()
+        composeTestRule.onNodeWithText("font size scale").assertTextContains("1.5")
+
         composeTestRule.onNodeWithText("font size scale")
-            .performTextReplacement("")
+            .performClick()
+            .performTextReplacement("1.6")
+        composeTestRule.onNodeWithText("font size scale")
+            .performImeAction()
+        composeTestRule.onNodeWithText("font size scale").assertTextContains("1.6")
+
+
+        // Test that an error message shows up when an incorrect format is entered.
+
 
     }
 }
