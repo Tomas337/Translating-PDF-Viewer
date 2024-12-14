@@ -311,9 +311,11 @@ class SettingsTest {
             .assertIsNotFocused()
 
         // Test that clicking on anything else hides the keyboard.
+        // Content
         composeTestRule.onNodeWithContentDescription("Page 0").performClick()
         composeTestRule.onAllNodes(isFocused()).assertCountEquals(0)
 
+        // Buttons
         composeTestRule.onNodeWithText("font size scale")
             .performClick()
             .assertIsFocused()
@@ -334,6 +336,7 @@ class SettingsTest {
             .performClick()
         composeTestRule.onAllNodes(isFocused()).assertCountEquals(0)
 
+        // Handle bar
         composeTestRule.onNodeWithText("font size scale")
             .performClick()
             .assertIsFocused()
@@ -341,7 +344,13 @@ class SettingsTest {
             .performClick()
         composeTestRule.onAllNodes(isFocused()).assertCountEquals(0)
 
-        // TODO: currently click on PageSlider and top bar doesn't clear focus - decide what to do with that
+        // Top bar
+        composeTestRule.onNodeWithText("font size scale")
+            .performClick()
+            .assertIsFocused()
+        composeTestRule.onNodeWithContentDescription("PdfViewer screen top bar")
+            .performClick()
+        composeTestRule.onAllNodes(isFocused()).assertCountEquals(0)
 
         // Test that you can input a value
         // TODO: don't forget to test cancelling the input
