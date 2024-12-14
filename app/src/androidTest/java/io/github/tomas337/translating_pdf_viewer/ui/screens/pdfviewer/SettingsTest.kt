@@ -22,7 +22,6 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
@@ -280,16 +279,6 @@ class SettingsTest {
         )
     }
 
-
-    // TODO: settings test
-    // You can input number into text field and a format is required.
-    // Test keyboard focus management.
-
-    // When keyboard is displayed, click should hide it, unless it is on another text field,
-    // in that case change focus to that text field.
-
-    // Cancelling keyboard doesn't change the value
-    // Reset button.
     @Test
     fun keyboardBehaviour() {
         // Test that clicking on another text field changes the focus to it.
@@ -349,13 +338,15 @@ class SettingsTest {
         composeTestRule.onAllNodes(isFocused()).assertCountEquals(0)
 
 
-        // Test that you can input a value
+        // Test that hiding the keyboard resets the text field value to it's prior state.
         composeTestRule.onNodeWithText("font size scale")
             .performClick()
             .performTextReplacement("1.6")
         composeTestRule.onNodeWithContentDescription("Page 0").performClick()
         composeTestRule.onNodeWithText("font size scale").assertTextContains("1.5")
 
+
+        // Test that you can change the value using the text field.
         composeTestRule.onNodeWithText("font size scale")
             .performClick()
             .performTextReplacement("1.6")
@@ -365,7 +356,22 @@ class SettingsTest {
 
 
         // Test that an error message shows up when an incorrect format is entered.
+        composeTestRule.onNodeWithText("Invalid numeric format").assertDoesNotExist()
+        composeTestRule.onNodeWithText("font size scale")
+            .performClick()
+            .performTextReplacement("1,6")
+        composeTestRule.onNodeWithText("font size scale")
+            .performImeAction()
+        composeTestRule.onNodeWithText("Invalid numeric format").assertIsDisplayed()
 
 
+        // Test that the error message disappears after a correct format is entered.
+        composeTestRule.onNodeWithText("Invalid numeric format").assertIsDisplayed()
+        composeTestRule.onNodeWithText("font size scale")
+            .performClick()
+            .performTextReplacement("1.5")
+        composeTestRule.onNodeWithText("font size scale")
+            .performImeAction()
+        composeTestRule.onNodeWithText("Invalid numeric format").assertDoesNotExist()
     }
 }
