@@ -7,9 +7,9 @@ import io.github.tomas337.translating_pdf_viewer.data.repository.fileinfo.FileIn
 import io.github.tomas337.translating_pdf_viewer.data.repository.fileinfo.FileInfoRepository
 import io.github.tomas337.translating_pdf_viewer.data.repository.page.PageDto
 import io.github.tomas337.translating_pdf_viewer.data.repository.page.PageRepository
-import io.github.tomas337.translating_pdf_viewer.data.utils.ExtractionEvent
-import io.github.tomas337.translating_pdf_viewer.data.utils.PdfExtractor
-import io.github.tomas337.translating_pdf_viewer.data.utils.extractDocumentWithProgress
+import io.github.tomas337.translating_pdf_viewer.data.utils.extraction.ExtractionEvent
+import io.github.tomas337.translating_pdf_viewer.data.utils.extraction.PdfExtractor
+import io.github.tomas337.translating_pdf_viewer.data.utils.extraction.extractDocumentWithProgress
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -34,7 +34,12 @@ class AddFileUseCase(
 
     suspend operator fun invoke(context: Context, uri: Uri) {
         val fileId = fileInfoRepository.getLastInsertedFileId() + 1
-        val pdfExtractor = PdfExtractor(context, uri, fileId)
+        val pdfExtractor =
+            PdfExtractor(
+                context,
+                uri,
+                fileId
+            )
         try {
             pdfExtractor.extractDocumentWithProgress()
                 .onEach { event ->

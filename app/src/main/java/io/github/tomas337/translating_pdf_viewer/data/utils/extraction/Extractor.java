@@ -14,10 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.tomas337.translating_pdf_viewer.data.utils;
+package io.github.tomas337.translating_pdf_viewer.data.utils.extraction;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import com.tom_roush.pdfbox.contentstream.operator.DrawObject;
 import com.tom_roush.pdfbox.contentstream.operator.Operator;
@@ -33,7 +32,6 @@ import com.tom_roush.pdfbox.contentstream.operator.color.SetStrokingColorSpace;
 import com.tom_roush.pdfbox.contentstream.operator.color.SetStrokingDeviceCMYKColor;
 import com.tom_roush.pdfbox.contentstream.operator.color.SetStrokingDeviceGrayColor;
 import com.tom_roush.pdfbox.contentstream.operator.color.SetStrokingDeviceRGBColor;
-import com.tom_roush.pdfbox.contentstream.operator.graphics.AppendRectangleToPath;
 import com.tom_roush.pdfbox.contentstream.operator.state.Concatenate;
 import com.tom_roush.pdfbox.contentstream.operator.state.Restore;
 import com.tom_roush.pdfbox.contentstream.operator.state.Save;
@@ -41,29 +39,23 @@ import com.tom_roush.pdfbox.contentstream.operator.state.SetGraphicsStateParamet
 import com.tom_roush.pdfbox.contentstream.operator.state.SetMatrix;
 import com.tom_roush.pdfbox.cos.COSBase;
 import com.tom_roush.pdfbox.cos.COSName;
-import com.tom_roush.pdfbox.cos.COSNumber;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
 import com.tom_roush.pdfbox.pdmodel.PDPage;
 import com.tom_roush.pdfbox.pdmodel.font.PDFont;
 import com.tom_roush.pdfbox.pdmodel.graphics.PDXObject;
-import com.tom_roush.pdfbox.pdmodel.graphics.form.PDFormXObject;
 import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import com.tom_roush.pdfbox.text.PDFTextStripper;
 import com.tom_roush.pdfbox.text.TextPosition;
 import com.tom_roush.pdfbox.util.Matrix;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

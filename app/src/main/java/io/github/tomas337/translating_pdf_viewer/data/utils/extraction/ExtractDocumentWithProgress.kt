@@ -1,7 +1,6 @@
-package io.github.tomas337.translating_pdf_viewer.data.utils
+package io.github.tomas337.translating_pdf_viewer.data.utils.extraction
 
-import io.github.tomas337.translating_pdf_viewer.data.utils.PdfExtractor.ExtractionListener
-import io.github.tomas337.translating_pdf_viewer.utils.Document
+import io.github.tomas337.translating_pdf_viewer.data.utils.extraction.PdfExtractor.ExtractionListener
 import io.github.tomas337.translating_pdf_viewer.utils.TextStyle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

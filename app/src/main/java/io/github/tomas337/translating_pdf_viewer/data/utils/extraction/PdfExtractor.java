@@ -1,18 +1,14 @@
-package io.github.tomas337.translating_pdf_viewer.data.utils;
+package io.github.tomas337.translating_pdf_viewer.data.utils.extraction;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.tom_roush.pdfbox.cos.COSName;
 import com.tom_roush.pdfbox.io.MemoryUsageSetting;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
 import com.tom_roush.pdfbox.pdmodel.PDPage;
-import com.tom_roush.pdfbox.pdmodel.graphics.PDXObject;
-import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import com.tom_roush.pdfbox.rendering.PDFRenderer;
 
 import java.io.File;
@@ -23,14 +19,11 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
 
-import io.github.tomas337.translating_pdf_viewer.utils.Document;
 import io.github.tomas337.translating_pdf_viewer.utils.Page;
 import io.github.tomas337.translating_pdf_viewer.utils.TextStyle;
 

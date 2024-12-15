@@ -1,4 +1,4 @@
-package io.github.tomas337.translating_pdf_viewer.data.utils
+package io.github.tomas337.translating_pdf_viewer.data.utils.extraction
 
 import io.github.tomas337.translating_pdf_viewer.utils.TextStyle
 
