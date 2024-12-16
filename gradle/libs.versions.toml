@@ -6,6 +6,7 @@ espressoCore = "3.6.1"
 gson = "2.10.1"
 junitJupiterApi = "5.11.2"
 junitJupiterEngine = "5.11.2"
+junitJupiterParams = "5.10.0"
 kotlin = "1.9.23"
 coreKtx = "1.13.1"
 lifecycleRuntimeKtx = "2.8.4"
@@ -45,6 +46,7 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiterApi" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiterEngine" }
+junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junitJupiterParams" }
 testng = { group = "org.testng", name = "testng", version.ref = "testng" }
 androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
 

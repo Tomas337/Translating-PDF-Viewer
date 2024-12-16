@@ -80,6 +80,7 @@ dependencies {
     implementation(libs.coil.compose)
 
     testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.params)
     testRuntimeOnly(libs.junit.jupiter.engine)
     androidTestImplementation(libs.junit.jupiter.api)
     androidTestImplementation(libs.androidx.ui.test.android)
