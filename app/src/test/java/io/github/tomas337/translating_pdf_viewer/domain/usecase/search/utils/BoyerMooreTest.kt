@@ -19,4 +19,18 @@ class BoyerMooreTest {
                 assert(result == expectedResult)
             }
         }
+
+    @TestFactory
+    fun `Assert that boyerMooreSunday function returns the expected result`() =
+        listOf(
+            Triple("A Seashell", " Sea", listOf(Pair(2, 4))),
+            Triple("Shell Shell", "hell", listOf(Pair(1, 4), Pair(7, 10))),
+        ).map { (text, pattern, expectedResult) ->
+            dynamicTest(
+                "Locate ${expectedResult.size} occurrence(s) of \"$pattern\" within the supplied text."
+            ) {
+                val result = boyerMooreSunday(text, pattern)
+                assert(result == expectedResult)
+            }
+        }
 }
