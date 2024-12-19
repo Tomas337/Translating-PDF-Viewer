@@ -9,6 +9,7 @@ class BoyerMooreTest {
     @TestFactory
     fun `Assert that boyerMoore function returns the expected result`() =
         listOf(
+            Triple("abxxxabcxabdxab", "abxxxab", listOf(Pair(0, 6))),
             Triple("A Seashell", " Sea", listOf(Pair(2, 4))),
             Triple("Shell Shell", "hell", listOf(Pair(1, 4), Pair(7, 10))),
         ).map { (text, pattern, expectedResult) ->

@@ -65,7 +65,7 @@ private fun computeGoodSuffixRule(pattern: String): IntArray {
 
     var b = borders[0]
 
-    for (i in 0..m) {
+    for (i in 0 until m) {
         if (i == b) {
             b = borders[b]
         }
