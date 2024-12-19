@@ -2,7 +2,9 @@ package io.github.tomas337.translating_pdf_viewer.domain.usecase.search.utils
 
 import kotlin.math.max
 
-// TODO: unimplemented
+// TODO: check functionality of the code
+// TODO: there exists an optimization
+// TODO: normalize utf characters
 fun boyerMoore(text: String, pattern: String): List<Pair<Int, Int>> {
     val highlights = mutableListOf<Pair<Int, Int>>()
 
@@ -25,7 +27,7 @@ fun boyerMoore(text: String, pattern: String): List<Pair<Int, Int>> {
         } else {
             val char = text[t+j]
             val lastOccurrence = badCharShift.getOrDefault(char, -1)
-            t += max(j - lastOccurrence, goodSuffixShift.getOrDefault(j, 1))
+            t += max(j - lastOccurrence, goodSuffixShift[j])
         }
     }
 
@@ -40,6 +42,37 @@ private fun computeBadCharacterRule(pattern: String): HashMap<Char, Int> {
     return occurrenceMap
 }
 
-private fun computeGoodSuffixRule(pattern: String): HashMap<Int, Int> {
+private fun computeGoodSuffixRule(pattern: String): IntArray {
+    val m = pattern.length
+    val borders = IntArray(m+1)
+    val shift = IntArray(m)
+    var i = m
+    var j = m + 1
 
+    borders[i] = j
+
+    while (i > 0) {
+        while (j <= m && pattern[i-1] != pattern[j-1]) {
+            if ((j-1) >= 0 && shift[j-1] == 0) {
+                shift[j-1] = j-1
+            }
+            j = borders[j]
+        }
+        i--
+        j--
+        borders[i] = j
+    }
+
+    var b = borders[0]
+
+    for (i in 0..m) {
+        if (i == b) {
+            b = borders[b]
+        }
+        if (shift[i] == 0) {
+            shift[i] = b
+        }
+    }
+
+    return shift
 }
