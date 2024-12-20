@@ -45,7 +45,6 @@ private fun computeBadCharacterRule(pattern: String): HashMap<Char, Int> {
     return occurrenceMap
 }
 
-// TODO fix: doesn't return correct shifts
 private fun computeGoodSuffixRule(pattern: String): IntArray {
     val m = pattern.length
     val borders = IntArray(m+1)
