@@ -2,10 +2,13 @@ package io.github.tomas337.translating_pdf_viewer.domain.usecase.search.utils
 
 import kotlin.math.max
 
-// TODO: check functionality of the code
 // TODO: there exists an optimization
 // TODO: normalize utf characters
 fun boyerMoore(text: String, pattern: String): List<Pair<Int, Int>> {
+    if (text.isEmpty() || pattern.isEmpty()) {
+        return emptyList()
+    }
+
     val highlights = mutableListOf<Pair<Int, Int>>()
 
     val n = text.length
@@ -42,6 +45,7 @@ private fun computeBadCharacterRule(pattern: String): HashMap<Char, Int> {
     return occurrenceMap
 }
 
+// TODO fix: doesn't return correct shifts
 private fun computeGoodSuffixRule(pattern: String): IntArray {
     val m = pattern.length
     val borders = IntArray(m+1)
@@ -53,8 +57,8 @@ private fun computeGoodSuffixRule(pattern: String): IntArray {
 
     while (i > 0) {
         while (j <= m && pattern[i-1] != pattern[j-1]) {
-            if ((j-1) >= 0 && shift[j-1] == 0) {
-                shift[j-1] = j-1
+            if (shift[j-1] == 0) {
+                shift[j-1] = j-i
             }
             j = borders[j]
         }
