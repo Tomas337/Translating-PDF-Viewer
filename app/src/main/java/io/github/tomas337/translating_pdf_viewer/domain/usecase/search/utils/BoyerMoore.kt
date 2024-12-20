@@ -5,7 +5,10 @@ import kotlin.math.max
 // TODO: there exists an optimization
 // TODO: normalize utf characters
 fun boyerMoore(text: String, pattern: String): List<Pair<Int, Int>> {
-    if (text.isEmpty() || pattern.isEmpty()) {
+    if (text.isEmpty() ||
+        pattern.isEmpty() ||
+        pattern.length > text.length
+    ) {
         return emptyList()
     }
 
