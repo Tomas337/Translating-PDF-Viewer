@@ -41,7 +41,7 @@ class BoyerMooreTest {
             ) {
                 val result = boyerMoore(text, pattern)
                 assert(result == expectedResult) {
-                    "Unexpected result: expected $expectedResult and got $result"
+                    "Unexpected result: expected $expectedResult and got $result."
                 }
             }
         }
@@ -54,7 +54,7 @@ class BoyerMooreTest {
             ) {
                 val result = boyerMooreSunday(text, pattern)
                 assert(result == expectedResult) {
-                    "Unexpected result: expected $expectedResult and got $result"
+                    "Unexpected result: expected $expectedResult and got $result."
                 }
             }
         }
