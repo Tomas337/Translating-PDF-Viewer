@@ -1,6 +1,5 @@
 package io.github.tomas337.translating_pdf_viewer.domain.usecase.search.utils
 
-import android.util.Log
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.TestFactory
 import kotlin.system.measureNanoTime
@@ -37,7 +36,7 @@ class BoyerMooreTest {
 
     @TestFactory
     fun `Assert that boyerMoore function returns the expected result`() =
-        testData.map { (text, pattern, expectedResult) ->
+        testData.mapIndexed { i, (text, pattern, expectedResult) ->
             dynamicTest(
                 "Locate ${expectedResult.size} occurrence(s) of \"$pattern\" within the supplied text."
             ) {
@@ -48,14 +47,13 @@ class BoyerMooreTest {
                 assert(result == expectedResult) {
                     "Unexpected result: expected $expectedResult and got $result."
                 }
-                // TODO: more descriptive message, eg. test 1, test 2...
-                print("boyerMoore execution time: $executionTime ns\n")
+                print("${i+1}) boyerMoore execution time: $executionTime ns\n")
             }
         }
 
     @TestFactory
     fun `Assert that boyerMooreSunday function returns the expected result`() =
-        testData.map { (text, pattern, expectedResult) ->
+        testData.mapIndexed { i, (text, pattern, expectedResult) ->
             dynamicTest(
                 "Locate ${expectedResult.size} occurrence(s) of \"$pattern\" within the supplied text."
             ) {
@@ -66,7 +64,7 @@ class BoyerMooreTest {
                 assert(result == expectedResult) {
                     "Unexpected result: expected $expectedResult and got $result."
                 }
-                print("boyerMooreSunday execution time: $executionTime ns\n")
+                print("${i+1}) boyerMooreSunday execution time: $executionTime ns\n")
             }
         }
 }

@@ -4,6 +4,7 @@ import kotlin.math.max
 
 // TODO: there exists an optimization
 // TODO: normalize utf characters
+// TODO: convert text to lower case for case insensitive search
 fun boyerMoore(text: String, pattern: String): List<Pair<Int, Int>> {
     if (text.isEmpty() ||
         pattern.isEmpty() ||
