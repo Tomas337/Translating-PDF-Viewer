@@ -181,7 +181,8 @@ fun Pager(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = handleXPositionModifier,
                 ) {
-                    row.forEach { content ->
+                    // j to be used for accessing highlights hashmap
+                    row.forEachIndexed { j, content ->
                         DrawContent(
                             content = content,
                             pageIndex = pageIndex,
