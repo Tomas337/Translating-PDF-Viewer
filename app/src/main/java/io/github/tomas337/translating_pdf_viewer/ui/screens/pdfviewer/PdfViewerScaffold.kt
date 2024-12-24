@@ -10,6 +10,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.PointerEventPass
@@ -18,7 +20,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.actions.search.SearchTopBar
+import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.SearchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,7 +33,8 @@ fun PdfViewerScaffold(
     setSettingsSheetVisibility: (Boolean) -> Unit,
     setBookmarksVisibility: (Boolean) -> Unit,
     navController: NavController,
-    content: @Composable (BoxWithConstraintsScope) -> Unit
+    searchViewModel: SearchViewModel = viewModel(factory = SearchViewModel.Factory),
+    content: @Composable (BoxWithConstraintsScope) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -40,11 +46,14 @@ fun PdfViewerScaffold(
             .fillMaxSize()
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            if (isToolbarVisible) {
+            val isSearchVisible by searchViewModel.searchVisibility.collectAsState()
+
+            if (isToolbarVisible && !isSearchVisible) {
                 PdfViewerTopBar(
                     navController = navController,
                     setSettingsSheetVisibility = setSettingsSheetVisibility,
                     setBookmarksVisibility = setBookmarksVisibility,
+                    setSearchVisibility = { searchViewModel.setSearchVisibility(it) },
                     modifier = Modifier
                         .pointerInput(isKeyboardVisible) {
                             if (isKeyboardVisible) {
@@ -52,6 +61,10 @@ fun PdfViewerScaffold(
                             }
                         }
                         .semantics { contentDescription = "PdfViewer screen top bar" }
+                )
+            } else if (isToolbarVisible && isSearchVisible) {
+                SearchTopBar(
+                    setSearchVisibility = { searchViewModel.setSearchVisibility(it) }
                 )
             }
         }

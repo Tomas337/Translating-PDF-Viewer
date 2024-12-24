@@ -24,6 +24,7 @@ fun PdfViewerTopBar(
     navController: NavController,
     setSettingsSheetVisibility: (Boolean) -> Unit,
     setBookmarksVisibility: (Boolean) -> Unit,
+    setSearchVisibility: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     TopAppBar(
@@ -40,7 +41,7 @@ fun PdfViewerTopBar(
             }
         },
         actions = {
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = { setSearchVisibility(true) }) {
                 Icon(
                     imageVector = Icons.Filled.Search,
                     contentDescription = "Search",
