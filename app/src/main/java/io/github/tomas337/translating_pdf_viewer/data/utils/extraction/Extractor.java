@@ -64,6 +64,7 @@ import io.github.tomas337.translating_pdf_viewer.utils.Page;
 import io.github.tomas337.translating_pdf_viewer.utils.TextBlock;
 import io.github.tomas337.translating_pdf_viewer.utils.TextStyle;
 
+// TODO: UTF normalize text
 /**
  * This class takes a PDPage and extracts the text and images into Page object.
  */
