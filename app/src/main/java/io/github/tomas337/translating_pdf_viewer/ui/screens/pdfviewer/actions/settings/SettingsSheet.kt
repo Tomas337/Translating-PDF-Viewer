@@ -127,6 +127,8 @@ fun SettingsSheet(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
+            // TODO: add a toggle button to change between continuous and individual page display mode
+            // TODO: add a toggle button for "reading mode"
             Spacer(modifier = Modifier.size(10.dp))
             SettingsItem(
                 settingName = "font size scale",

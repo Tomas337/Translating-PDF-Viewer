@@ -1,10 +1,8 @@
 package io.github.tomas337.translating_pdf_viewer.domain.usecase.search.utils
 
+import java.text.Normalizer
 import kotlin.math.max
 
-// TODO: there exists an optimization
-// TODO: normalize utf characters
-// TODO: convert text to lower case for case insensitive search
 fun boyerMoore(text: String, pattern: String): List<Pair<Int, Int>> {
     if (text.isEmpty() ||
         pattern.isEmpty() ||
@@ -12,6 +10,9 @@ fun boyerMoore(text: String, pattern: String): List<Pair<Int, Int>> {
     ) {
         return emptyList()
     }
+
+    val text = Normalizer.normalize(text.lowercase(), Normalizer.Form.NFC)
+    val pattern = Normalizer.normalize(pattern.lowercase(), Normalizer.Form.NFC)
 
     val highlights = mutableListOf<Pair<Int, Int>>()
 

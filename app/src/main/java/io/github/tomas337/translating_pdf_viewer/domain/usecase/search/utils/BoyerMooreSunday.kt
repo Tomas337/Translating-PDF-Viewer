@@ -1,5 +1,7 @@
 package io.github.tomas337.translating_pdf_viewer.domain.usecase.search.utils
 
+import java.text.Normalizer
+
 fun boyerMooreSunday(text: String, pattern: String): List<Pair<Int, Int>> {
     if (text.isEmpty() ||
         pattern.isEmpty() ||
@@ -7,6 +9,9 @@ fun boyerMooreSunday(text: String, pattern: String): List<Pair<Int, Int>> {
     ) {
         return emptyList()
     }
+
+    val text = Normalizer.normalize(text.lowercase(), Normalizer.Form.NFC)
+    val pattern = Normalizer.normalize(pattern.lowercase(), Normalizer.Form.NFC)
 
     val highlights = mutableListOf<Pair<Int, Int>>()
 

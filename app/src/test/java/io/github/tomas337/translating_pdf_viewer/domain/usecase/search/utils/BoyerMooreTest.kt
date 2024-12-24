@@ -31,7 +31,13 @@ class BoyerMooreTest {
         Triple("aabbaabbaabbaabb", "bb", listOf(Pair(2, 3), Pair(6, 7), Pair(10, 11), Pair(14, 15))),
         Triple("aabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz", "xxyy", listOf(Pair(46, 49))),
         Triple("aaaabbaaaaaababaaabaaa", "aaa", listOf(Pair(0, 2), Pair(6, 8), Pair(9, 11), Pair(15, 17), Pair(19, 21))),
-        Triple("abcdefghijklmnopqrstuvwxyz", "xyz", listOf(Pair(23, 25)))
+        Triple("abcdefghijklmnopqrstuvwxyz", "xyz", listOf(Pair(23, 25))),
+
+        // From Anpanman by BTS (방탄소년단)
+        // 진 = U+110C + U+1175 + U+11AB
+        Triple("내가 가진 건 이 노래 한방", "진", listOf(Pair(4, 4))),
+        // 진 = U+C9C4
+        Triple("내가 가진 건 이 노래 한방", "진", listOf(Pair(4, 4)))
     )
 
     @TestFactory
