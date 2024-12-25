@@ -71,6 +71,8 @@ fun PdfViewerScaffold(
                 SearchTopBar(
                     setSearchVisibility = { searchViewModel.setSearchVisibility(it) },
                     findHighlights = { searchViewModel.findHighlights(fileInfo.id, fileInfo.pageCount, it) },
+                    selectNextHighlight = { searchViewModel.selectNextHighlight() },
+                    selectPreviousHighlight = { searchViewModel.selectPreviousHighlight() },
                     resetState = { searchViewModel.resetState() },
                     currentlySelected = currentlySelected,
                     highlightsSize = highlightsSize

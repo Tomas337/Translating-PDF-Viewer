@@ -39,12 +39,15 @@ import androidx.compose.ui.unit.dp
 fun SearchTopBar(
     setSearchVisibility: (Boolean) -> Unit,
     findHighlights: (String) -> Unit,
+    selectNextHighlight: () -> Unit,
+    selectPreviousHighlight: () -> Unit,
     resetState: () -> Unit,
     currentlySelected: Int,
     highlightsSize: Int,
 ) {
     val focusManager = LocalFocusManager.current
     var textFieldValue by remember { mutableStateOf("") }
+    var showNumbers by remember { mutableStateOf(false) }
 
     TopAppBar(
         modifier = Modifier,
@@ -67,14 +70,15 @@ fun SearchTopBar(
                 value = textFieldValue,
                 onValueChange = {
                     resetState()
+                    showNumbers = false
                     textFieldValue = it
                 },
                 placeholder = {
                     Text("Search")
                 },
                 suffix = {
-                    if (highlightsSize != 0) {
-                        Text("$currentlySelected/$highlightsSize")
+                    if (showNumbers) {
+                        Text("${currentlySelected+1}/$highlightsSize")
                     }
                 },
                 singleLine = true,
@@ -84,6 +88,7 @@ fun SearchTopBar(
                 keyboardActions = KeyboardActions(onSearch = {
                     if (textFieldValue.isNotEmpty()) {
                         findHighlights(textFieldValue)
+                        showNumbers = true
                         focusManager.clearFocus()
                     }
                 }),
@@ -111,8 +116,8 @@ fun SearchTopBar(
             )
             Spacer(Modifier.width(4.dp))
             IconButton(
-                enabled = highlightsSize > 0,
-                onClick = {}
+                enabled = textFieldValue.isNotEmpty(),
+                onClick = selectNextHighlight
             ) {
                 Icon(
                     imageVector = Icons.Filled.KeyboardArrowUp,
@@ -121,8 +126,8 @@ fun SearchTopBar(
                 )
             }
             IconButton(
-                enabled = highlightsSize > 0,
-                onClick = {}
+                enabled = textFieldValue.isNotEmpty(),
+                onClick = selectPreviousHighlight
             ) {
                 Icon(
                     imageVector = Icons.Filled.KeyboardArrowDown,
@@ -131,10 +136,11 @@ fun SearchTopBar(
                 )
             }
             IconButton(
-                enabled = highlightsSize > 0,
+                enabled = textFieldValue.isNotEmpty(),
                 onClick = {
                     textFieldValue = ""
                     resetState()
+                    showNumbers = false
                 }
             ) {
                 Icon(

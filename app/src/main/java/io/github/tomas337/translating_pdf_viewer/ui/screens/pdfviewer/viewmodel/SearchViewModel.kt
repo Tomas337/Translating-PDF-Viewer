@@ -21,7 +21,7 @@ class SearchViewModel(
     private val _highlights = mutableListOf<HashMap<Pair<Int, Int>, List<Pair<Int, Int>>>>()
     val highlights: List<HashMap<Pair<Int, Int>, List<Pair<Int, Int>>>> = _highlights
 
-    private val _currentlySelected = MutableStateFlow(0)
+    private val _currentlySelected = MutableStateFlow(-1)
     val currentlySelected: StateFlow<Int> = _currentlySelected
 
     private val _highlightsSize = MutableStateFlow(0)
@@ -46,9 +46,25 @@ class SearchViewModel(
         }
     }
 
+    fun selectNextHighlight() {
+        if (_currentlySelected.value < _highlightsSize.value - 1) {
+            _currentlySelected.value += 1
+        } else {
+            _currentlySelected.value = 0
+        }
+    }
+
+    fun selectPreviousHighlight() {
+        if (_currentlySelected.value > 0) {
+            _currentlySelected.value -= 1
+        } else {
+            _currentlySelected.value = _highlightsSize.value - 1
+        }
+    }
+
     fun resetState() {
         _highlights.clear()
-        _currentlySelected.value = 0
+        _currentlySelected.value = -1
         _highlightsSize.value = 0
     }
 
