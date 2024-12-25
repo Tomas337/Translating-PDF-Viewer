@@ -1,6 +1,5 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.actions.search
 
-import android.util.Log
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
