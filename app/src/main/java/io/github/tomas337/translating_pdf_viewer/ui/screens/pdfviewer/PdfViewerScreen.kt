@@ -53,6 +53,7 @@ fun PdfViewerScreen(
         isToolbarVisible = isToolbarVisible,
         setSettingsSheetVisibility = { preferencesViewModel.setSettingsSheetVisibility(it) },
         setBookmarksVisibility = { bookmarkViewModel.setBookmarksVisibility(it) },
+        fileInfo = fileInfo,
         navController = navController
     ) { boxWithConstraintsScope ->
 

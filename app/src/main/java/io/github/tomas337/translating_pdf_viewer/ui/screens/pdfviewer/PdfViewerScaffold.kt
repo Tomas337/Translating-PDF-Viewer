@@ -22,6 +22,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import io.github.tomas337.translating_pdf_viewer.domain.model.FileModel
 import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.actions.search.SearchTopBar
 import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.SearchViewModel
 
@@ -32,6 +33,7 @@ fun PdfViewerScaffold(
     isToolbarVisible: Boolean,
     setSettingsSheetVisibility: (Boolean) -> Unit,
     setBookmarksVisibility: (Boolean) -> Unit,
+    fileInfo: FileModel,
     navController: NavController,
     searchViewModel: SearchViewModel = viewModel(factory = SearchViewModel.Factory),
     content: @Composable (BoxWithConstraintsScope) -> Unit,
@@ -64,7 +66,8 @@ fun PdfViewerScaffold(
                 )
             } else if (isToolbarVisible && isSearchVisible) {
                 SearchTopBar(
-                    setSearchVisibility = { searchViewModel.setSearchVisibility(it) }
+                    setSearchVisibility = { searchViewModel.setSearchVisibility(it) },
+                    getHighlights = { searchViewModel.getHighlights(fileInfo.id, fileInfo.pageCount, it) }
                 )
             }
         }
