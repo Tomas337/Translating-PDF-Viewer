@@ -65,9 +65,15 @@ fun PdfViewerScaffold(
                         .semantics { contentDescription = "PdfViewer screen top bar" }
                 )
             } else if (isToolbarVisible && isSearchVisible) {
+                val currentlySelected by searchViewModel.currentlySelected.collectAsState()
+                val highlightsSize by searchViewModel.highlightsSize.collectAsState()
+
                 SearchTopBar(
                     setSearchVisibility = { searchViewModel.setSearchVisibility(it) },
-                    getHighlights = { searchViewModel.getHighlights(fileInfo.id, fileInfo.pageCount, it) }
+                    findHighlights = { searchViewModel.findHighlights(fileInfo.id, fileInfo.pageCount, it) },
+                    resetState = { searchViewModel.resetState() },
+                    currentlySelected = currentlySelected,
+                    highlightsSize = highlightsSize
                 )
             }
         }

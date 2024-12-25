@@ -1,5 +1,6 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.actions.search
 
+import android.util.Log
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -22,37 +23,38 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.onEach
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchTopBar(
     setSearchVisibility: (Boolean) -> Unit,
-    getHighlights: (String) -> Flow<HashMap<Pair<Int, Int>, List<Pair<Int, Int>>>>
+    findHighlights: (String) -> Unit,
+    resetState: () -> Unit,
+    currentlySelected: Int,
+    highlightsSize: Int,
 ) {
+    val focusManager = LocalFocusManager.current
     var textFieldValue by remember { mutableStateOf("") }
-
-    val highlights = remember {
-        mutableStateListOf<HashMap<Pair<Int, Int>, List<Pair<Int, Int>>>>()
-    }
 
     TopAppBar(
         modifier = Modifier,
         title = {
         },
         navigationIcon = {
-            IconButton(onClick = { setSearchVisibility(false) }) {
+            IconButton(onClick = {
+                setSearchVisibility(false)
+                resetState()
+            }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Hide search",
@@ -63,25 +65,26 @@ fun SearchTopBar(
         actions = {
             TextField(
                 value = textFieldValue,
-                onValueChange = { textFieldValue = it },
+                onValueChange = {
+                    resetState()
+                    textFieldValue = it
+                },
                 placeholder = {
                     Text("Search")
                 },
                 suffix = {
-                    if (textFieldValue.isNotEmpty()) {
-                        Text("0/${highlights.size}")
+                    if (highlightsSize != 0) {
+                        Text("$currentlySelected/$highlightsSize")
                     }
-
-                    // TODO: remove
-                    Text("0/${highlights.size}")
                 },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Search
                 ),
                 keyboardActions = KeyboardActions(onSearch = {
-                    getHighlights(textFieldValue).onEach { pageHighlights ->
-                        highlights.add(pageHighlights)
+                    if (textFieldValue.isNotEmpty()) {
+                        findHighlights(textFieldValue)
+                        focusManager.clearFocus()
                     }
                 }),
                 colors = TextFieldDefaults.colors().copy(
@@ -108,6 +111,7 @@ fun SearchTopBar(
             )
             Spacer(Modifier.width(4.dp))
             IconButton(
+                enabled = highlightsSize > 0,
                 onClick = {}
             ) {
                 Icon(
@@ -117,6 +121,7 @@ fun SearchTopBar(
                 )
             }
             IconButton(
+                enabled = highlightsSize > 0,
                 onClick = {}
             ) {
                 Icon(
@@ -126,7 +131,11 @@ fun SearchTopBar(
                 )
             }
             IconButton(
-                onClick = { textFieldValue = "" }
+                enabled = highlightsSize > 0,
+                onClick = {
+                    textFieldValue = ""
+                    resetState()
+                }
             ) {
                 Icon(
                     imageVector = Icons.Filled.Clear,

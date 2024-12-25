@@ -7,11 +7,22 @@ import io.github.tomas337.translating_pdf_viewer.domain.usecase.search.utils.boy
 import io.github.tomas337.translating_pdf_viewer.utils.Page
 import io.github.tomas337.translating_pdf_viewer.utils.PageContent
 import io.github.tomas337.translating_pdf_viewer.utils.TextBlock
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import java.io.File
 
 class GetPageSearchResultsUseCase(
     private val pageRepository: PageRepository
 ) {
+    private val _occurrencesFound = MutableStateFlow(0)
+
+    fun getNumberOfOccurrences(): Flow<Int> {
+        _occurrencesFound.value = 0
+        return _occurrencesFound
+    }
+
     suspend operator fun invoke(
         id: Int,
         pageIndex: Int,
@@ -33,9 +44,10 @@ class GetPageSearchResultsUseCase(
                 val pageContent = page.orderedData[i][j]
                 if (pageContent is TextBlock) {
                     val text = pageContent.texts.joinToString("")
-                    highlights[Pair(i, j)] = boyerMooreSunday(text, pattern)
+                    val searchResult = boyerMooreSunday(text, pattern)
+                    highlights[Pair(i, j)] = searchResult
+                    _occurrencesFound.value += searchResult.size
                 }
-
             }
         }
 
