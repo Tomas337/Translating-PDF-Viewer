@@ -1,6 +1,5 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope

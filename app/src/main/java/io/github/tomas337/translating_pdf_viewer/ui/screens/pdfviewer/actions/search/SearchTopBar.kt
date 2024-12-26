@@ -115,7 +115,7 @@ fun SearchTopBar(
             )
             Spacer(Modifier.width(4.dp))
             IconButton(
-                enabled = textFieldValue.isNotEmpty(),
+                enabled = showNumbers,
                 onClick = selectNextHighlight
             ) {
                 Icon(
@@ -125,7 +125,7 @@ fun SearchTopBar(
                 )
             }
             IconButton(
-                enabled = textFieldValue.isNotEmpty(),
+                enabled = showNumbers,
                 onClick = selectPreviousHighlight
             ) {
                 Icon(
