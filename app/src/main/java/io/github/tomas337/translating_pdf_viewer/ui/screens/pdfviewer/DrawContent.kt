@@ -35,6 +35,8 @@ fun DrawContent(
     intToTextStyleMap: Map<Int, TextStyle>,
     fontSizeScale: Float,
     lineSpacing: Int,
+    highlights: List<Pair<Int, Int>>,
+    isHighlightSelected: (Pair<Int, Int>) -> Boolean,
     modifier: Modifier = Modifier,
 ) {
     if (content is Image) {

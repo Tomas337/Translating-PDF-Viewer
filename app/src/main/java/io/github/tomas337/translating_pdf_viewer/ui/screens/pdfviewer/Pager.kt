@@ -77,7 +77,6 @@ fun Pager(
     val context = LocalContext.current
     var isScrollable by remember { mutableStateOf(false) }
 
-    val highlights by searchViewModel.highlightsSize.collectAsState()
     val currentlySelected by searchViewModel.currentlySelected.collectAsState()
 
     VerticalPager(
@@ -90,6 +89,8 @@ fun Pager(
     ) { pageIndex ->
         val pageContent: List<List<PageContent>> by getPageContent(pageIndex).collectAsState(emptyList())
         val lazyColumnState = rememberLazyListState()
+
+        val pageHighlights = searchViewModel.highlightsStructured[pageIndex]
 
         LazyColumn(
             state = lazyColumnState,
@@ -187,7 +188,6 @@ fun Pager(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = handleXPositionModifier,
                 ) {
-                    // j to be used for accessing highlights hashmap
                     row.forEachIndexed { j, content ->
                         DrawContent(
                             content = content,
@@ -195,6 +195,8 @@ fun Pager(
                             intToTextStyleMap = intToTextStyleMap,
                             fontSizeScale = fontSizeScale,
                             lineSpacing = lineSpacing,
+                            highlights = pageHighlights.getOrDefault(Pair(i, j), emptyList()),
+                            isHighlightSelected = { it === searchViewModel.highlights[currentlySelected].second }
                         )
                     }
                 }
