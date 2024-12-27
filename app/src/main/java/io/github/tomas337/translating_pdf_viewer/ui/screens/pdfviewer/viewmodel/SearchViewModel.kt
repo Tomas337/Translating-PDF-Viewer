@@ -18,8 +18,11 @@ class SearchViewModel(
     private val _searchVisibility = MutableStateFlow(false)
     val searchVisibility: StateFlow<Boolean> = _searchVisibility
 
-    private val _highlights = mutableListOf<HashMap<Pair<Int, Int>, List<Pair<Int, Int>>>>()
-    val highlights: List<HashMap<Pair<Int, Int>, List<Pair<Int, Int>>>> = _highlights
+    private val _highlightsStructured = mutableListOf<HashMap<Pair<Int, Int>, List<Pair<Int, Int>>>>()
+    val highlightsStructured: List<HashMap<Pair<Int, Int>, List<Pair<Int, Int>>>> = _highlightsStructured
+
+    private val _highlights = mutableListOf<Pair<Int, Pair<Int, Int>>>()
+    val highlights: List<Pair<Int, Pair<Int, Int>>> = _highlights
 
     private val _currentlySelected = MutableStateFlow(-1)
     val currentlySelected: StateFlow<Int> = _currentlySelected
@@ -41,7 +44,11 @@ class SearchViewModel(
             }
             for (pageIndex in 0 until pageCount) {
                 val pageHighlights = getPageSearchResultsUseCase(fileId, pageIndex, pattern)
-                _highlights.add(pageHighlights)
+                _highlightsStructured.add(pageHighlights)
+
+                pageHighlights.values.forEach {
+                    _highlights.addAll(it.map { Pair(pageIndex, it) })
+                }
             }
         }
     }
@@ -63,7 +70,7 @@ class SearchViewModel(
     }
 
     fun resetState() {
-        _highlights.clear()
+        _highlightsStructured.clear()
         _currentlySelected.value = -1
         _highlightsSize.value = 0
     }

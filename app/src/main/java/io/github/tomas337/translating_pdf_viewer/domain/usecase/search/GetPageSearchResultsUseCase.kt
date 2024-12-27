@@ -35,7 +35,7 @@ class GetPageSearchResultsUseCase(
         val gson = builder.create()
         val page = gson.fromJson(stringifiedPage, Page::class.java)
 
-        val highlights = HashMap<Pair<Int, Int>, List<Pair<Int, Int>>>()
+        val highlightsStructured = HashMap<Pair<Int, Int>, List<Pair<Int, Int>>>()
 
         for (i in 0 until page.orderedData.size) {
             for (j in 0 until page.orderedData[i].size) {
@@ -43,12 +43,12 @@ class GetPageSearchResultsUseCase(
                 if (pageContent is TextBlock) {
                     val text = pageContent.texts.joinToString("")
                     val searchResult = boyerMooreSunday(text, pattern)
-                    highlights[Pair(i, j)] = searchResult
+                    highlightsStructured[Pair(i, j)] = searchResult
                     _occurrencesFound.value += searchResult.size
                 }
             }
         }
 
-        return highlights
+        return highlightsStructured
     }
 }

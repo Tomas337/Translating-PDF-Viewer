@@ -38,6 +38,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
+import androidx.lifecycle.viewmodel.compose.viewModel
+import io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer.viewmodel.SearchViewModel
 import io.github.tomas337.translating_pdf_viewer.utils.PageContent
 import io.github.tomas337.translating_pdf_viewer.utils.TextStyle
 import kotlinx.coroutines.flow.Flow
@@ -69,10 +71,14 @@ fun Pager(
     pagePadding: Dp,
     pageSpacing: Dp,
     paragraphSpacing: Dp,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    searchViewModel: SearchViewModel = viewModel(factory = SearchViewModel.Factory),
 ) {
     val context = LocalContext.current
     var isScrollable by remember { mutableStateOf(false) }
+
+    val highlights by searchViewModel.highlightsSize.collectAsState()
+    val currentlySelected by searchViewModel.currentlySelected.collectAsState()
 
     VerticalPager(
         modifier = modifier
