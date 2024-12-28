@@ -3,7 +3,7 @@ package io.github.tomas337.translating_pdf_viewer.domain.usecase.search.utils
 import java.text.Normalizer
 import kotlin.math.max
 
-fun boyerMoore(text: String, pattern: String): List<Pair<Int, Int>> {
+fun boyerMoore(text: String, pattern: String): List<Highlight> {
     if (text.isEmpty() ||
         pattern.isEmpty() ||
         pattern.length > text.length
@@ -14,7 +14,7 @@ fun boyerMoore(text: String, pattern: String): List<Pair<Int, Int>> {
     val text = Normalizer.normalize(text.lowercase(), Normalizer.Form.NFC)
     val pattern = Normalizer.normalize(pattern.lowercase(), Normalizer.Form.NFC)
 
-    val highlights = mutableListOf<Pair<Int, Int>>()
+    val highlights = mutableListOf<Highlight>()
 
     val n = text.length
     val m = pattern.length
@@ -30,7 +30,7 @@ fun boyerMoore(text: String, pattern: String): List<Pair<Int, Int>> {
         }
 
         if (j == -1) {
-            highlights.add(Pair(t, t+m-1))
+            highlights.add(Highlight(t, t+m-1))
             t += m
         } else {
             val char = text[t+j]

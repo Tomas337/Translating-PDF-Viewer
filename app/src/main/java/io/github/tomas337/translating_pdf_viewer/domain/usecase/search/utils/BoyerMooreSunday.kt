@@ -2,7 +2,7 @@ package io.github.tomas337.translating_pdf_viewer.domain.usecase.search.utils
 
 import java.text.Normalizer
 
-fun boyerMooreSunday(text: String, pattern: String): List<Pair<Int, Int>> {
+fun boyerMooreSunday(text: String, pattern: String): List<Highlight> {
     if (text.isEmpty() ||
         pattern.isEmpty() ||
         pattern.length > text.length
@@ -13,7 +13,7 @@ fun boyerMooreSunday(text: String, pattern: String): List<Pair<Int, Int>> {
     val text = Normalizer.normalize(text.lowercase(), Normalizer.Form.NFC)
     val pattern = Normalizer.normalize(pattern.lowercase(), Normalizer.Form.NFC)
 
-    val highlights = mutableListOf<Pair<Int, Int>>()
+    val highlights = mutableListOf<Highlight>()
 
     val n = text.length
     val m = pattern.length
@@ -28,7 +28,7 @@ fun boyerMooreSunday(text: String, pattern: String): List<Pair<Int, Int>> {
         }
 
         if (j == m) {
-            highlights.add(Pair(t, t+m-1))
+            highlights.add(Highlight(t, t+m-1))
             t += m
         } else if (t < n-m) {
             val nextChar = text[t+m]

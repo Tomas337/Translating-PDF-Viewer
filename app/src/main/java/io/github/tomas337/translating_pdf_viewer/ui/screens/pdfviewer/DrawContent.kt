@@ -22,6 +22,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.search.utils.Highlight
 import io.github.tomas337.translating_pdf_viewer.utils.Image
 import io.github.tomas337.translating_pdf_viewer.utils.PageContent
 import io.github.tomas337.translating_pdf_viewer.utils.TextBlock
@@ -35,8 +36,8 @@ fun DrawContent(
     intToTextStyleMap: Map<Int, TextStyle>,
     fontSizeScale: Float,
     lineSpacing: Int,
-    highlights: List<Pair<Int, Int>>,
-    isHighlightSelected: (Pair<Int, Int>) -> Boolean,
+    highlights: List<Highlight>,
+    isHighlightSelected: (Highlight) -> Boolean,
     modifier: Modifier = Modifier,
 ) {
     if (content is Image) {

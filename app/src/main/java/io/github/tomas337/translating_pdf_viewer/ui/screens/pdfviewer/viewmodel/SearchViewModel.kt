@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import io.github.tomas337.translating_pdf_viewer.di.MyApp
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.search.GetPageSearchResultsUseCase
+import io.github.tomas337.translating_pdf_viewer.domain.usecase.search.utils.Highlight
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -18,11 +19,11 @@ class SearchViewModel(
     private val _searchVisibility = MutableStateFlow(false)
     val searchVisibility: StateFlow<Boolean> = _searchVisibility
 
-    private val _highlightsStructured = mutableListOf<HashMap<Pair<Int, Int>, List<Pair<Int, Int>>>>()
-    val highlightsStructured: List<HashMap<Pair<Int, Int>, List<Pair<Int, Int>>>> = _highlightsStructured
+    private val _highlightsStructured = mutableListOf<HashMap<Pair<Int, Int>, List<Highlight>>>()
+    val highlightsStructured: List<HashMap<Pair<Int, Int>, List<Highlight>>> = _highlightsStructured
 
-    private val _highlights = mutableListOf<Pair<Int, Pair<Int, Int>>>()
-    val highlights: List<Pair<Int, Pair<Int, Int>>> = _highlights
+    private val _highlights = mutableListOf<Pair<Int, Highlight>>()
+    val highlights: List<Pair<Int, Highlight>> = _highlights
 
     private val _currentlySelected = MutableStateFlow(-1)
     val currentlySelected: StateFlow<Int> = _currentlySelected
