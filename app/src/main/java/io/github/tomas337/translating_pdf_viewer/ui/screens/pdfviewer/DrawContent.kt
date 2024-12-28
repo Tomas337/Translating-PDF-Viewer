@@ -27,6 +27,8 @@ import io.github.tomas337.translating_pdf_viewer.utils.Image
 import io.github.tomas337.translating_pdf_viewer.utils.PageContent
 import io.github.tomas337.translating_pdf_viewer.utils.TextBlock
 import io.github.tomas337.translating_pdf_viewer.utils.TextStyle
+import java.util.LinkedList
+import java.util.Queue
 import kotlin.math.abs
 
 @Composable
@@ -79,28 +81,63 @@ fun DrawContent(
 
         Text(
             buildAnnotatedString {
+                if (content.listPrefix != null) {
+                    append(content.listPrefix)
+                }
+
+                val highlightsQueue: Queue<Highlight> = LinkedList(highlights)
+                var startCharIndex = 0
+
                 content.texts.forEachIndexed { i, text ->
                     val styleIndex = content.styles[i]
-                    val style = intToTextStyleMap[styleIndex]
+                    val textStyle = intToTextStyleMap[styleIndex]
+                    val style = SpanStyle(
+                        fontSize = textStyle!!.fontSize.sp * fontSizeScale,
+                        fontWeight = FontWeight(textStyle.fontWeight),
+                        fontStyle = if (textStyle.isItalic) FontStyle.Italic else FontStyle.Normal,
+                        color =
+                            if (textStyle.color.size == 3) {
+                                Color(textStyle.color[0], textStyle.color[1], textStyle.color[2])
+                            } else {
+                                Color(textStyle.color[0], textStyle.color[0], textStyle.color[0])
+                            },
+                    )
 
-                    withStyle(
-                        style = SpanStyle(
-                            fontSize = style!!.fontSize.sp * fontSizeScale,
-                            fontWeight = FontWeight(style.fontWeight),
-                            fontStyle = if (style.isItalic) FontStyle.Italic else FontStyle.Normal,
-                            color =
-                                if (style.color.size == 3) {
-                                    Color(style.color[0], style.color[1], style.color[2])
-                                } else {
-                                    Color(style.color[0], style.color[0], style.color[0])
-                                },
-                        )
+                    // TODO: the highlight should disappear when Clear button is pressed
+                    // TODO fix: selection currently doesn't work
+                    if (highlightsQueue.isNotEmpty() &&
+                        highlightsQueue.first().start >= startCharIndex &&
+                        highlightsQueue.first().end < startCharIndex + text.length
                     ) {
-                        if (i == 0 && content.listPrefix != null) {
-                            append(content.listPrefix)
+                        val curHighlight = highlightsQueue.first()
+
+                        text.forEachIndexed { index, char ->
+                            val highlightStyle = style.copy(
+                                // TODO: change colors
+                                background = if (isHighlightSelected(curHighlight)) Color.Magenta else Color.Yellow
+                            )
+
+                            // TODO: test that the highlight is correctly displayed if the TextBlock contains more than 1 text
+                            withStyle(
+                                if (curHighlight.start <= index + startCharIndex &&
+                                    curHighlight.end >= index + startCharIndex
+                                ) {
+                                    highlightStyle
+                                } else {
+                                    style
+                                }
+                            ) {
+                                append(char)
+                            }
                         }
-                        append(text)
+                        highlightsQueue.remove()
+                    } else {
+                        withStyle(style) {
+                            append(text)
+                        }
                     }
+
+                    startCharIndex += text.length
                 }
             },
             textAlign = textAlign,

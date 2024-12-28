@@ -90,7 +90,7 @@ fun Pager(
         val pageContent: List<List<PageContent>> by getPageContent(pageIndex).collectAsState(emptyList())
         val lazyColumnState = rememberLazyListState()
 
-        val pageHighlights = searchViewModel.highlightsStructured[pageIndex]
+        val pageHighlights = searchViewModel.highlightsStructured.getOrDefault(pageIndex, emptyMap())
 
         LazyColumn(
             state = lazyColumnState,
@@ -196,7 +196,12 @@ fun Pager(
                             fontSizeScale = fontSizeScale,
                             lineSpacing = lineSpacing,
                             highlights = pageHighlights.getOrDefault(Pair(i, j), emptyList()),
-                            isHighlightSelected = { it === searchViewModel.highlights[currentlySelected].second }
+                            isHighlightSelected = {
+                                if (currentlySelected != -1) {
+                                    it === searchViewModel.highlights[currentlySelected].second
+                                }
+                                false
+                            }
                         )
                     }
                 }
