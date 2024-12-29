@@ -1,6 +1,5 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
-import android.util.Log
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -104,7 +103,6 @@ fun DrawContent(
                             },
                     )
 
-                    // TODO fix: selection currently doesn't work
                     if (highlightsQueue.isNotEmpty() &&
                         highlightsQueue.first().start >= startCharIndex &&
                         highlightsQueue.first().end < startCharIndex + text.length
