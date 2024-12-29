@@ -47,8 +47,10 @@ class SearchViewModel(
                 val pageHighlights = getPageSearchResultsUseCase(fileId, pageIndex, pattern)
                 _highlightsStructured[pageIndex] = pageHighlights
 
-                pageHighlights.values.forEach {
-                    _highlights.addAll(it.map { Pair(pageIndex, it) })
+                pageHighlights.values.forEach { highlights ->
+                    highlights.forEach { highlight ->
+                        _highlights.add(Pair(pageIndex, highlight))
+                    }
                 }
             }
         }

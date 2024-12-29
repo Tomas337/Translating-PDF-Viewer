@@ -1,5 +1,6 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
+import android.util.Log
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -110,10 +111,14 @@ fun DrawContent(
                     ) {
                         val curHighlight = highlightsQueue.first()
 
+                        val backgroundColor = if (isHighlightSelected(curHighlight)) Color.Magenta else Color.Yellow
+                        Log.d("isSelected", isHighlightSelected(curHighlight).toString())
+
                         text.forEachIndexed { index, char ->
                             val highlightStyle = style.copy(
                                 // TODO: change colors
-                                background = if (isHighlightSelected(curHighlight)) Color.Magenta else Color.Yellow
+//                                background = if (isHighlightSelected(curHighlight)) Color.Magenta else Color.Yellow
+                                background = backgroundColor
                             )
 
                             // TODO: test that the highlight is correctly displayed if the TextBlock contains more than 1 text

@@ -83,6 +83,12 @@ fun Pager(
     val currentlySelected by searchViewModel.currentlySelected.collectAsState()
     val highlightsSize by searchViewModel.highlightsSize.collectAsState()
 
+    LaunchedEffect(currentlySelected) {
+        if (currentlySelected != -1) {
+            pagerState.scrollToPage(searchViewModel.highlights[currentlySelected].first)
+        }
+    }
+
     VerticalPager(
         modifier = modifier
             .fillMaxSize(),
@@ -204,6 +210,11 @@ fun Pager(
                             highlights = pageHighlights.getOrDefault(Pair(i, j), emptyList()),
                             isHighlightSelected = {
                                 if (currentlySelected != -1) {
+                                    Log.d("comparedValue", "")
+                                    Log.d("comparedValue", it.toString())
+                                    Log.d("currentlySelected", searchViewModel.highlights[currentlySelected].toString())
+                                    Log.d("result", (it === searchViewModel.highlights[currentlySelected].second).toString())
+
                                     it === searchViewModel.highlights[currentlySelected].second
                                 }
                                 false
