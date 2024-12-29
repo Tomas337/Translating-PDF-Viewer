@@ -72,6 +72,7 @@ class SearchViewModel(
 
     fun resetState() {
         _highlightsStructured.clear()
+        _highlights.clear()
         _currentlySelected.value = -1
         _highlightsSize.value = 0
     }

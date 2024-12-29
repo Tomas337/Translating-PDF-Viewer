@@ -1,5 +1,6 @@
 package io.github.tomas337.translating_pdf_viewer.ui.screens.pdfviewer
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -17,7 +18,9 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -78,6 +81,7 @@ fun Pager(
     var isScrollable by remember { mutableStateOf(false) }
 
     val currentlySelected by searchViewModel.currentlySelected.collectAsState()
+    val highlightsSize by searchViewModel.highlightsSize.collectAsState()
 
     VerticalPager(
         modifier = modifier
@@ -90,7 +94,9 @@ fun Pager(
         val pageContent: List<List<PageContent>> by getPageContent(pageIndex).collectAsState(emptyList())
         val lazyColumnState = rememberLazyListState()
 
-        val pageHighlights = searchViewModel.highlightsStructured.getOrDefault(pageIndex, emptyMap())
+        val pageHighlights by remember(highlightsSize) {
+            derivedStateOf { searchViewModel.highlightsStructured.getOrDefault(pageIndex, emptyMap()) }
+        }
 
         LazyColumn(
             state = lazyColumnState,

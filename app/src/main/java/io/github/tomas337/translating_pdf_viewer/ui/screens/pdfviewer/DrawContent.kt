@@ -103,7 +103,6 @@ fun DrawContent(
                             },
                     )
 
-                    // TODO: the highlight should disappear when Clear button is pressed
                     // TODO fix: selection currently doesn't work
                     if (highlightsQueue.isNotEmpty() &&
                         highlightsQueue.first().start >= startCharIndex &&

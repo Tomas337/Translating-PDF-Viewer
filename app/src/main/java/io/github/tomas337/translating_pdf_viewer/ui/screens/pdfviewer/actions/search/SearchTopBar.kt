@@ -137,9 +137,9 @@ fun SearchTopBar(
             IconButton(
                 enabled = textFieldValue.isNotEmpty(),
                 onClick = {
-                    textFieldValue = ""
                     resetState()
                     showNumbers = false
+                    textFieldValue = ""
                 }
             ) {
                 Icon(
