@@ -111,14 +111,10 @@ fun DrawContent(
                     ) {
                         val curHighlight = highlightsQueue.first()
 
-                        val backgroundColor = if (isHighlightSelected(curHighlight)) Color.Magenta else Color.Yellow
-                        Log.d("isSelected", isHighlightSelected(curHighlight).toString())
-
                         text.forEachIndexed { index, char ->
                             val highlightStyle = style.copy(
                                 // TODO: change colors
-//                                background = if (isHighlightSelected(curHighlight)) Color.Magenta else Color.Yellow
-                                background = backgroundColor
+                                background = if (isHighlightSelected(curHighlight)) Color.Magenta else Color.Yellow
                             )
 
                             // TODO: test that the highlight is correctly displayed if the TextBlock contains more than 1 text

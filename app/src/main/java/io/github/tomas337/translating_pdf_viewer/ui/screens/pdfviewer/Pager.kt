@@ -210,14 +210,10 @@ fun Pager(
                             highlights = pageHighlights.getOrDefault(Pair(i, j), emptyList()),
                             isHighlightSelected = {
                                 if (currentlySelected != -1) {
-                                    Log.d("comparedValue", "")
-                                    Log.d("comparedValue", it.toString())
-                                    Log.d("currentlySelected", searchViewModel.highlights[currentlySelected].toString())
-                                    Log.d("result", (it === searchViewModel.highlights[currentlySelected].second).toString())
-
                                     it === searchViewModel.highlights[currentlySelected].second
+                                } else {
+                                    false
                                 }
-                                false
                             }
                         )
                     }
