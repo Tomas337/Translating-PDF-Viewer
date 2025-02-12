@@ -1,7 +1,5 @@
 package io.github.tomas337.translating_pdf_viewer.utils;
 
-import android.util.Log;
-
 import com.tom_roush.pdfbox.pdmodel.font.PDFont;
 import com.tom_roush.pdfbox.pdmodel.font.PDFontDescriptor;
 
@@ -14,10 +12,12 @@ public class TextStyle {
     int fontWeight;
     boolean isItalic;
     float[] color;
+    BaselineShift baselineShift;
 
-    public TextStyle(float fontSize, PDFont font, float[] color) {
+    public TextStyle(float fontSize, PDFont font, float[] color, BaselineShift baselineShift) {
         this.fontSize = fontSize;
         this.color = color;
+        this.baselineShift = baselineShift;
 
         PDFontDescriptor descriptor = font.getFontDescriptor();
         String fontName = font.getName();
@@ -59,6 +59,10 @@ public class TextStyle {
 
     public float[] getColor() {
         return color;
+    }
+
+    public BaselineShift getBaselineShift() {
+        return baselineShift;
     }
 
     @Override

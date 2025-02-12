@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import io.github.tomas337.translating_pdf_viewer.domain.usecase.search.utils.Highlight
+import io.github.tomas337.translating_pdf_viewer.utils.BaselineShift
 import io.github.tomas337.translating_pdf_viewer.utils.Image
 import io.github.tomas337.translating_pdf_viewer.utils.PageContent
 import io.github.tomas337.translating_pdf_viewer.utils.TextBlock
@@ -95,6 +96,11 @@ fun DrawContent(
                         fontSize = textStyle!!.fontSize.sp * fontSizeScale,
                         fontWeight = FontWeight(textStyle.fontWeight),
                         fontStyle = if (textStyle.isItalic) FontStyle.Italic else FontStyle.Normal,
+                        baselineShift = when (textStyle.baselineShift) {
+                            BaselineShift.SUBSCRIPT -> androidx.compose.ui.text.style.BaselineShift.Subscript
+                            BaselineShift.SUPERSCRIPT -> androidx.compose.ui.text.style.BaselineShift.Superscript
+                            else -> androidx.compose.ui.text.style.BaselineShift.None
+                            },
                         color =
                             if (textStyle.color.size == 3) {
                                 Color(textStyle.color[0], textStyle.color[1], textStyle.color[2])
@@ -103,6 +109,7 @@ fun DrawContent(
                             },
                     )
 
+                    // TODO: the current way of highlighting is very slow
                     if (highlightsQueue.isNotEmpty() &&
                         highlightsQueue.first().start >= startCharIndex &&
                         highlightsQueue.first().end < startCharIndex + text.length

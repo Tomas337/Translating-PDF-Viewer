@@ -59,6 +59,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import io.github.tomas337.translating_pdf_viewer.utils.BaselineShift;
 import io.github.tomas337.translating_pdf_viewer.utils.Image;
 import io.github.tomas337.translating_pdf_viewer.utils.Page;
 import io.github.tomas337.translating_pdf_viewer.utils.TextBlock;
@@ -271,10 +272,18 @@ public class Extractor extends PDFTextStripper {
                     prevEndPadding = null;
                 }
 
+                // Assumes that the first position isn't shifted.
+                BaselineShift baselineShift = firstPosition.getY() == position.getY()
+                        ? BaselineShift.NONE
+                        : firstPosition.getY() > position.getY()
+                        ? BaselineShift.SUPERSCRIPT
+                        : BaselineShift.SUBSCRIPT;
+
                 TextStyle style = new TextStyle(
                         fontSize,
                         font,
-                        curColor
+                        curColor,
+                        baselineShift
                 );
 
                 if (textStyleToIntMap.containsKey(style)) {
