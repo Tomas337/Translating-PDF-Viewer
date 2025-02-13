@@ -72,6 +72,7 @@ public class TextStyle {
         result = 31 * result + Float.floatToIntBits(fontSize);
         result = 31 * result + fontWeight;
         result = 31 * result + (isItalic ? 1 : 0);
+        result = 31 * result + baselineShift.hashCode();
         return result;
     }
 
@@ -96,6 +97,9 @@ public class TextStyle {
             return false;
         }
         if (!Arrays.equals(this.color, other.color)) {
+            return false;
+        }
+        if (this.baselineShift != other.baselineShift) {
             return false;
         }
 
