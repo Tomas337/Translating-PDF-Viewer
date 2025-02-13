@@ -18,6 +18,8 @@ package io.github.tomas337.translating_pdf_viewer.data.utils.extraction;
 
 import android.graphics.Bitmap;
 
+import androidx.annotation.NonNull;
+
 import com.tom_roush.pdfbox.contentstream.operator.DrawObject;
 import com.tom_roush.pdfbox.contentstream.operator.Operator;
 import com.tom_roush.pdfbox.contentstream.operator.color.SetNonStrokingColor;
@@ -272,12 +274,7 @@ public class Extractor extends PDFTextStripper {
                     prevEndPadding = null;
                 }
 
-                // Assumes that the first position isn't shifted.
-                BaselineShift baselineShift = firstPosition.getY() == position.getY()
-                        ? BaselineShift.NONE
-                        : firstPosition.getY() > position.getY()
-                        ? BaselineShift.SUPERSCRIPT
-                        : BaselineShift.SUBSCRIPT;
+                BaselineShift baselineShift = getBaselineShift(position, firstPosition);
 
                 TextStyle style = new TextStyle(
                         fontSize,
@@ -352,6 +349,20 @@ public class Extractor extends PDFTextStripper {
         }
 
         super.writeString(builder.toString());
+    }
+
+    /**
+     *  This function assumes that the first position isn't shifted.
+     */
+    @NonNull
+    private static BaselineShift getBaselineShift(TextPosition position, TextPosition firstPosition) {
+        float fontSizeQuotient = position.getFontSizeInPt() / firstPosition.getFontSizeInPt();
+        float positionDifference = (firstPosition.getY() - position.getY()) / firstPosition.getHeight();
+        return positionDifference >= 0.33 && fontSizeQuotient < 0.70
+                ? BaselineShift.SUPERSCRIPT
+                : positionDifference <= -0.33 && fontSizeQuotient < 0.70
+                ? BaselineShift.SUBSCRIPT
+                : BaselineShift.NONE;
     }
 
     private static float getAngle(TextPosition text) {
