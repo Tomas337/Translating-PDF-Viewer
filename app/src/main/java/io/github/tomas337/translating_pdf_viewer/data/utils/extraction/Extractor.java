@@ -445,6 +445,7 @@ public class Extractor extends PDFTextStripper {
     }
 
     private String saveImage(Bitmap image) throws IOException {
+        // TODO: PNG format doesn't support CMYK, Use JPG instead? JPG doesn't support transparency, use TIFF instead?
         Path filepath = path.resolve(imageIndex + ".png");
         String filepathString = filepath.toString();
 
